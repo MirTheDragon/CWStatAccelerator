@@ -353,7 +353,7 @@ public class TrainerFragment extends Fragment {
             // Fetch a new character and play it
             playNextCharacter(true);
         } else {
-            Toast.makeText(requireContext(), "👎 Incorrect. Correct Answer: ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "👎 Incorrect!", Toast.LENGTH_SHORT).show();
             updateLogView();
             // Replay the same character
             playNextCharacter(false);

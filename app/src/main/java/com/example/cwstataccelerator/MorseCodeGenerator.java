@@ -20,7 +20,7 @@ public class MorseCodeGenerator {
     private static final String PREFS_NAME = "CWSettings";
     private static final String KEY_FREQUENCY = "frequency";
     private static final String KEY_SPEED = "speed";
-    private static final String KEY_RAMP = "ramp_duration";
+    private static final String KEY_RAMP_TIME = "ramp_duration";
     private static final String KEY_SNR = "snr";
 
     private int frequency = 600; // Default frequency in Hz
@@ -80,7 +80,7 @@ public class MorseCodeGenerator {
         frequency = sharedPreferences.getInt(KEY_FREQUENCY, 600);
         int speed = sharedPreferences.getInt(KEY_SPEED, 15);
         dotDuration = 1200 / speed;
-        rampDuration = sharedPreferences.getInt(KEY_RAMP, 0);
+        rampDuration = sharedPreferences.getInt(KEY_RAMP_TIME, 0);
         snr = sharedPreferences.getInt(KEY_SNR, 100);
     }
 
