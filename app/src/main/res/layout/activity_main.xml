@@ -1,0 +1,36 @@
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleTextColor="?attr/colorOnPrimaryContainer"/>
+
+        <!-- Main content container -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <!-- NavigationView for drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/activity_main_drawer" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

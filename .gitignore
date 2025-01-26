@@ -1,0 +1,19 @@
+# Android Studio specific
+.idea/
+*.iml
+
+# Gradle files
+.gradle/
+/build/
+
+# Local configuration
+local.properties
+
+# Log files
+*.log
+
+# Keystore files
+*.jks
+
+# Miscellaneous
+.DS_Store

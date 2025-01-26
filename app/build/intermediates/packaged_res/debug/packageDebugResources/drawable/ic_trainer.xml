@@ -1,0 +1,66 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Brain lobes outline -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:pathData="
+            M7,4
+            c-2,0-4,1-4,3
+            v10
+            c0,2,2,3,4,3
+            h2
+            c2,0,4-1,4-3
+            V7
+            c0-2-2-3-4-3
+            z
+
+            M17,4
+            c-2,0-4,1-4,3
+            v10
+            c0,2,2,3,4,3
+            h2
+            c2,0,4-1,4-3
+            V7
+            c0-2-2-3-4-3
+            z"/>
+
+    <!-- Wrinkles/veins for left lobe -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M5,8 c2,1 4,-1 6,0"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M5,10 c2,-1 4,1 6,0"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M5,12 c2,1 4,-1 6,0"/>
+
+    <!-- Wrinkles/veins for right lobe -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M19,8 c-2,1 -4,-1 -6,0"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M19,10 c-2,-1 -4,1 -6,0"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M19,12 c-2,1 -4,-1 -6,0"/>
+</vector>

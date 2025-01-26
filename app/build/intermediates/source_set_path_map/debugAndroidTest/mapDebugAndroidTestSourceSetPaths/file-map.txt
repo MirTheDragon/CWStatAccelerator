@@ -1,0 +1,6 @@
+com.example.cwstataccelerator.test.app-annotation-experimental-1.3.0-0 C:\Users\plasm\.gradle\caches\8.10.2\transforms\50dd1bf7bb077f36499f08e7815faeff\transformed\annotation-experimental-1.3.0\res
+com.example.cwstataccelerator.test.app-core-1.5.0-1 C:\Users\plasm\.gradle\caches\8.10.2\transforms\785b2a79cd15f81590ec8dce2074dfad\transformed\core-1.5.0\res
+com.example.cwstataccelerator.test.app-androidTest-2 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\generated\res\resValues\androidTest\debug
+com.example.cwstataccelerator.test.app-mergeDebugAndroidTestResources-3 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.example.cwstataccelerator.test.app-mergeDebugAndroidTestResources-4 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.example.cwstataccelerator.test.app-debugAndroidTest-5 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

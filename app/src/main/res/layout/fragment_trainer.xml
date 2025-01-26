@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Character Type Checkboxes -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:padding="8dp">
+
+        <!-- Alphabet Checkbox -->
+        <CheckBox
+            android:id="@+id/alphabet_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alphabet"
+            android:checked="true" />
+
+        <!-- Numbers Checkbox -->
+        <CheckBox
+            android:id="@+id/numbers_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Numbers" />
+
+        <!-- Special Characters Checkbox -->
+        <CheckBox
+            android:id="@+id/special_characters_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Special Characters" />
+    </LinearLayout>
+
+    <!-- Start/Stop Training Button and Countdown Timer -->
+    <Button
+        android:id="@+id/start_training_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="16dp"
+        android:text="Start Training" />
+
+    <TextView
+        android:id="@+id/countdown_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Ready"
+        android:textSize="24sp"
+        android:padding="8dp"
+        android:visibility="gone" />
+
+    <!-- Input Field -->
+    <EditText
+        android:id="@+id/input_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type here"
+        android:padding="8dp"
+        android:enabled="false" />
+
+    <!-- Tab Layout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- ViewPager2 for Tab Content -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

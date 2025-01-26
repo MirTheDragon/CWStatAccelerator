@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.cwstataccelerator.app-mergeDebugResources-42:/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\plasm\\.gradle\\caches\\8.10.2\\transforms\\7d3162e5a45dfb73ce5ea4ba076e6e6a\\transformed\\appcompat-1.6.1\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}

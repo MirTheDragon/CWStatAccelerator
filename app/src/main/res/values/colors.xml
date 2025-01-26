@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Windows blue hues with reduced vibrancy -->
+    <color name="blue_200">#729FCF</color> <!-- Soft blue -->
+    <color name="blue_500">#3465A4</color> <!-- Medium blue -->
+    <color name="blue_700">#204A87</color> <!-- Deep blue -->
+
+    <!-- Lavender hues with reduced vibrancy -->
+    <color name="lavender_200">#C6A8D7</color> <!-- Soft lavender -->
+    <color name="lavender_500">#8E63B9</color> <!-- Medium lavender -->
+    <color name="lavender_700">#5F3D8E</color> <!-- Deep lavender -->
+</resources>
