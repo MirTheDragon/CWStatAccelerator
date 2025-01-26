@@ -25,19 +25,34 @@ public final class FragmentTrainerBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final CheckBox advancedLettersCheckbox;
+
+  @NonNull
   public final CheckBox alphabetCheckbox;
+
+  @NonNull
+  public final CheckBox basicLettersCheckbox;
 
   @NonNull
   public final TextView countdownTimer;
 
   @NonNull
+  public final CheckBox fourLetterCheckbox;
+
+  @NonNull
   public final EditText inputField;
 
   @NonNull
-  public final CheckBox numbersCheckbox;
+  public final CheckBox intermediateLettersCheckbox;
 
   @NonNull
-  public final CheckBox specialCharactersCheckbox;
+  public final CheckBox numberCheckbox;
+
+  @NonNull
+  public final CheckBox rareLettersCheckbox;
+
+  @NonNull
+  public final CheckBox specialCharacterCheckbox;
 
   @NonNull
   public final Button startTrainingButton;
@@ -46,21 +61,38 @@ public final class FragmentTrainerBinding implements ViewBinding {
   public final TabLayout tabLayout;
 
   @NonNull
+  public final CheckBox threeLetterCheckbox;
+
+  @NonNull
+  public final CheckBox twoLetterCheckbox;
+
+  @NonNull
   public final ViewPager2 viewPager;
 
-  private FragmentTrainerBinding(@NonNull LinearLayout rootView, @NonNull CheckBox alphabetCheckbox,
-      @NonNull TextView countdownTimer, @NonNull EditText inputField,
-      @NonNull CheckBox numbersCheckbox, @NonNull CheckBox specialCharactersCheckbox,
+  private FragmentTrainerBinding(@NonNull LinearLayout rootView,
+      @NonNull CheckBox advancedLettersCheckbox, @NonNull CheckBox alphabetCheckbox,
+      @NonNull CheckBox basicLettersCheckbox, @NonNull TextView countdownTimer,
+      @NonNull CheckBox fourLetterCheckbox, @NonNull EditText inputField,
+      @NonNull CheckBox intermediateLettersCheckbox, @NonNull CheckBox numberCheckbox,
+      @NonNull CheckBox rareLettersCheckbox, @NonNull CheckBox specialCharacterCheckbox,
       @NonNull Button startTrainingButton, @NonNull TabLayout tabLayout,
+      @NonNull CheckBox threeLetterCheckbox, @NonNull CheckBox twoLetterCheckbox,
       @NonNull ViewPager2 viewPager) {
     this.rootView = rootView;
+    this.advancedLettersCheckbox = advancedLettersCheckbox;
     this.alphabetCheckbox = alphabetCheckbox;
+    this.basicLettersCheckbox = basicLettersCheckbox;
     this.countdownTimer = countdownTimer;
+    this.fourLetterCheckbox = fourLetterCheckbox;
     this.inputField = inputField;
-    this.numbersCheckbox = numbersCheckbox;
-    this.specialCharactersCheckbox = specialCharactersCheckbox;
+    this.intermediateLettersCheckbox = intermediateLettersCheckbox;
+    this.numberCheckbox = numberCheckbox;
+    this.rareLettersCheckbox = rareLettersCheckbox;
+    this.specialCharacterCheckbox = specialCharacterCheckbox;
     this.startTrainingButton = startTrainingButton;
     this.tabLayout = tabLayout;
+    this.threeLetterCheckbox = threeLetterCheckbox;
+    this.twoLetterCheckbox = twoLetterCheckbox;
     this.viewPager = viewPager;
   }
 
@@ -91,9 +123,21 @@ public final class FragmentTrainerBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.advanced_letters_checkbox;
+      CheckBox advancedLettersCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (advancedLettersCheckbox == null) {
+        break missingId;
+      }
+
       id = R.id.alphabet_checkbox;
       CheckBox alphabetCheckbox = ViewBindings.findChildViewById(rootView, id);
       if (alphabetCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.basic_letters_checkbox;
+      CheckBox basicLettersCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (basicLettersCheckbox == null) {
         break missingId;
       }
 
@@ -103,21 +147,39 @@ public final class FragmentTrainerBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.four_letter_checkbox;
+      CheckBox fourLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (fourLetterCheckbox == null) {
+        break missingId;
+      }
+
       id = R.id.input_field;
       EditText inputField = ViewBindings.findChildViewById(rootView, id);
       if (inputField == null) {
         break missingId;
       }
 
-      id = R.id.numbers_checkbox;
-      CheckBox numbersCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (numbersCheckbox == null) {
+      id = R.id.intermediate_letters_checkbox;
+      CheckBox intermediateLettersCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (intermediateLettersCheckbox == null) {
         break missingId;
       }
 
-      id = R.id.special_characters_checkbox;
-      CheckBox specialCharactersCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (specialCharactersCheckbox == null) {
+      id = R.id.number_checkbox;
+      CheckBox numberCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (numberCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.rare_letters_checkbox;
+      CheckBox rareLettersCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (rareLettersCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.special_character_checkbox;
+      CheckBox specialCharacterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (specialCharacterCheckbox == null) {
         break missingId;
       }
 
@@ -133,15 +195,29 @@ public final class FragmentTrainerBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.three_letter_checkbox;
+      CheckBox threeLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (threeLetterCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.two_letter_checkbox;
+      CheckBox twoLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (twoLetterCheckbox == null) {
+        break missingId;
+      }
+
       id = R.id.view_pager;
       ViewPager2 viewPager = ViewBindings.findChildViewById(rootView, id);
       if (viewPager == null) {
         break missingId;
       }
 
-      return new FragmentTrainerBinding((LinearLayout) rootView, alphabetCheckbox, countdownTimer,
-          inputField, numbersCheckbox, specialCharactersCheckbox, startTrainingButton, tabLayout,
-          viewPager);
+      return new FragmentTrainerBinding((LinearLayout) rootView, advancedLettersCheckbox,
+          alphabetCheckbox, basicLettersCheckbox, countdownTimer, fourLetterCheckbox, inputField,
+          intermediateLettersCheckbox, numberCheckbox, rareLettersCheckbox,
+          specialCharacterCheckbox, startTrainingButton, tabLayout, threeLetterCheckbox,
+          twoLetterCheckbox, viewPager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

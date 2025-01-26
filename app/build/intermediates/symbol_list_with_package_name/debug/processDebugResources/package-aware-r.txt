@@ -3200,6 +3200,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id advanced_letters_checkbox
 id alertTitle
 id aligned
 id all
@@ -3221,6 +3222,7 @@ id autoCompleteToEnd
 id autoCompleteToStart
 id barrier
 id baseline
+id basic_letters_checkbox
 id beginOnFirstDraw
 id beginning
 id bestChoice
@@ -3330,6 +3332,7 @@ id fixed
 id flip
 id floating
 id forever
+id four_letter_checkbox
 id fragment_container
 id fragment_container_view_tag
 id frequency_label
@@ -3362,6 +3365,7 @@ id included
 id indeterminate
 id info
 id input_field
+id intermediate_letters_checkbox
 id invisible
 id inward
 id italic
@@ -3475,7 +3479,7 @@ id north
 id notification_background
 id notification_main_column
 id notification_main_column_container
-id numbers_checkbox
+id number_checkbox
 id off
 id on
 id onInterceptTouchReturnSwipe
@@ -3516,6 +3520,7 @@ id progress_horizontal
 id radio
 id ramp_label
 id ramp_seekbar
+id rare_letters_checkbox
 id ratio
 id rectangles
 id report_drawn
@@ -3570,7 +3575,7 @@ id snr_label
 id snr_seekbar
 id south
 id spacer
-id special_characters_checkbox
+id special_character_checkbox
 id special_effects_controller_view_tag
 id speed_label
 id speed_seekbar
@@ -3633,6 +3638,7 @@ id textinput_helper_text
 id textinput_placeholder
 id textinput_prefix_text
 id textinput_suffix_text
+id three_letter_checkbox
 id time
 id title
 id titleDividerNoCustom
@@ -3650,6 +3656,7 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id two_letter_checkbox
 id unchecked
 id uniform
 id unlabeled

@@ -185,12 +185,15 @@ public class RecentLogFragment extends Fragment {
             }
         });
 
+
+        MorseCodeGenerator morseCodeGenerator = new MorseCodeGenerator(requireContext());
+
         // Populate the log view with sorted entries
         for (String logEntry : logEntries) {
             String[] parts = logEntry.split(",");
             if (parts.length < 6) continue;
 
-            String character = parts[0];
+            String character = parts[0] + "   " + morseCodeGenerator.getMorseCode(parts[0]) + "   ";
             String responseTime = parts[1];
             String correctness = parts[2];
             String typedReply = parts[3];

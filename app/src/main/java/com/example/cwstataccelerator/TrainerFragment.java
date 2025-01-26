@@ -49,8 +49,11 @@ public class TrainerFragment extends Fragment {
     private TableLayout logView; // Log display
     private boolean isTrainingActive = false;
 
-    private CheckBox singleLetterCheckbox;
     private CheckBox alphabetCheckbox;
+    private CheckBox basicLettersCheckbox;
+    private CheckBox intermediateLettersCheckbox;
+    private CheckBox advancedLettersCheckbox;
+    private CheckBox rareLettersCheckbox;
     private CheckBox numberCheckbox;
     private CheckBox specialCharacterCheckbox;
 
@@ -77,10 +80,14 @@ public class TrainerFragment extends Fragment {
         loadSelectedSpeed();
 
         // Setup training checkboxes
-        //singleLetterCheckbox = view.findViewById(R.id.single_letter_checkbox);
         alphabetCheckbox = view.findViewById(R.id.alphabet_checkbox);
-        numberCheckbox = view.findViewById(R.id.numbers_checkbox);
-        specialCharacterCheckbox = view.findViewById(R.id.special_characters_checkbox);
+        numberCheckbox = view.findViewById(R.id.number_checkbox);
+        specialCharacterCheckbox = view.findViewById(R.id.special_character_checkbox);
+
+        basicLettersCheckbox = view.findViewById(R.id.basic_letters_checkbox);
+        intermediateLettersCheckbox = view.findViewById(R.id.intermediate_letters_checkbox);
+        advancedLettersCheckbox = view.findViewById(R.id.advanced_letters_checkbox);
+        rareLettersCheckbox = view.findViewById(R.id.rare_letters_checkbox);
 
         // Alphabet selected by default; at least one checkbox always remains checked
         alphabetCheckbox.setChecked(true);
@@ -223,12 +230,15 @@ public class TrainerFragment extends Fragment {
     }
 
     private void enforceMinimumCheckboxSelection() {
-        CheckBox[] checkboxes = {alphabetCheckbox, numberCheckbox, specialCharacterCheckbox};
-        for (CheckBox checkbox : checkboxes) {
+        CheckBox[] mainCheckboxes = {alphabetCheckbox, numberCheckbox, specialCharacterCheckbox};
+        CheckBox[] subgroupCheckboxes = {basicLettersCheckbox, intermediateLettersCheckbox, advancedLettersCheckbox, rareLettersCheckbox};
+
+        // Handle changes for main checkboxes
+        for (CheckBox checkbox : mainCheckboxes) {
             checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!isChecked) {
                     boolean atLeastOneChecked = false;
-                    for (CheckBox cb : checkboxes) {
+                    for (CheckBox cb : mainCheckboxes) {
                         if (cb.isChecked()) {
                             atLeastOneChecked = true;
                             break;
@@ -238,9 +248,40 @@ public class TrainerFragment extends Fragment {
                         buttonView.setChecked(true);
                     }
                 }
+
+                // Handle the alphabet checkbox specifically
+                if (buttonView == alphabetCheckbox) {
+                    // Enable or disable all subgroups when the main alphabet checkbox is toggled
+                    for (CheckBox subgroupCheckbox : subgroupCheckboxes) {
+                        subgroupCheckbox.setChecked(isChecked);
+                    }
+                }
+            });
+        }
+
+        // Handle changes for subgroup checkboxes
+        for (CheckBox subgroupCheckbox : subgroupCheckboxes) {
+            subgroupCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                // If any subgroup is selected, ensure the alphabet checkbox is also selected
+                if (isChecked) {
+                    alphabetCheckbox.setChecked(true);
+                } else {
+                    // If all subgroups are deselected, uncheck the alphabet checkbox
+                    boolean anySubgroupChecked = false;
+                    for (CheckBox subgroup : subgroupCheckboxes) {
+                        if (subgroup.isChecked()) {
+                            anySubgroupChecked = true;
+                            break;
+                        }
+                    }
+                    if (!anySubgroupChecked) {
+                        alphabetCheckbox.setChecked(false);
+                    }
+                }
             });
         }
     }
+
 
     private void startTrainingSession() {
         Log.d("TrainerFragment", "Starting training session.");
@@ -314,24 +355,43 @@ public class TrainerFragment extends Fragment {
     private String getSelectedCharacters() {
         StringBuilder characters = new StringBuilder();
 
+        // Alphabet and its subgroups
         if (alphabetCheckbox.isChecked()) {
-            characters.append("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+            // Add letter groups if the main alphabet checkbox is checked
+            // Subgroup logic
+            if (basicLettersCheckbox != null && basicLettersCheckbox.isChecked()) {
+                characters.append("ETAOINS");
+            }
+            if (intermediateLettersCheckbox != null && intermediateLettersCheckbox.isChecked()) {
+                characters.append("HRDLCUMW");
+            }
+            if (advancedLettersCheckbox != null && advancedLettersCheckbox.isChecked()) {
+                characters.append("FGYPBVK");
+            }
+            if (rareLettersCheckbox != null && rareLettersCheckbox.isChecked()) {
+                characters.append("JXQZ");
+            }
         }
-        if (numberCheckbox.isChecked()) {
+
+        // Numbers
+        if (numberCheckbox != null && numberCheckbox.isChecked()) {
             characters.append("0123456789");
         }
-        if (specialCharacterCheckbox.isChecked()) {
+
+        // Special Characters
+        if (specialCharacterCheckbox != null && specialCharacterCheckbox.isChecked()) {
             characters.append("?!.,;:+-=/");
         }
 
+        // Fallback to default (alphabet) if no checkboxes are selected
         if (characters.length() == 0) {
-            // Fallback to default (alphabet) if no checkboxes are selected
             Toast.makeText(requireContext(), "Defaulting to alphabet characters.", Toast.LENGTH_SHORT).show();
             return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         }
 
         return characters.toString();
     }
+
 
     private void processInput(String enteredChar) {
         long responseTime = SystemClock.elapsedRealtime() - characterStartTime;

@@ -3199,6 +3199,7 @@ int id action_text 0x7f080044
 int id actions 0x7f080045
 int id activity_chooser_view_content 0x7f080046
 int id add 0x7f080047
+int id advanced_letters_checkbox 0x7f080222
 int id alertTitle 0x7f080048
 int id aligned 0x7f080049
 int id all 0x7f08004a
@@ -3220,6 +3221,7 @@ int id autoCompleteToEnd 0x7f080058
 int id autoCompleteToStart 0x7f080059
 int id barrier 0x7f08005a
 int id baseline 0x7f08005b
+int id basic_letters_checkbox 0x7f080223
 int id beginOnFirstDraw 0x7f08005c
 int id beginning 0x7f08005d
 int id bestChoice 0x7f08005e
@@ -3329,6 +3331,7 @@ int id fixed 0x7f0800c5
 int id flip 0x7f0800c6
 int id floating 0x7f0800c7
 int id forever 0x7f0800c8
+int id four_letter_checkbox 0x7f080229
 int id fragment_container 0x7f0800c9
 int id fragment_container_view_tag 0x7f0800ca
 int id frequency_label 0x7f0800cb
@@ -3361,6 +3364,7 @@ int id included 0x7f0800e5
 int id indeterminate 0x7f0800e6
 int id info 0x7f0800e7
 int id input_field 0x7f0800e8
+int id intermediate_letters_checkbox 0x7f080224
 int id invisible 0x7f0800e9
 int id inward 0x7f0800ea
 int id italic 0x7f0800eb
@@ -3474,7 +3478,7 @@ int id north 0x7f080156
 int id notification_background 0x7f080157
 int id notification_main_column 0x7f080158
 int id notification_main_column_container 0x7f080159
-int id numbers_checkbox 0x7f08015a
+int id number_checkbox 0x7f080225
 int id off 0x7f08015b
 int id on 0x7f08015c
 int id onInterceptTouchReturnSwipe 0x7f08015d
@@ -3515,6 +3519,7 @@ int id progress_horizontal 0x7f08017f
 int id radio 0x7f080180
 int id ramp_label 0x7f080181
 int id ramp_seekbar 0x7f080182
+int id rare_letters_checkbox 0x7f080226
 int id ratio 0x7f080183
 int id rectangles 0x7f080184
 int id report_drawn 0x7f080185
@@ -3569,7 +3574,7 @@ int id snr_label 0x7f0801b5
 int id snr_seekbar 0x7f0801b6
 int id south 0x7f0801b7
 int id spacer 0x7f0801b8
-int id special_characters_checkbox 0x7f0801b9
+int id special_character_checkbox 0x7f080228
 int id special_effects_controller_view_tag 0x7f0801ba
 int id speed_label 0x7f0801bb
 int id speed_seekbar 0x7f0801bc
@@ -3632,6 +3637,7 @@ int id textinput_helper_text 0x7f0801f4
 int id textinput_placeholder 0x7f0801f5
 int id textinput_prefix_text 0x7f0801f6
 int id textinput_suffix_text 0x7f0801f7
+int id three_letter_checkbox 0x7f08022a
 int id time 0x7f0801f8
 int id title 0x7f0801f9
 int id titleDividerNoCustom 0x7f0801fa
@@ -3649,6 +3655,7 @@ int id transition_position 0x7f080205
 int id transition_scene_layoutid_cache 0x7f080206
 int id transition_transform 0x7f080207
 int id triangle 0x7f080208
+int id two_letter_checkbox 0x7f08022b
 int id unchecked 0x7f080209
 int id uniform 0x7f08020a
 int id unlabeled 0x7f08020b

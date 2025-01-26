@@ -112,7 +112,9 @@ public class PerformanceMetricsFragment extends Fragment {
                     TableRow.LayoutParams.WRAP_CONTENT
             ));
 
-            String character = entry.getKey();
+            MorseCodeGenerator morseCodeGenerator = new MorseCodeGenerator(requireContext());
+
+            String character = entry.getKey() + "   " + morseCodeGenerator.getMorseCode(entry.getKey()) + "   ";;
             Integer[] stats = entry.getValue();
             int attempts = stats[0];
             int correct = stats[1];

@@ -9,6 +9,8 @@ import android.media.AudioTrack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.util.Log; // Add this import at the top of your MorseCodeGenerator class
 
@@ -33,21 +35,77 @@ public class MorseCodeGenerator {
     private final BandLimitedPinkNoiseGenerator pinkNoiseGenerator;
 
     private final Map<String, String> morseCodeMap = new HashMap<String, String>() {{
-        put("A", ".-"); put("B", "-..."); put("C", "-.-."); put("D", "-..");
-        put("E", "."); put("F", "..-."); put("G", "--."); put("H", "....");
-        put("I", ".."); put("J", ".---"); put("K", "-.-"); put("L", ".-..");
-        put("M", "--"); put("N", "-."); put("O", "---"); put("P", ".--.");
-        put("Q", "--.-"); put("R", ".-."); put("S", "..."); put("T", "-");
-        put("U", "..-"); put("V", "...-"); put("W", ".--"); put("X", "-..-");
-        put("Y", "-.--"); put("Z", "--..");
-        put("0", "-----"); put("1", ".----"); put("2", "..---"); put("3", "...--");
-        put("4", "....-"); put("5", "....."); put("6", "-...."); put("7", "--...");
-        put("8", "---.."); put("9", "----.");
-        put(".", ".-.-.-"); put(",", "--..--"); put("?", "..--..");
-        put("!", "-.-.--"); put(";", "-.-.-."); put(":", "---...");
-        put("+", ".-.-."); put("-", "-....-"); put("/", "-..-."); put("=", "-...-");
+        put("A", ".-");
+        put("B", "-...");
+        put("C", "-.-.");
+        put("D", "-..");
+        put("E", ".");
+        put("F", "..-.");
+        put("G", "--.");
+        put("H", "....");
+        put("I", "..");
+        put("J", ".---");
+        put("K", "-.-");
+        put("L", ".-..");
+        put("M", "--");
+        put("N", "-.");
+        put("O", "---");
+        put("P", ".--.");
+        put("Q", "--.-");
+        put("R", ".-.");
+        put("S", "...");
+        put("T", "-");
+        put("U", "..-");
+        put("V", "...-");
+        put("W", ".--");
+        put("X", "-..-");
+        put("Y", "-.--");
+        put("Z", "--..");
+        put("0", "-----");
+        put("1", ".----");
+        put("2", "..---");
+        put("3", "...--");
+        put("4", "....-");
+        put("5", ".....");
+        put("6", "-....");
+        put("7", "--...");
+        put("8", "---..");
+        put("9", "----.");
+        put(".", ".-.-.-");
+        put(",", "--..--");
+        put("?", "..--..");
+        put("!", "-.-.--");
+        put(";", "-.-.-.");
+        put(":", "---...");
+        put("+", ".-.-.");
+        put("-", "-....-");
+        put("/", "-..-.");
+        put("=", "-...-");
     }};
 
+
+    public int getTotalSymbols() {
+        return morseCodeMap.size();
+    }
+    public String getCharacterByIndex(int index) {
+        // Convert the morseCodeMap keys to a list
+        List<String> keys = new ArrayList<>(morseCodeMap.keySet());
+
+        // Validate the index to ensure it's within bounds
+        if (index < 0 || index >= keys.size()) {
+            throw new IllegalArgumentException("Index out of bounds: " + index);
+        }
+
+        // Return the character at the specified index
+        return keys.get(index);
+    }
+
+    public String getMorseCode(String character) {
+        if (character == null || character.isEmpty()) {
+            return ""; // Return an empty string for invalid input
+        }
+        return morseCodeMap.getOrDefault(character.toUpperCase(), ""); // Default to empty if character not found
+    }
 
     public MorseCodeGenerator(Context context) {
         this.context = context;
