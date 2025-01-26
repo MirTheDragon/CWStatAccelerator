@@ -37,7 +37,7 @@ public final class FragmentTrainerBinding implements ViewBinding {
   public final TextView countdownTimer;
 
   @NonNull
-  public final CheckBox fourLetterCheckbox;
+  public final CheckBox fourCharacterCheckbox;
 
   @NonNull
   public final EditText inputField;
@@ -61,10 +61,10 @@ public final class FragmentTrainerBinding implements ViewBinding {
   public final TabLayout tabLayout;
 
   @NonNull
-  public final CheckBox threeLetterCheckbox;
+  public final CheckBox threeCharacterCheckbox;
 
   @NonNull
-  public final CheckBox twoLetterCheckbox;
+  public final CheckBox twoCharacterCheckbox;
 
   @NonNull
   public final ViewPager2 viewPager;
@@ -72,18 +72,18 @@ public final class FragmentTrainerBinding implements ViewBinding {
   private FragmentTrainerBinding(@NonNull LinearLayout rootView,
       @NonNull CheckBox advancedLettersCheckbox, @NonNull CheckBox alphabetCheckbox,
       @NonNull CheckBox basicLettersCheckbox, @NonNull TextView countdownTimer,
-      @NonNull CheckBox fourLetterCheckbox, @NonNull EditText inputField,
+      @NonNull CheckBox fourCharacterCheckbox, @NonNull EditText inputField,
       @NonNull CheckBox intermediateLettersCheckbox, @NonNull CheckBox numberCheckbox,
       @NonNull CheckBox rareLettersCheckbox, @NonNull CheckBox specialCharacterCheckbox,
       @NonNull Button startTrainingButton, @NonNull TabLayout tabLayout,
-      @NonNull CheckBox threeLetterCheckbox, @NonNull CheckBox twoLetterCheckbox,
+      @NonNull CheckBox threeCharacterCheckbox, @NonNull CheckBox twoCharacterCheckbox,
       @NonNull ViewPager2 viewPager) {
     this.rootView = rootView;
     this.advancedLettersCheckbox = advancedLettersCheckbox;
     this.alphabetCheckbox = alphabetCheckbox;
     this.basicLettersCheckbox = basicLettersCheckbox;
     this.countdownTimer = countdownTimer;
-    this.fourLetterCheckbox = fourLetterCheckbox;
+    this.fourCharacterCheckbox = fourCharacterCheckbox;
     this.inputField = inputField;
     this.intermediateLettersCheckbox = intermediateLettersCheckbox;
     this.numberCheckbox = numberCheckbox;
@@ -91,8 +91,8 @@ public final class FragmentTrainerBinding implements ViewBinding {
     this.specialCharacterCheckbox = specialCharacterCheckbox;
     this.startTrainingButton = startTrainingButton;
     this.tabLayout = tabLayout;
-    this.threeLetterCheckbox = threeLetterCheckbox;
-    this.twoLetterCheckbox = twoLetterCheckbox;
+    this.threeCharacterCheckbox = threeCharacterCheckbox;
+    this.twoCharacterCheckbox = twoCharacterCheckbox;
     this.viewPager = viewPager;
   }
 
@@ -147,9 +147,9 @@ public final class FragmentTrainerBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.four_letter_checkbox;
-      CheckBox fourLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (fourLetterCheckbox == null) {
+      id = R.id.four_character_checkbox;
+      CheckBox fourCharacterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (fourCharacterCheckbox == null) {
         break missingId;
       }
 
@@ -195,15 +195,15 @@ public final class FragmentTrainerBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.three_letter_checkbox;
-      CheckBox threeLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (threeLetterCheckbox == null) {
+      id = R.id.three_character_checkbox;
+      CheckBox threeCharacterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (threeCharacterCheckbox == null) {
         break missingId;
       }
 
-      id = R.id.two_letter_checkbox;
-      CheckBox twoLetterCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (twoLetterCheckbox == null) {
+      id = R.id.two_character_checkbox;
+      CheckBox twoCharacterCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (twoCharacterCheckbox == null) {
         break missingId;
       }
 
@@ -214,10 +214,10 @@ public final class FragmentTrainerBinding implements ViewBinding {
       }
 
       return new FragmentTrainerBinding((LinearLayout) rootView, advancedLettersCheckbox,
-          alphabetCheckbox, basicLettersCheckbox, countdownTimer, fourLetterCheckbox, inputField,
+          alphabetCheckbox, basicLettersCheckbox, countdownTimer, fourCharacterCheckbox, inputField,
           intermediateLettersCheckbox, numberCheckbox, rareLettersCheckbox,
-          specialCharacterCheckbox, startTrainingButton, tabLayout, threeLetterCheckbox,
-          twoLetterCheckbox, viewPager);
+          specialCharacterCheckbox, startTrainingButton, tabLayout, threeCharacterCheckbox,
+          twoCharacterCheckbox, viewPager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

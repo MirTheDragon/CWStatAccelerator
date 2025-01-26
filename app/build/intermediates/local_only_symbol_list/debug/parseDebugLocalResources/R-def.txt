@@ -53,7 +53,7 @@ id basic_letters_checkbox
 id countdown_timer
 id drawer_layout
 id fab
-id four_letter_checkbox
+id four_character_checkbox
 id fragment_container
 id frequency_label
 id frequency_seekbar
@@ -92,9 +92,9 @@ id text_gallery
 id text_home
 id text_reference
 id text_slideshow
-id three_letter_checkbox
+id three_character_checkbox
 id toolbar
-id two_letter_checkbox
+id two_character_checkbox
 id view_pager
 layout activity_main
 layout app_bar_main

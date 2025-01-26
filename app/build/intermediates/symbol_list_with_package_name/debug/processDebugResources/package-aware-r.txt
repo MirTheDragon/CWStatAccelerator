@@ -3332,7 +3332,7 @@ id fixed
 id flip
 id floating
 id forever
-id four_letter_checkbox
+id four_character_checkbox
 id fragment_container
 id fragment_container_view_tag
 id frequency_label
@@ -3638,7 +3638,7 @@ id textinput_helper_text
 id textinput_placeholder
 id textinput_prefix_text
 id textinput_suffix_text
-id three_letter_checkbox
+id three_character_checkbox
 id time
 id title
 id titleDividerNoCustom
@@ -3656,7 +3656,7 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
-id two_letter_checkbox
+id two_character_checkbox
 id unchecked
 id uniform
 id unlabeled

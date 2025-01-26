@@ -77,27 +77,24 @@
 
             <!-- 2-Letter Training -->
             <CheckBox
-                android:id="@+id/two_letter_checkbox"
+                android:id="@+id/two_character_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="2-Character Training"
-                android:enabled="false" />
+                android:text="2-Character Training" />
 
             <!-- 3-Letter Training -->
             <CheckBox
-                android:id="@+id/three_letter_checkbox"
+                android:id="@+id/three_character_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="3-Character Training"
-                android:enabled="false" />
+                android:text="3-Character Training" />
 
             <!-- 4-Letter Training -->
             <CheckBox
-                android:id="@+id/four_letter_checkbox"
+                android:id="@+id/four_character_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="4-Character Training"
-                android:enabled="false" />
+                android:text="4-Character Training" />
         </LinearLayout>
     </LinearLayout>
 

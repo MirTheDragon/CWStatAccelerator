@@ -49,6 +49,8 @@ public class TrainerFragment extends Fragment {
     private TableLayout logView; // Log display
     private boolean isTrainingActive = false;
 
+    private int charactersInTraining = 1;
+
     private CheckBox alphabetCheckbox;
     private CheckBox basicLettersCheckbox;
     private CheckBox intermediateLettersCheckbox;
@@ -56,6 +58,9 @@ public class TrainerFragment extends Fragment {
     private CheckBox rareLettersCheckbox;
     private CheckBox numberCheckbox;
     private CheckBox specialCharacterCheckbox;
+    private CheckBox twoCharacterCheckbox;
+    private CheckBox threeCharacterCheckbox;
+    private CheckBox fourCharacterCheckbox;
 
     private MorseCodeGenerator morseCodeGenerator;
     private Handler trainingHandler;
@@ -88,6 +93,11 @@ public class TrainerFragment extends Fragment {
         intermediateLettersCheckbox = view.findViewById(R.id.intermediate_letters_checkbox);
         advancedLettersCheckbox = view.findViewById(R.id.advanced_letters_checkbox);
         rareLettersCheckbox = view.findViewById(R.id.rare_letters_checkbox);
+
+        // Initialize the new checkboxes for multi-character training
+        twoCharacterCheckbox = view.findViewById(R.id.two_character_checkbox);
+        threeCharacterCheckbox = view.findViewById(R.id.three_character_checkbox);
+        fourCharacterCheckbox = view.findViewById(R.id.four_character_checkbox);
 
         // Alphabet selected by default; at least one checkbox always remains checked
         alphabetCheckbox.setChecked(true);
@@ -232,6 +242,7 @@ public class TrainerFragment extends Fragment {
     private void enforceMinimumCheckboxSelection() {
         CheckBox[] mainCheckboxes = {alphabetCheckbox, numberCheckbox, specialCharacterCheckbox};
         CheckBox[] subgroupCheckboxes = {basicLettersCheckbox, intermediateLettersCheckbox, advancedLettersCheckbox, rareLettersCheckbox};
+        CheckBox[] multiCharacterCheckboxes = {twoCharacterCheckbox, threeCharacterCheckbox, fourCharacterCheckbox};
 
         // Handle changes for main checkboxes
         for (CheckBox checkbox : mainCheckboxes) {
@@ -280,8 +291,48 @@ public class TrainerFragment extends Fragment {
                 }
             });
         }
+
+        // Handle changes for multi character checkboxes
+        for (CheckBox checkbox : multiCharacterCheckboxes) {
+            checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+
+                // If checkbox is checked, set the characters in training to associated value
+                if (isChecked) {
+                    if (checkbox == twoCharacterCheckbox) charactersInTraining = 2;
+                    if (checkbox == threeCharacterCheckbox) charactersInTraining = 3;
+                    if (checkbox == fourCharacterCheckbox) charactersInTraining = 4;
+                    Log.d("TrainerFragment", "Characters in training set to " + charactersInTraining + ".");
+
+                    // Deselect all other checkboxes in the group
+                    for (CheckBox otherCheckbox : multiCharacterCheckboxes) {
+                        if (otherCheckbox != buttonView) {
+                            otherCheckbox.setChecked(false);
+                        }
+                    }
+                }
+                if(!isChecked){
+                    // Check if all checkboxes in the group are off
+                    if (areAllCheckboxesOff(multiCharacterCheckboxes)) {
+                        charactersInTraining = 1; // Default to single-letter training
+                        Log.d("TrainerFragment", "Characters in training set to " + charactersInTraining + ".");
+                    }
+            }
+            });
+        }
+
+
+
     }
 
+    private boolean areAllCheckboxesOff(CheckBox[] checkboxes) {
+        for (CheckBox checkbox : checkboxes) {
+            if (checkbox.isChecked()) {
+                return false; // At least one checkbox is checked
+            }
+        }
+        return true; // All checkboxes are off
+    }
 
     private void startTrainingSession() {
         Log.d("TrainerFragment", "Starting training session.");
