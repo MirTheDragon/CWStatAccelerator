@@ -2,6 +2,8 @@ package com.example.cwstataccelerator;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +29,22 @@ public class MainActivity extends AppCompatActivity
         // Set up the Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ImageView appIcon = findViewById(R.id.app_icon);
+
+        // Dynamically set height to match the toolbar height
+        int toolbarHeight = toolbar.getLayoutParams().height;
+        appIcon.getLayoutParams().height = toolbarHeight;
+        appIcon.getLayoutParams().width = toolbarHeight; // Make it square
+        appIcon.requestLayout();
+
+        // Adjust the icon's height dynamically
+        toolbar.post(() -> {
+            ViewGroup.LayoutParams layoutParams = appIcon.getLayoutParams();
+            layoutParams.height = toolbar.getHeight(); // Match the Toolbar height
+            layoutParams.width = (int)(toolbar.getHeight() * 1.625); // Match the Toolbar height
+            appIcon.setLayoutParams(layoutParams);
+        });
 
         // Initialize DrawerLayout and NavigationView
         drawer = findViewById(R.id.drawer_layout);

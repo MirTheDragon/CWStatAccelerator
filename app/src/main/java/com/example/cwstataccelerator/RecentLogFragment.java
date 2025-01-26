@@ -108,6 +108,7 @@ public class RecentLogFragment extends Fragment {
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, new IntentFilter("com.example.cwstataccelerator.UPDATE_LOG"));
+        updateLogView();  // Refresh when the fragment becomes visible
     }
 
     public void onPause() {
@@ -133,6 +134,7 @@ public class RecentLogFragment extends Fragment {
         if (view == null) return;
 
         TableLayout logView = view.findViewById(R.id.log_view);
+
         // Fetch recent log entries (ensure TrainerUtils.readRecentLogEntries works correctly)
         List<String> logEntries = TrainerUtils.readRecentLogEntries(requireContext(), 500);
 
@@ -202,7 +204,7 @@ public class RecentLogFragment extends Fragment {
                     TableRow.LayoutParams.WRAP_CONTENT
             ));
 
-// Apply color based on correctness
+            // Apply color based on correctness
             if ("1".equals(correctness)) {
                 // Get the correct background color from the theme
                 TypedValue typedValue = new TypedValue();

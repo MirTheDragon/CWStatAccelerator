@@ -3019,6 +3019,9 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable cw_app_trainer_icon_background
+drawable cw_app_trainer_icon_foreground
+drawable cw_app_trainer_icon_wide_foreground
 drawable design_fab_background
 drawable design_ic_visibility
 drawable design_ic_visibility_off
@@ -3208,6 +3211,7 @@ id animateToEnd
 id animateToStart
 id antiClockwise
 id anticipate
+id app_icon
 id arc
 id asConfigured
 id async
@@ -3910,6 +3914,7 @@ string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
 string action_settings
 string androidx_startup
+string app_icon_desc
 string app_name
 string appbar_scrolling_view_behavior
 string bottom_sheet_behavior

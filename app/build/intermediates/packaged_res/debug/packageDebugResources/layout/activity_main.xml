@@ -13,10 +13,24 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="56dp"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextColor="?attr/colorOnPrimaryContainer"/>
+            app:titleTextColor="?attr/colorOnPrimaryContainer">
+
+            <!-- Add App Icon -->
+            <ImageView
+                android:id="@+id/app_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="fill_horizontal"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:src="@drawable/cw_app_trainer_icon_wide_foreground"
+                android:contentDescription="@string/app_icon_desc" />
+
+        </androidx.appcompat.widget.Toolbar>
+
 
         <!-- Main content container -->
         <FrameLayout

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +23,9 @@ public final class ActivityMainBinding implements ViewBinding {
   private final DrawerLayout rootView;
 
   @NonNull
+  public final ImageView appIcon;
+
+  @NonNull
   public final DrawerLayout drawerLayout;
 
   @NonNull
@@ -33,10 +37,11 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final Toolbar toolbar;
 
-  private ActivityMainBinding(@NonNull DrawerLayout rootView, @NonNull DrawerLayout drawerLayout,
-      @NonNull FrameLayout fragmentContainer, @NonNull NavigationView navView,
-      @NonNull Toolbar toolbar) {
+  private ActivityMainBinding(@NonNull DrawerLayout rootView, @NonNull ImageView appIcon,
+      @NonNull DrawerLayout drawerLayout, @NonNull FrameLayout fragmentContainer,
+      @NonNull NavigationView navView, @NonNull Toolbar toolbar) {
     this.rootView = rootView;
+    this.appIcon = appIcon;
     this.drawerLayout = drawerLayout;
     this.fragmentContainer = fragmentContainer;
     this.navView = navView;
@@ -70,6 +75,12 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.app_icon;
+      ImageView appIcon = ViewBindings.findChildViewById(rootView, id);
+      if (appIcon == null) {
+        break missingId;
+      }
+
       DrawerLayout drawerLayout = (DrawerLayout) rootView;
 
       id = R.id.fragment_container;
@@ -90,8 +101,8 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((DrawerLayout) rootView, drawerLayout, fragmentContainer,
-          navView, toolbar);
+      return new ActivityMainBinding((DrawerLayout) rootView, appIcon, drawerLayout,
+          fragmentContainer, navView, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

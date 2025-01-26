@@ -114,28 +114,26 @@ public class TrainerFragment extends Fragment {
             }
         }).attach();
 
-        // Ensure tabs are updated with current data
+        // Ensure tabs are updated on tab switch
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                if (position == 0) {
-                    // Update the Current Log tab
-                    Fragment currentLogFragment = getChildFragmentManager().findFragmentByTag(
-                            "f" + viewPager.getCurrentItem()
-                    );
-                    if (currentLogFragment instanceof RecentLogFragment) {
-                        ((RecentLogFragment) currentLogFragment).updateLogView();
-                    }
-                } else if (position == 1) {
-                    // Update the Performance Metrics tab
-                    Fragment performanceMetricsFragment = getChildFragmentManager().findFragmentByTag(
-                            "f" + viewPager.getCurrentItem()
-                    );
-                    if (performanceMetricsFragment instanceof PerformanceMetricsFragment) {
-                        ((PerformanceMetricsFragment) performanceMetricsFragment).updateMetricsView();
-                    }
+                Fragment fragment = getChildFragmentManager().findFragmentByTag("f" + position);
+
+                if (position == 0 && fragment instanceof PerformanceMetricsFragment) {
+                    ((PerformanceMetricsFragment) fragment).updateMetricsView();
+                } else if (position == 1 && fragment instanceof RecentLogFragment) {
+                    ((RecentLogFragment) fragment).updateLogView();
                 }
+            }
+        });
+
+        // Force update on Recent Log when the fragment is first created
+        viewPager.post(() -> {
+            Fragment fragment = getChildFragmentManager().findFragmentByTag("f1");
+            if (fragment instanceof RecentLogFragment) {
+                ((RecentLogFragment) fragment).updateLogView();
             }
         });
 

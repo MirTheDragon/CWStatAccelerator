@@ -28,6 +28,9 @@ dimen activity_vertical_margin
 dimen fab_margin
 dimen nav_header_height
 dimen nav_header_vertical_spacing
+drawable cw_app_trainer_icon_background
+drawable cw_app_trainer_icon_foreground
+drawable cw_app_trainer_icon_wide_foreground
 drawable ic_home
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -44,6 +47,7 @@ drawable ic_trainer
 drawable side_nav_bar
 id action_settings
 id alphabet_checkbox
+id app_icon
 id countdown_timer
 id drawer_layout
 id fab
@@ -104,6 +108,7 @@ mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 navigation mobile_navigation
 string action_settings
+string app_icon_desc
 string app_name
 string hello_blank_fragment
 string menu_gallery
