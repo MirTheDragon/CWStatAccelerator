@@ -8,13 +8,32 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="dark_background">#121212</color> <!-- Deep dark background -->
+    <color name="divider_color">#303030</color> <!-- Subtle divider for rows -->
+    <color name="text_light">#FFFFFF</color> <!-- White text -->
+    <color name="text_dim">#B0B0B0</color> <!-- Dimmed text for secondary data -->
+
     <!-- Windows blue hues with reduced vibrancy -->
     <color name="blue_200">#729FCF</color> <!-- Soft blue -->
     <color name="blue_500">#3465A4</color> <!-- Medium blue -->
     <color name="blue_700">#204A87</color> <!-- Deep blue -->
+
+    <!-- Correcness background color -->
+    <!-- Light Theme -->
+    <color name="correct_background_light">#DFF0D8</color>
+    <color name="incorrect_background_light">#F2DEDE</color>
+
+    <!-- Dark Theme -->
+    <color name="correct_background_dark">#244F24</color>
+    <color name="incorrect_background_dark">#6B1B1B</color>
+
 
     <!-- Lavender hues with reduced vibrancy -->
     <color name="lavender_200">#C6A8D7</color> <!-- Soft lavender -->
     <color name="lavender_500">#8E63B9</color> <!-- Medium lavender -->
     <color name="lavender_700">#5F3D8E</color> <!-- Deep lavender -->
 </resources>
+
+
+
+

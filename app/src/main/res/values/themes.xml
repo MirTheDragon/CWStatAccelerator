@@ -13,6 +13,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <!-- Other theme attributes -->
+        <item name="correctBackground">@color/correct_background_light</item>
+        <item name="incorrectBackground">@color/incorrect_background_light</item>
     </style>
 
     <style name="Theme.CWStatAccelerator.NoActionBar">

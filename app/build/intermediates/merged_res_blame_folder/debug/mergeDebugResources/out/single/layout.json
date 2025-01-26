@@ -8,6 +8,10 @@
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_gallery.xml"
     },
     {
+        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_recent_log.xml",
+        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_recent_log.xml"
+    },
+    {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\activity_main.xml",
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\activity_main.xml"
     },
@@ -16,16 +20,12 @@
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_cw_speed.xml"
     },
     {
-        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_trainer.xml",
-        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_trainer.xml"
-    },
-    {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_home.xml",
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_home.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_cw_speed.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_cw_speed.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_trainer.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_trainer.xml"
     },
     {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_slideshow.xml",
@@ -34,10 +34,6 @@
     {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_performance_metrics.xml",
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_performance_metrics.xml"
-    },
-    {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/activity_main.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/activity_main.xml"
     },
     {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_reference_sheet.xml",

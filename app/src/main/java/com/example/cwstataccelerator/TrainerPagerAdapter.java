@@ -14,9 +14,9 @@ public class TrainerPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new CurrentLogFragment(); // Tab 1
+            return new PerformanceMetricsFragment(); // Tab 1
         } else {
-            return new PerformanceMetricsFragment(); // Tab 2
+            return new RecentLogFragment(); // Tab 2
         }
     }
 

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="http://schemas.android.com/tools">
+    <attr format="color" name="correctBackground"/>
+    <attr format="color" name="incorrectBackground"/>
     <color name="black">#FF000000</color>
     <color name="blue_200">#729FCF</color>
     <color name="blue_500">#3465A4</color>
     <color name="blue_700">#204A87</color>
+    <color name="correct_background_dark">#244F24</color>
+    <color name="correct_background_light">#DFF0D8</color>
+    <color name="dark_background">#121212</color>
+    <color name="divider_color">#303030</color>
+    <color name="incorrect_background_dark">#6B1B1B</color>
+    <color name="incorrect_background_light">#F2DEDE</color>
     <color name="lavender_200">#C6A8D7</color>
     <color name="lavender_500">#8E63B9</color>
     <color name="lavender_700">#5F3D8E</color>
@@ -12,6 +20,8 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="text_dim">#B0B0B0</color>
+    <color name="text_light">#FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
@@ -48,6 +58,9 @@
         
         <item name="android:statusBarColor" ns1:targetApi="21">?attr/colorPrimaryVariant</item>
         
+        
+        <item name="correctBackground">@color/correct_background_light</item>
+        <item name="incorrectBackground">@color/incorrect_background_light</item>
     </style>
     <style name="Theme.CWStatAccelerator.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="Theme.CWStatAccelerator.NoActionBar">

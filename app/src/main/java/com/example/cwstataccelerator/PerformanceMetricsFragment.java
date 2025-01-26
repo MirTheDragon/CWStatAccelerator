@@ -81,8 +81,8 @@ public class PerformanceMetricsFragment extends Fragment {
         for (String header : headers) {
             TextView headerView = new TextView(requireContext());
             headerView.setText(header);
-            headerView.setPadding(16, 16, 16, 16);
-            headerView.setTextSize(16);
+            headerView.setPadding(8, 8, 8, 8);
+            headerView.setTextSize(12);
             headerView.setGravity(Gravity.CENTER);
             headerView.setTypeface(null, android.graphics.Typeface.BOLD);
             headerRow.addView(headerView);
@@ -131,15 +131,15 @@ public class PerformanceMetricsFragment extends Fragment {
             row.addView(attemptsView);
 
             // Success rate column
-            TextView successRateView = createTextView(String.format("%.2f%%", successRate));
+            TextView successRateView = createTextView(String.format("%.1f%%", successRate));
             row.addView(successRateView);
 
             // Average response time column
-            TextView avgTimeView = createTextView(averageResponseTime + " ms");
+            TextView avgTimeView = createTextView(averageResponseTime + "");
             row.addView(avgTimeView);
 
             // Fastest response time column
-            TextView fastestTimeView = createTextView(fastestResponseTime + " ms");
+            TextView fastestTimeView = createTextView(fastestResponseTime + "");
             row.addView(fastestTimeView);
 
             metricsTable.addView(row);

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define custom attributes for correct and incorrect background colors -->
+    <attr name="correctBackground" format="color" />
+    <attr name="incorrectBackground" format="color" />
+</resources>

@@ -108,9 +108,9 @@ public class TrainerFragment extends Fragment {
         // Link TabLayout with ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) {
-                tab.setText("Current Log");
-            } else if (position == 1) {
                 tab.setText("Performance Metrics");
+            } else if (position == 1) {
+                tab.setText("Recent Log");
             }
         }).attach();
 
@@ -124,8 +124,8 @@ public class TrainerFragment extends Fragment {
                     Fragment currentLogFragment = getChildFragmentManager().findFragmentByTag(
                             "f" + viewPager.getCurrentItem()
                     );
-                    if (currentLogFragment instanceof CurrentLogFragment) {
-                        ((CurrentLogFragment) currentLogFragment).updateLogView();
+                    if (currentLogFragment instanceof RecentLogFragment) {
+                        ((RecentLogFragment) currentLogFragment).updateLogView();
                     }
                 } else if (position == 1) {
                     // Update the Performance Metrics tab

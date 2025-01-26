@@ -1,9 +1,17 @@
 R_DEF: Internal format may change without notice
 local
+attr correctBackground
+attr incorrectBackground
 color black
 color blue_200
 color blue_500
 color blue_700
+color correct_background_dark
+color correct_background_light
+color dark_background
+color divider_color
+color incorrect_background_dark
+color incorrect_background_light
 color lavender_200
 color lavender_500
 color lavender_700
@@ -12,6 +20,8 @@ color purple_500
 color purple_700
 color teal_200
 color teal_700
+color text_dim
+color text_light
 color white
 dimen activity_horizontal_margin
 dimen activity_vertical_margin
@@ -78,11 +88,11 @@ id view_pager
 layout activity_main
 layout app_bar_main
 layout content_main
-layout fragment_current_log
 layout fragment_cw_speed
 layout fragment_gallery
 layout fragment_home
 layout fragment_performance_metrics
+layout fragment_recent_log
 layout fragment_reference_sheet
 layout fragment_slideshow
 layout fragment_trainer
