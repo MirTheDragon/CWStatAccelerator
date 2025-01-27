@@ -489,7 +489,7 @@ public class TrainerFragment extends Fragment {
 
         // Log the result
         // Calculate the actual response time from when the current character finished playing
-        
+
         long playbackDuration = morseCodeGenerator.calculatePlaybackDuration(currentCharacter, currentCharacterIndex);
         long responseTime = SystemClock.elapsedRealtime() - (characterStartTime + playbackDuration);
         TrainerUtils.logResult(
@@ -500,6 +500,9 @@ public class TrainerFragment extends Fragment {
                 enteredChar,
                 selectedSpeed
         );
+
+        // Update the cache
+        LogCache.addLog(currentCharacter + "," + responseTime + "," + (isCorrect ? "1" : "0") + "," + enteredChar + "," + selectedSpeed + "," + TrainerUtils.getCurrentDateTime());
 
 
         // Check for remaining characters;
@@ -519,12 +522,14 @@ public class TrainerFragment extends Fragment {
         } else if (charactersInTraining > 1 && remaining > 0) {
             String message = isCorrect ? "👍 Correct! Keep Going!" : "👎 Incorrect! Starting over.";
             ToastUtils.showCustomToast(requireContext(), message, toastTime);
+            if (!isCorrect) {
+                playNextCharacter(false);
+            }
         } else if (charactersInTraining > 1 && remaining <= 0) {
             String message = isCorrect ? "👍 Correct! Training text complete." : "👎 Incorrect! Starting over.";
             ToastUtils.showCustomToast(requireContext(), message, toastTime);
             playNextCharacter(isCorrect);
         }
-
 
         updateLogView();
 
@@ -536,7 +541,7 @@ public class TrainerFragment extends Fragment {
     }
 
     private void updateLogView() {
-        List<String> logEntries = TrainerUtils.readRecentLogEntries(requireContext(), 500);
+        List<String> logEntries = LogCache.getLogs(); // Fetch logs from the cache
 
         // Ensure logView is not null and linked properly
         if (logView == null) {

@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity
         // Ensure this layout file has a Toolbar with id "toolbar" and the DrawerLayout structure
         setContentView(R.layout.activity_main);
 
+        // Load logs into memory
+        LogCache.loadLogs(this);
+
         // Set up the Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
