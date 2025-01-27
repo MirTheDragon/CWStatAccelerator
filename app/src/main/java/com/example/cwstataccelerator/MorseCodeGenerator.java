@@ -142,18 +142,34 @@ public class MorseCodeGenerator {
         snr = sharedPreferences.getInt(KEY_SNR, 100);
     }
 
-    public void playMorseCode(String character) {
-        character = character.toUpperCase();
-        if (!morseCodeMap.containsKey(character)) {
-            throw new IllegalArgumentException("Unsupported character: " + character);
+    public void playMorseCode(String input) {
+        input = input.toUpperCase(); // Convert input to uppercase for consistency
+
+        if (input.isEmpty()) {
+            throw new IllegalArgumentException("Input string is empty.");
         }
 
-        if (!audioTrackCache.containsKey(character)) {
-            String morseCode = morseCodeMap.get(character);
-            audioTrackCache.put(character, generateAudioTrack(morseCode));
+        // Handle single-character and multi-character strings
+        for (char character : input.toCharArray()) {
+            String charAsString = String.valueOf(character);
+            if (!morseCodeMap.containsKey(charAsString)) {
+                throw new IllegalArgumentException("Unsupported character in input: " + charAsString);
+            }
         }
 
-        AudioTrack track = audioTrackCache.get(character);
+        // Check if the multi-character string is already cached
+        if (!audioTrackCache.containsKey(input)) {
+            StringBuilder morseCode = new StringBuilder();
+
+            // Generate the combined Morse code for the string
+            for (char character : input.toCharArray()) {
+                morseCode.append(morseCodeMap.get(String.valueOf(character))).append(" "); // Add a space between characters
+            }
+
+            audioTrackCache.put(input, generateAudioTrack(morseCode.toString().trim())); // Cache the generated audio track
+        }
+
+        AudioTrack track = audioTrackCache.get(input);
         if (track != null) {
             track.stop();
             track.reloadStaticData();
@@ -235,7 +251,9 @@ public class MorseCodeGenerator {
 
 
     private AudioTrack generateAudioTrack(String morseCode) {
+
         short[] waveform = generateMorseSound(morseCode);
+
         if (snr < 100) {
             waveform = applyNoise(waveform, snr);
         }
@@ -258,7 +276,7 @@ public class MorseCodeGenerator {
         return track;
     }
 
-    private short[] generateMorseSound(String morseCode) {
+    private short[] generateMorseSound(String morseCodeString) {
         int dotSamples = (SAMPLE_RATE * dotDuration) / 1000;
         int dashSamples = dotSamples * 3;
         int rampSamples = (SAMPLE_RATE * rampDuration) / 1000;
@@ -267,26 +285,89 @@ public class MorseCodeGenerator {
         short[] dashTone = applyRamp(generateTone(dashSamples, frequency), rampSamples);
         short[] silence = new short[silenceSamples];
 
-        int totalLength = 0;
-        for (char c : morseCode.toCharArray()) {
-            totalLength += (c == '.') ? dotSamples : dashSamples;
-            totalLength += silenceSamples;
-        }
+        // Split input into characters to handle multi-character strings
+        String[] morseCodes = morseCodeString.split(""); // Split into individual characters
 
+        // Calculate total length, including padding and inter-character silence
+        int totalLength = silenceSamples; // Start with one silence at the beginning
+        for (int i = 0; i < morseCodes.length; i++) {
+            String morseCode = morseCodes[i];
+            for (char c : morseCode.toCharArray()) {
+                totalLength += (c == '.') ? dotSamples : dashSamples;
+                totalLength += silenceSamples; // Intra-symbol silence
+            }
+            if (i < morseCodes.length - 1) {
+                totalLength += silenceSamples * 3; // Inter-character silence
+            }
+        }
+        totalLength += silenceSamples; // Add trailing silence
+
+
+        // Generate the sound
         short[] result = new short[totalLength];
         int position = 0;
-        for (char c : morseCode.toCharArray()) {
-            if (c == '.') {
-                System.arraycopy(dotTone, 0, result, position, dotTone.length);
-                position += dotTone.length;
-            } else if (c == '-') {
-                System.arraycopy(dashTone, 0, result, position, dashTone.length);
-                position += dashTone.length;
+
+        // Add initial silence
+        System.arraycopy(silence, 0, result, position, silence.length);
+        position += silence.length;
+
+        for (int i = 0; i < morseCodes.length; i++) {
+            String morseCode = morseCodes[i];
+            for (char c : morseCode.toCharArray()) {
+                if (c == '.') {
+                    System.arraycopy(dotTone, 0, result, position, dotTone.length);
+                    position += dotTone.length;
+                } else if (c == '-') {
+                    System.arraycopy(dashTone, 0, result, position, dashTone.length);
+                    position += dashTone.length;
+                }
+                // Add intra-symbol silence
+                System.arraycopy(silence, 0, result, position, silence.length);
+                position += silence.length;
             }
-            System.arraycopy(silence, 0, result, position, silence.length);
-            position += silence.length;
+            if (i < morseCodes.length - 1) {
+                // Add inter-character silence (3 silence periods)
+                for (int j = 0; j < 3; j++) {
+                    System.arraycopy(silence, 0, result, position, silence.length);
+                    position += silence.length;
+                }
+            }
         }
+
+        // Add trailing silence
+        System.arraycopy(silence, 0, result, position, silence.length);
+
         return result;
+    }
+    public long calculatePlaybackDuration(String morseString, int position) {
+        int dotDurationMs = dotDuration; // Duration of a dot in milliseconds
+        int dashDurationMs = dotDuration * 3; // Duration of a dash in milliseconds
+        int interSymbolSilenceMs = dotDuration; // Silence between symbols
+        int interCharacterSilenceMs = dotDuration * 3; // Silence between characters
+
+        long totalDuration = 0;
+
+        for (int i = 0; i < position; i++) {
+            char currentChar = morseString.charAt(i);
+            String morseCode = getMorseCode(String.valueOf(currentChar));
+
+            // Add the duration of each symbol in the Morse code
+            for (char symbol : morseCode.toCharArray()) {
+                if (symbol == '.') {
+                    totalDuration += dotDurationMs;
+                } else if (symbol == '-') {
+                    totalDuration += dashDurationMs;
+                }
+                totalDuration += interSymbolSilenceMs; // Silence between symbols
+            }
+
+            // Add the inter-character silence after the character
+            if (i < position - 1) {
+                totalDuration += interCharacterSilenceMs;
+            }
+        }
+
+        return totalDuration;
     }
 
     private short[] generateTone(int samples, int frequency) {

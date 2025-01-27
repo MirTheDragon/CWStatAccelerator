@@ -65,6 +65,7 @@ public class TrainerFragment extends Fragment {
     private MorseCodeGenerator morseCodeGenerator;
     private Handler trainingHandler;
     private String currentCharacter;
+    private int currentCharacterIndex = 0; // Tracks the current character in the training string
     private long characterStartTime;
     private boolean waitingForReply = false;
 
@@ -320,9 +321,6 @@ public class TrainerFragment extends Fragment {
             }
             });
         }
-
-
-
     }
 
     private boolean areAllCheckboxesOff(CheckBox[] checkboxes) {
@@ -347,12 +345,38 @@ public class TrainerFragment extends Fragment {
     private void playNextCharacter(boolean fetchNewCharacter) {
         try {
             if (fetchNewCharacter) {
-                // Fetch a new character
+                // Use StringBuilder to efficiently build the string
+                StringBuilder characterBuilder = new StringBuilder();
+
+                // Generate the initial random character
                 //currentCharacter = getRandomCharacter();
-                currentCharacter = getRandomWeightedCharacter();
+                characterBuilder.append(getRandomWeightedCharacter());
+
+                // Add more characters if needed
+                int maxAttempts = 100; // Safeguard to prevent infinite loop
+                int attempts = 0;
+
+                // Add additional random characters if multi-character training is enabled
+                while (characterBuilder.length() < charactersInTraining && attempts < maxAttempts) {
+                    characterBuilder.append(getRandomWeightedCharacter());
+                    attempts++;
+                }
+
+                if (attempts >= maxAttempts) {
+                    throw new IllegalStateException("Unable to generate a valid character sequence.");
+                }
+
+                // Set the current character string
+                currentCharacter = characterBuilder.toString();
+
+                // Debugging log
+                Log.d("TrainerFragment", "Generated character sequence: " + currentCharacter);
             }
+
             characterStartTime = SystemClock.elapsedRealtime();
 
+            // Play the generated Morse code
+            currentCharacterIndex = 0;
             morseCodeGenerator.playMorseCode(currentCharacter);
             waitingForReply = true;
         } catch (Exception e) {
@@ -445,30 +469,66 @@ public class TrainerFragment extends Fragment {
 
 
     private void processInput(String enteredChar) {
-        long responseTime = SystemClock.elapsedRealtime() - characterStartTime;
-        boolean isCorrect = enteredChar.equals(currentCharacter);
+        // Ensure `currentCharacter` is valid
+        if (currentCharacter == null || currentCharacter.isEmpty()) {
+            Log.e("TrainerFragment", "Invalid currentCharacter: " + currentCharacter);
+            stopTrainingSession();
+            return;
+        }
+
+        // Ensure `currentPosition` is within bounds
+        if (currentCharacterIndex >= currentCharacter.length()) {
+            Log.e("TrainerFragment", "currentPosition is out of bounds: " + currentCharacterIndex);
+            stopTrainingSession();
+            return;
+        }
+
+        // Get the current character to compare and check correctness
+        char expectedChar = currentCharacter.charAt(currentCharacterIndex);
+        boolean isCorrect = enteredChar.length() == 1 && enteredChar.charAt(0) == expectedChar;
 
         // Log the result
-        TrainerUtils.logResult(requireContext(), currentCharacter, (int) responseTime, isCorrect, enteredChar, selectedSpeed);
+        // Calculate the actual response time from when the current character finished playing
+        
+        long playbackDuration = morseCodeGenerator.calculatePlaybackDuration(currentCharacter, currentCharacterIndex);
+        long responseTime = SystemClock.elapsedRealtime() - (characterStartTime + playbackDuration);
+        TrainerUtils.logResult(
+                requireContext(),
+                String.valueOf(expectedChar),
+                (int) responseTime,
+                isCorrect,
+                enteredChar,
+                selectedSpeed
+        );
+
+
+        // Check for remaining characters;
+        currentCharacterIndex++; // Move to the next character
+        int remaining = currentCharacter.length() - currentCharacterIndex;
+        int toastTime = 600;
 
         // Broadcast the update
         Intent intent = new Intent("com.example.cwstataccelerator.UPDATE_LOG");
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
 
         // Provide user feedback
-        if (isCorrect) {
-            Toast.makeText(requireContext(), "👍 Correct!", Toast.LENGTH_SHORT).show();
-            updateLogView();
-            // Fetch a new character and play it
-            playNextCharacter(true);
-        } else {
-            Toast.makeText(requireContext(), "👎 Incorrect!", Toast.LENGTH_SHORT).show();
-            updateLogView();
-            // Replay the same character
-            playNextCharacter(false);
+        if (charactersInTraining == 1) {
+            String message = isCorrect ? "👍 Correct!" : "👎 Incorrect!";
+            ToastUtils.showCustomToast(requireContext(), message, toastTime);
+            playNextCharacter(isCorrect);
+        } else if (charactersInTraining > 1 && remaining > 0) {
+            String message = isCorrect ? "👍 Correct! Keep Going!" : "👎 Incorrect! Starting over.";
+            ToastUtils.showCustomToast(requireContext(), message, toastTime);
+        } else if (charactersInTraining > 1 && remaining <= 0) {
+            String message = isCorrect ? "👍 Correct! Training text complete." : "👎 Incorrect! Starting over.";
+            ToastUtils.showCustomToast(requireContext(), message, toastTime);
+            playNextCharacter(isCorrect);
         }
-    }
 
+
+        updateLogView();
+
+    }
 
 
     private void notifyLogUpdate() {
