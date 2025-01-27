@@ -374,9 +374,10 @@ public class TrainerFragment extends Fragment {
             }
 
             characterStartTime = SystemClock.elapsedRealtime();
+            currentCharacterIndex = 0;
+            Log.d("TrainerFragment", "Resetting character index to 0.");
 
             // Play the generated Morse code
-            currentCharacterIndex = 0;
             morseCodeGenerator.playMorseCode(currentCharacter);
             waitingForReply = true;
         } catch (Exception e) {
