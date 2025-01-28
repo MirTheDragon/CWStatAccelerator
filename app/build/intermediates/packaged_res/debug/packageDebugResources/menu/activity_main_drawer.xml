@@ -16,5 +16,9 @@
             android:id="@+id/nav_trainer"
             android:icon="@drawable/ic_trainer"
             android:title="CW to Character Trainer" />
+        <item
+            android:id="@+id/nav_callsign_trainer"
+            android:icon="@drawable/ic_trainer"
+            android:title="CW to Character Trainer" />
     </group>
 </menu>

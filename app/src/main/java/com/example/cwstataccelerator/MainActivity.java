@@ -26,8 +26,11 @@ public class MainActivity extends AppCompatActivity
         // Ensure this layout file has a Toolbar with id "toolbar" and the DrawerLayout structure
         setContentView(R.layout.activity_main);
 
-        // Load logs into memory
-        LogCache.loadLogs(this);
+        // Load single-character trainer logs into memory
+        LogCache.loadLogs(this, "character", TrainerUtils::readRecentLogEntries);
+
+        // Load callsign trainer logs into memory
+        LogCache.loadLogs(this, "callsign", CallsignTrainerUtils::readRecentLogEntries);
 
         // Set up the Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -84,6 +87,8 @@ public class MainActivity extends AppCompatActivity
             selectedFragment = new ReferenceSheetFragment();
         } else if (id == R.id.nav_trainer) {
             selectedFragment = new TrainerFragment();
+        } else if (id == R.id.nav_callsign_trainer) {
+            selectedFragment = new CallsignTrainerFragment();
         }
 
         if (selectedFragment != null) {

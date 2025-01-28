@@ -120,7 +120,7 @@ public class TrainerFragment extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
 
         // ViewPager Adapter
-        TrainerPagerAdapter adapter = new TrainerPagerAdapter(this);
+        TrainerPagerAdapter adapter = new TrainerPagerAdapter(this, TrainerPagerAdapter.TrainerType.CHARACTER);
         viewPager.setAdapter(adapter);
 
         // Link TabLayout with ViewPager2
@@ -503,7 +503,7 @@ public class TrainerFragment extends Fragment {
         );
 
         // Update the cache
-        LogCache.addLog(currentCharacter + "," + responseTime + "," + (isCorrect ? "1" : "0") + "," + enteredChar + "," + selectedSpeed + "," + TrainerUtils.getCurrentDateTime());
+        LogCache.addLog("character", currentCharacter + "," + responseTime + "," + (isCorrect ? "1" : "0") + "," + enteredChar + "," + selectedSpeed + "," + TrainerUtils.getCurrentDateTime());
 
 
         // Check for remaining characters;
@@ -542,7 +542,7 @@ public class TrainerFragment extends Fragment {
     }
 
     private void updateLogView() {
-        List<String> logEntries = LogCache.getLogs(); // Fetch logs from the cache
+        List<String> logEntries = LogCache.getLogs("character"); // Fetch logs from the cache
 
         // Ensure logView is not null and linked properly
         if (logView == null) {

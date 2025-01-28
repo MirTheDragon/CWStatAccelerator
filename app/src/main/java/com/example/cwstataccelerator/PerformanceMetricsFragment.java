@@ -77,18 +77,6 @@ public class PerformanceMetricsFragment extends Fragment {
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
 
-        String[] headers = {"Character", "Attempts", "Success Rate", "Avg Time (ms)", "Fastest Time (ms)"};
-        for (String header : headers) {
-            TextView headerView = new TextView(requireContext());
-            headerView.setText(header);
-            headerView.setPadding(8, 8, 8, 8);
-            headerView.setTextSize(12);
-            headerView.setGravity(Gravity.CENTER);
-            headerView.setTypeface(null, android.graphics.Typeface.BOLD);
-            headerRow.addView(headerView);
-        }
-        metricsTable.addView(headerRow);
-
         // Get performance metrics from TrainerUtils
         Map<String, Integer[]> metrics = TrainerUtils.getPerformanceMetrics(requireContext());
 
@@ -100,6 +88,18 @@ public class PerformanceMetricsFragment extends Fragment {
             metricsTable.addView(noDataMessage);
             return;
         }
+
+        String[] headers = {"Character", "Attempts", "Success Rate", "Avg Time (ms)", "Fastest Time (ms)"};
+        for (String header : headers) {
+            TextView headerView = new TextView(requireContext());
+            headerView.setText(header);
+            headerView.setPadding(8, 8, 8, 8);
+            headerView.setTextSize(12);
+            headerView.setGravity(Gravity.CENTER);
+            headerView.setTypeface(null, android.graphics.Typeface.BOLD);
+            headerRow.addView(headerView);
+        }
+        metricsTable.addView(headerRow);
 
         // Sort metrics by performance (worst-performing first)
         List<Map.Entry<String, Integer[]>> sortedMetrics = sortMetricsByPerformance(metrics);

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,10 +21,24 @@ public final class FragmentHomeBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final TextView databaseStats;
+
+  @NonNull
+  public final TextView databaseStatusMessage;
+
+  @NonNull
+  public final ProgressBar databaseUpdateProgress;
+
+  @NonNull
   public final TextView textHome;
 
-  private FragmentHomeBinding(@NonNull LinearLayout rootView, @NonNull TextView textHome) {
+  private FragmentHomeBinding(@NonNull LinearLayout rootView, @NonNull TextView databaseStats,
+      @NonNull TextView databaseStatusMessage, @NonNull ProgressBar databaseUpdateProgress,
+      @NonNull TextView textHome) {
     this.rootView = rootView;
+    this.databaseStats = databaseStats;
+    this.databaseStatusMessage = databaseStatusMessage;
+    this.databaseUpdateProgress = databaseUpdateProgress;
     this.textHome = textHome;
   }
 
@@ -54,13 +69,32 @@ public final class FragmentHomeBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.database_stats;
+      TextView databaseStats = ViewBindings.findChildViewById(rootView, id);
+      if (databaseStats == null) {
+        break missingId;
+      }
+
+      id = R.id.database_status_message;
+      TextView databaseStatusMessage = ViewBindings.findChildViewById(rootView, id);
+      if (databaseStatusMessage == null) {
+        break missingId;
+      }
+
+      id = R.id.database_update_progress;
+      ProgressBar databaseUpdateProgress = ViewBindings.findChildViewById(rootView, id);
+      if (databaseUpdateProgress == null) {
+        break missingId;
+      }
+
       id = R.id.text_home;
       TextView textHome = ViewBindings.findChildViewById(rootView, id);
       if (textHome == null) {
         break missingId;
       }
 
-      return new FragmentHomeBinding((LinearLayout) rootView, textHome);
+      return new FragmentHomeBinding((LinearLayout) rootView, databaseStats, databaseStatusMessage,
+          databaseUpdateProgress, textHome);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

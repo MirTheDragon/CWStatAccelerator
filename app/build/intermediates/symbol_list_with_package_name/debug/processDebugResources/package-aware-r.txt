@@ -3235,6 +3235,8 @@ id bounceStart
 id buttonPanel
 id cache_measures
 id callMeasure
+id callsign_length_range_label
+id callsign_length_range_slider
 id cancel_button
 id carryVelocity
 id center
@@ -3272,6 +3274,9 @@ id currentState
 id custom
 id customPanel
 id cut
+id database_stats
+id database_status_message
+id database_update_progress
 id date_picker_actions
 id decelerate
 id decelerateAndComplete
@@ -3285,6 +3290,7 @@ id design_menu_item_action_area_stub
 id design_menu_item_text
 id design_navigation_view
 id dialog_button
+id difficult_letter_combinations_checkbox
 id dimensions
 id direct
 id disableHome
@@ -3361,6 +3367,7 @@ id ignoreRequest
 id image
 id imageView
 id immediateStop
+id include_special_characters_checkbox
 id included
 id indeterminate
 id info
@@ -3451,6 +3458,7 @@ id mtrl_picker_text_input_range_start
 id mtrl_picker_title_text
 id mtrl_view_tag_bottom_padding
 id multiply
+id nav_callsign_trainer
 id nav_controller_view_tag
 id nav_cw_speed
 id nav_gallery
@@ -3480,6 +3488,7 @@ id notification_background
 id notification_main_column
 id notification_main_column_container
 id number_checkbox
+id numbers_placement_checkbox
 id off
 id on
 id onInterceptTouchReturnSwipe
@@ -3815,6 +3824,7 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout fragment_callsign_trainer
 layout fragment_cw_speed
 layout fragment_gallery
 layout fragment_home
@@ -3892,6 +3902,7 @@ mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 navigation mobile_navigation
 plurals mtrl_badge_content_description
+raw qrz_database
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description

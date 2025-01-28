@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.util.Log;
 import android.util.Pair;
 import java.util.Arrays;
 
@@ -27,7 +28,7 @@ public class TrainerUtils {
     private static final String LOG_DIRECTORY = "trainer_logs";
 
     public static void logResult(Context context, String character, int responseTime, boolean isCorrect, String typedReply, int wpm) {
-        String logFileName = getTodayDate() + ".log";
+        String logFileName = "character_" + getTodayDate() + ".log";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(getLogFile(context, logFileName), true))) {
             String logEntry = String.format(
@@ -51,21 +52,38 @@ public class TrainerUtils {
         File logDir = new File(context.getFilesDir(), LOG_DIRECTORY);
 
         if (!logDir.exists() || !logDir.isDirectory()) {
-            return metrics;
+            return metrics;  // Return empty metrics if directory doesn't exist
         }
 
         File[] logFiles = logDir.listFiles();
         if (logFiles == null || logFiles.length == 0) {
-            return metrics;
+            return metrics;  // Return empty metrics if directory doesn't exist
         }
 
+        // Filter for files starting with "character_"
+        List<File> sortedLogFiles = new ArrayList<>();
         for (File logFile : logFiles) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            if (logFile.getName().startsWith("character_")) {
+                sortedLogFiles.add(logFile);
+            }
+        }
+
+        if (sortedLogFiles.isEmpty()) {
+            Log.d("TrainerUtils", "No valid 'character_' log files found for performance metrics.");
+            return metrics; // No valid files to process
+        }
+
+        try {
+            for (File logFile : sortedLogFiles) {
+                BufferedReader reader = new BufferedReader(new FileReader(logFile));
                 String line;
 
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length != 6) continue;
+                    if (parts.length != 6) {
+                        Log.w("TrainerUtils", "Skipping invalid log entry: " + line);
+                        continue; // Skip invalid lines
+                    }
 
                     String character = parts[0];
                     int responseTime = Integer.parseInt(parts[1]);
@@ -79,9 +97,10 @@ public class TrainerUtils {
                     stats[3] = Math.min(stats[3], responseTime); // Update fastest response time
                     metrics.put(character, stats);
                 }
-            } catch (IOException | NumberFormatException e) {
-                e.printStackTrace();
+                reader.close();
             }
+        } catch (IOException | NumberFormatException e) {
+            Log.e("TrainerUtils", "Error processing performance metrics: ", e);
         }
 
         return metrics;
@@ -103,6 +122,11 @@ public class TrainerUtils {
 
         List<File> sortedLogFiles = new ArrayList<>();
         Collections.addAll(sortedLogFiles, logFiles);
+
+        // Only process files that start with "character_"
+        sortedLogFiles.removeIf(file -> !file.getName().startsWith("character_"));
+
+        // Sort log files by name (most recent first)
         sortedLogFiles.sort((f1, f2) -> f2.getName().compareTo(f1.getName()));
 
         try {

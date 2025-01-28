@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-28:12
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-31:12
+INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-31:12
+INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-31:12
+INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:1-31:12
 MERGED from [androidx.databinding:viewbinding:8.8.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\e9396fb4d7d3fb15b58573528efe9bf9\transformed\viewbinding-8.8.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-common:2.6.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\c95ffb96b5461651d4cf08d0a442f68a\transformed\navigation-common-2.6.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.6.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\778ed08bacd60f1a9bc5b81540e95933\transformed\navigation-runtime-2.6.0\AndroidManifest.xml:17:1-22:12
@@ -69,9 +69,13 @@ MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\plasm\.
 		INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:22-64
 application
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:5:5-26:19
-INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:5:5-26:19
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:8:5-29:19
+INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:8:5-29:19
 MERGED from [com.google.android.material:material:1.10.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\03a9ab62026960cf3400f791cd8cc7f1\transformed\material-1.10.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.10.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\03a9ab62026960cf3400f791cd8cc7f1\transformed\material-1.10.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\plasm\.gradle\caches\8.10.2\transforms\7ab82d27dfe20e0644371111d7605153\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -95,43 +99,43 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\plasm\.gradle\cach
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\bc9ad1eb3ac0478baf31c00deedef906\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:12:9-35
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:15:9-35
 	android:label
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:10:9-41
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:13:9-41
 	android:fullBackupContent
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:8:9-54
-	android:roundIcon
 		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:11:9-54
+	android:roundIcon
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:14:9-54
 	tools:targetApi
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:14:9-29
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:17:9-29
 	android:icon
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:9:9-43
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:12:9-43
 	android:allowBackup
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:9-35
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:9:9-35
 	android:theme
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:13:9-55
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:16:9-55
 	android:dataExtractionRules
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:7:9-65
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:10:9-65
 activity#com.example.cwstataccelerator.MainActivity
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:15:9-25:20
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:18:9-28:20
 	android:label
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:18:13-45
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:21:13-45
 	android:exported
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:17:13-36
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:20:13-36
 	android:theme
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:19:13-71
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:22:13-71
 	android:name
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:16:13-41
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:19:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:20:13-24:29
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:23:13-27:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:21:17-69
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:17-69
 	android:name
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:21:25-66
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:23:17-77
+ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:17-77
 	android:name
-		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:23:27-74
+		ADDED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:27-74
 uses-sdk
 INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml

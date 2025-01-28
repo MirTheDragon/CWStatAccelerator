@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 
 
 import java.io.BufferedReader;
@@ -138,11 +139,16 @@ public class RecentLogFragment extends Fragment {
         // Fetch recent log entries (ensure TrainerUtils.readRecentLogEntries works correctly)
         List<String> logEntries = TrainerUtils.readRecentLogEntries(requireContext(), 500);
 
-        // Ensure the log view is valid and clear any existing rows
-        if (logView != null) {
-            logView.removeAllViews();
-        } else {
-            Log.e("RecentLogFragment", "logView is null. Cannot update log.");
+        if (logEntries == null || logEntries.isEmpty()) {
+            // No data available
+            TextView noDataMessage = new TextView(requireContext());
+            noDataMessage.setText("No recent logs available. Start training to generate logs.");
+            noDataMessage.setGravity(Gravity.CENTER);
+            noDataMessage.setPadding(16, 16, 16, 16);
+
+            // Add this message to the parent layout or log view
+            logView.removeAllViews(); // Clear any previous views
+            logView.addView(noDataMessage);
             return;
         }
 

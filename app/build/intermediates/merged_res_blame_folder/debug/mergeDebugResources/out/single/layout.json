@@ -44,6 +44,10 @@
         "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_trainer.xml"
     },
     {
+        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_callsign_trainer.xml",
+        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_callsign_trainer.xml"
+    },
+    {
         "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_gallery.xml",
         "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_gallery.xml"
     }

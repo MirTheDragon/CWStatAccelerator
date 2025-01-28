@@ -50,7 +50,13 @@ id advanced_letters_checkbox
 id alphabet_checkbox
 id app_icon
 id basic_letters_checkbox
+id callsign_length_range_label
+id callsign_length_range_slider
 id countdown_timer
+id database_stats
+id database_status_message
+id database_update_progress
+id difficult_letter_combinations_checkbox
 id drawer_layout
 id fab
 id four_character_checkbox
@@ -58,6 +64,7 @@ id fragment_container
 id frequency_label
 id frequency_seekbar
 id imageView
+id include_special_characters_checkbox
 id input_field
 id intermediate_letters_checkbox
 id log_view
@@ -67,6 +74,7 @@ id metrics_view
 id min_training_speed_label
 id min_training_speed_seekbar
 id mobile_navigation
+id nav_callsign_trainer
 id nav_cw_speed
 id nav_gallery
 id nav_home
@@ -76,6 +84,7 @@ id nav_slideshow
 id nav_trainer
 id nav_view
 id number_checkbox
+id numbers_placement_checkbox
 id ramp_label
 id ramp_seekbar
 id rare_letters_checkbox
@@ -99,6 +108,7 @@ id view_pager
 layout activity_main
 layout app_bar_main
 layout content_main
+layout fragment_callsign_trainer
 layout fragment_cw_speed
 layout fragment_gallery
 layout fragment_home
@@ -114,6 +124,7 @@ mipmap ic_launcher
 mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 navigation mobile_navigation
+raw qrz_database
 string action_settings
 string app_icon_desc
 string app_name
