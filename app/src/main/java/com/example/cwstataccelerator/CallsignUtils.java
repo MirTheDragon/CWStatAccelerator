@@ -554,6 +554,28 @@ public class CallsignUtils {
             }
         }
 
+        // Define patterns for 3-letter and 4-letter combinations that are challenging in CW
+        String[] difficultThreeLetterClusters = {
+                "HHH", "RRR", "SSS", "LLL", "ZZZ", "YYY", "XXX", "WWW", "QQQ", "VVV"
+        };
+        String[] difficultFourLetterClusters = {
+                "HHHH", "RRRR", "SSSS", "LLLL", "ZZZZ", "YYYY", "XXXX", "WWWW", "QQQQ", "VVVV"
+        };
+
+        // Check for 3-letter clusters
+        for (String cluster : difficultThreeLetterClusters) {
+            if (callsign.contains(cluster)) {
+                return true; // Flag as difficult
+            }
+        }
+
+        // Check for 4-letter clusters
+        for (String cluster : difficultFourLetterClusters) {
+            if (callsign.contains(cluster)) {
+                return true; // Flag as very difficult
+            }
+        }
+
         // Check for three or more consecutive consonants that create CW rhythm difficulty
         if (callsign.matches(".*[CFGHJKLMNPQRSTVWXYZ]{3,}.*")) {
             return true;

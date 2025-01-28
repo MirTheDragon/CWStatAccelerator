@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +23,7 @@ import java.lang.String;
 
 public final class FragmentCallsignTrainerBinding implements ViewBinding {
   @NonNull
-  private final ScrollView rootView;
+  private final LinearLayout rootView;
 
   @NonNull
   public final TextView callsignLengthRangeLabel;
@@ -55,7 +55,7 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
   @NonNull
   public final ViewPager2 viewPager;
 
-  private FragmentCallsignTrainerBinding(@NonNull ScrollView rootView,
+  private FragmentCallsignTrainerBinding(@NonNull LinearLayout rootView,
       @NonNull TextView callsignLengthRangeLabel, @NonNull RangeSlider callsignLengthRangeSlider,
       @NonNull TextView countdownTimer, @NonNull CheckBox difficultLetterCombinationsCheckbox,
       @NonNull CheckBox includeSpecialCharactersCheckbox, @NonNull EditText inputField,
@@ -76,7 +76,7 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
 
   @Override
   @NonNull
-  public ScrollView getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -161,7 +161,7 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentCallsignTrainerBinding((ScrollView) rootView, callsignLengthRangeLabel,
+      return new FragmentCallsignTrainerBinding((LinearLayout) rootView, callsignLengthRangeLabel,
           callsignLengthRangeSlider, countdownTimer, difficultLetterCombinationsCheckbox,
           includeSpecialCharactersCheckbox, inputField, numbersPlacementCheckbox,
           startTrainingButton, tabLayout, viewPager);

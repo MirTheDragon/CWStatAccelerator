@@ -1,13 +1,16 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="0dp">
 
         <!-- Callsign Length Range Slider -->
         <TextView
@@ -15,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Callsign Length: 3 Characters and Above"
-            android:paddingBottom="8dp" />
+            android:paddingHorizontal="16dp" />
 
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/callsign_length_range_slider"
@@ -37,20 +40,20 @@
         <CheckBox
             android:id="@+id/include_special_characters_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:text="Include Slashed Callsigns (e.g. BS7H/M)" />
 
         <CheckBox
             android:id="@+id/numbers_placement_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Include Numbers in Difficult Positions" />
+            android:layout_height="36dp"
+            android:text="Include Callsigns with Difficult Number Combinations" />
 
         <CheckBox
             android:id="@+id/difficult_letter_combinations_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Include Difficult Letter Combinations (e.g. HH)" />
+            android:layout_height="36dp"
+            android:text="Include Difficult Letter Combinations (e.g. SSS)" />
 
         <!-- Start/Stop Training Button and Countdown Timer -->
         <Button
@@ -95,4 +98,4 @@
             android:layout_marginTop="8dp" />
 
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
