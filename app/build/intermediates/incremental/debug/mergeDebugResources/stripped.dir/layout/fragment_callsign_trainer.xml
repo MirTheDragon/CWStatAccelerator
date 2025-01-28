@@ -72,7 +72,9 @@
             android:hint="Type here"
             android:padding="8dp"
             android:enabled="false"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:inputType="text"
+            android:imeOptions="actionDone" />
 
         <TextView
             android:id="@+id/countdown_timer"

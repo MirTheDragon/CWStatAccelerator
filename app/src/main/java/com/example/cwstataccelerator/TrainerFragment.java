@@ -85,20 +85,29 @@ public class TrainerFragment extends Fragment {
         // Load the selected speed from shared preferences
         loadSelectedSpeed();
 
-        // Setup training checkboxes
+        // Initialize all UI elements
         alphabetCheckbox = view.findViewById(R.id.alphabet_checkbox);
-        numberCheckbox = view.findViewById(R.id.number_checkbox);
-        specialCharacterCheckbox = view.findViewById(R.id.special_character_checkbox);
-
         basicLettersCheckbox = view.findViewById(R.id.basic_letters_checkbox);
         intermediateLettersCheckbox = view.findViewById(R.id.intermediate_letters_checkbox);
         advancedLettersCheckbox = view.findViewById(R.id.advanced_letters_checkbox);
         rareLettersCheckbox = view.findViewById(R.id.rare_letters_checkbox);
-
-        // Initialize the new checkboxes for multi-character training
+        numberCheckbox = view.findViewById(R.id.number_checkbox);
+        specialCharacterCheckbox = view.findViewById(R.id.special_character_checkbox);
         twoCharacterCheckbox = view.findViewById(R.id.two_character_checkbox);
         threeCharacterCheckbox = view.findViewById(R.id.three_character_checkbox);
         fourCharacterCheckbox = view.findViewById(R.id.four_character_checkbox);
+
+        inputField = view.findViewById(R.id.input_field);
+        startTrainingButton = view.findViewById(R.id.start_training_button);
+        logView = view.findViewById(R.id.log_view);
+
+        // Log initialization status
+        Log.d("TrainerFragment", "alphabetCheckbox initialized: " + (alphabetCheckbox != null));
+        Log.d("TrainerFragment", "inputField initialized: " + (inputField != null));
+
+        // Set initial states
+        updateCheckboxesState(true); // Enable checkboxes initially
+        updateInputFieldState(false); // Disable input field initially
 
         // Alphabet selected by default; at least one checkbox always remains checked
         alphabetCheckbox.setChecked(true);
@@ -180,9 +189,9 @@ public class TrainerFragment extends Fragment {
                 startTrainingButton.setText("Stop Training");
                 startTrainingButton.setEnabled(true);
 
-                inputField.setEnabled(true); // Enable the input field
-                inputField.requestFocus(); // Focus on the input field
-                showKeyboard(inputField); // Show the keyboard
+                // Disable checkboxes and enable the input field
+                updateCheckboxesState(false); // Disable checkboxes
+                updateInputFieldState(true); // Enable input field
 
                 waitingForReply = false;
                 startTrainingSession(); // Start training logic
@@ -190,12 +199,39 @@ public class TrainerFragment extends Fragment {
         } else {
             Log.d("TrainerFragment", "Training deactivated.");
             startTrainingButton.setText("Start Training");
-            inputField.setEnabled(false); // Disable the input field
-            hideKeyboard(inputField); // Hide the keyboard
+
+            // Enable checkboxes and disable the input field
+            updateCheckboxesState(true); // Enable checkboxes
+            updateInputFieldState(false); // Disable input field
+
             stopTrainingSession(); // Stop training logic
         }
     }
 
+    private void updateCheckboxesState(boolean enabled) {
+        if (alphabetCheckbox != null) alphabetCheckbox.setEnabled(enabled);
+        if (basicLettersCheckbox != null) basicLettersCheckbox.setEnabled(enabled);
+        if (intermediateLettersCheckbox != null) intermediateLettersCheckbox.setEnabled(enabled);
+        if (advancedLettersCheckbox != null) advancedLettersCheckbox.setEnabled(enabled);
+        if (rareLettersCheckbox != null) rareLettersCheckbox.setEnabled(enabled);
+        if (numberCheckbox != null) numberCheckbox.setEnabled(enabled);
+        if (specialCharacterCheckbox != null) specialCharacterCheckbox.setEnabled(enabled);
+        if (twoCharacterCheckbox != null) twoCharacterCheckbox.setEnabled(enabled);
+        if (threeCharacterCheckbox != null) threeCharacterCheckbox.setEnabled(enabled);
+        if (fourCharacterCheckbox != null) fourCharacterCheckbox.setEnabled(enabled);
+    }
+
+    private void updateInputFieldState(boolean enabled) {
+        if (inputField != null) {
+            inputField.setEnabled(enabled);
+            if (enabled) {
+                inputField.requestFocus(); // Focus on the input field
+                showKeyboard(inputField); // Show the keyboard
+            } else {
+                hideKeyboard(inputField); // Hide the keyboard
+            }
+        }
+    }
 
     private void startCountdown(Runnable onComplete) {
         Log.d("TrainerFragment", "Starting countdown.");
