@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:valueFrom="3"
-            android:valueTo="15"
+            android:valueTo="10"
             android:stepSize="1" />
 
         <!-- Callsign Filters -->
@@ -38,7 +38,7 @@
             android:paddingBottom="8dp" />
 
         <CheckBox
-            android:id="@+id/include_special_characters_checkbox"
+            android:id="@+id/include_slash_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="Include Slashed Callsigns (e.g. BS7H/M)" />
@@ -50,7 +50,7 @@
             android:text="Include Callsigns with Difficult Number Combinations" />
 
         <CheckBox
-            android:id="@+id/difficult_letter_combinations_checkbox"
+            android:id="@+id/difficult_letters_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="Include Difficult Letter Combinations (e.g. SSS)" />
@@ -72,7 +72,9 @@
             android:hint="Type here"
             android:padding="8dp"
             android:enabled="false"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:inputType="text"
+            android:imeOptions="actionDone" />
 
         <TextView
             android:id="@+id/countdown_timer"

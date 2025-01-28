@@ -1,6 +1,7 @@
 package com.example.cwstataccelerator;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,28 +17,161 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Random;
 
 public class CallsignTrainerUtils {
 
     private static final String LOG_DIRECTORY = "callsign_trainer_logs";
     private static final int CACHE_LIMIT = 1000; // Limit the number of entries stored in the cache
-    private static List<String> logCache = new ArrayList<>(); // Cache for log entries
+    private static final List<String> logCache = new ArrayList<>(); // Cache for log entries
     private static String lastCachedFile = null; // Tracks the last file read
 
     /**
      * Logs a callsign training result.
      */
-    public static void logResult(Context context, String callsign, int responseTime, boolean isCorrect,
-                                 String typedResponse, int wpm, String bucketName) {
+    private static final Map<String, List<String>> bucketCache = new HashMap<>();
+    private static final Map<String, Boolean> bucketSelectionState = new HashMap<>();
+    private static int lastMinLength = -1;
+    private static int lastMaxLength = -1;
+
+    /**
+     * Fetches a random callsign based on the selected buckets and length range.
+     *
+     * @param context          Application context.
+     * @param selectedBuckets  List of selected bucket names (e.g., "standard_callsigns", "slashes_only").
+     * @param minLength        Minimum callsign length.
+     * @param maxLength        Maximum callsign length.
+     * @return A random callsign from the filtered cache.
+     */
+    public static String getRandomCallsign(Context context, List<String> selectedBuckets, int minLength, int maxLength, boolean isTrainingActive) {
+        // Check if the cache needs to be updated
+        boolean cacheNeedsUpdate = false;
+
+        // Check if the cache is empty
+        for (String bucket : selectedBuckets) {
+            if (!bucketCache.containsKey(bucket) || bucketCache.get(bucket).isEmpty()) {
+                cacheNeedsUpdate = true;
+                break;
+            }
+        }
+
+        // Check if the parameters (min/max length) have changed
+        if (minLength != lastMinLength || maxLength != lastMaxLength) {
+            cacheNeedsUpdate = true;
+        }
+
+        // Update the cache if needed
+        if (cacheNeedsUpdate || !isTrainingActive) {
+            Log.d("CallsignTrainerUtils", "Cache needs update. Updating now...");
+            boolean updated = updateBucketCache(context, selectedBuckets, minLength, maxLength);
+            if (updated) {
+                Log.d("CallsignTrainerUtils", "Cache updated successfully.");
+            } else {
+                Log.w("CallsignTrainerUtils", "Failed to update cache or no valid callsigns found.");
+            }
+        } else {
+            Log.d("CallsignTrainerUtils", "Using existing cached callsigns without updating.");
+        }
+
+        // Gather callsigns from the selected cached buckets
+        List<String> availableCallsigns = new ArrayList<>();
+        for (String bucket : selectedBuckets) {
+            if (bucketCache.containsKey(bucket)) {
+                availableCallsigns.addAll(bucketCache.get(bucket));
+            }
+        }
+
+        // Return a random callsign from the available callsigns
+        if (!availableCallsigns.isEmpty()) {
+            Random random = new Random();
+            return availableCallsigns.get(random.nextInt(availableCallsigns.size()));
+        } else {
+            Log.w("CallsignTrainerUtils", "No valid callsigns available in the selected buckets.");
+            return null; // No valid callsigns available
+        }
+    }
+
+
+
+    /**
+     * Updates the bucket cache by loading/unloading buckets based on the selected buckets and length range.
+     *
+     * @param context         Application context.
+     * @param selectedBuckets List of selected bucket names.
+     * @param minLength       Minimum callsign length.
+     * @param maxLength       Maximum callsign length.
+     * @return True if the cache was updated, false otherwise.
+     */
+    private static boolean updateBucketCache(Context context, List<String> selectedBuckets, int minLength, int maxLength) {
+        boolean cacheUpdated = false;
+
+        // Unload buckets that are no longer selected
+        for (String bucket : bucketCache.keySet()) {
+            if (!selectedBuckets.contains(bucket)) {
+                bucketCache.remove(bucket);
+                cacheUpdated = true;
+                Log.d("CallsignTrainerUtils", "Unloaded bucket: " + bucket);
+            }
+        }
+
+        // Load buckets that are newly selected or need to be updated
+        for (String bucket : selectedBuckets) {
+            boolean isNewBucket = !bucketCache.containsKey(bucket);
+
+            if (isNewBucket) {
+                List<String> bucketCallsigns = loadFilteredBucket(context, bucket, minLength, maxLength);
+                bucketCache.put(bucket, bucketCallsigns);
+                cacheUpdated = true;
+                Log.d("CallsignTrainerUtils", "Loaded bucket: " + bucket + " with " + bucketCallsigns.size() + " callsigns.");
+            }
+        }
+
+        // Update the length range state
+        lastMinLength = minLength;
+        lastMaxLength = maxLength;
+
+        return cacheUpdated;
+    }
+
+
+    /**
+     * Loads callsigns from a bucket and filters them based on the length range.
+     *
+     * @param context   Application context.
+     * @param bucket    The name of the bucket to load.
+     * @param minLength Minimum callsign length.
+     * @param maxLength Maximum callsign length.
+     * @return A list of filtered callsigns.
+     */
+    private static List<String> loadFilteredBucket(Context context, String bucket, int minLength, int maxLength) {
+        List<String> filteredCallsigns = new ArrayList<>();
+        List<String> bucketCallsigns = CallsignUtils.loadBucketFromFile(context, bucket);
+
+        for (String callsign : bucketCallsigns) {
+            if (callsign.length() >= minLength && callsign.length() <= maxLength) {
+                filteredCallsigns.add(callsign);
+            }
+        }
+
+        return filteredCallsigns;
+    }
+
+    public static void logResult(Context context, String callsign, String typedResponse, boolean isCorrect,
+        int responseTime, int wpm, String bucketName) {
         String logFileName = getTodayDate() + "_callsign.log";
+
+        if (callsign == null || callsign.isEmpty() || typedResponse == null) {
+            Log.e("CallsignTrainerUtils", "Invalid callsign or typedResponse.");
+            return;
+        }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(getLogFile(context, logFileName), true))) {
             String logEntry = String.format(
-                    "%s,%d,%d,%s,%d,%s,%s",
+                    "%s,%s,%d,%d,%d,%s,%s",
                     callsign,
-                    responseTime,
-                    isCorrect ? 1 : 0,
                     typedResponse,
+                    isCorrect ? 1 : 0,
+                    responseTime,
                     wpm,
                     bucketName,
                     getCurrentDateTime()
@@ -47,9 +181,10 @@ public class CallsignTrainerUtils {
 
             // Add the log entry to the cache
             synchronized (logCache) {
-                if (logCache.size() < CACHE_LIMIT) {
-                    logCache.add(0, logEntry); // Add to the start of the cache
+                if (logCache.size() >= CACHE_LIMIT) {
+                    logCache.remove(logCache.size() - 1); // Remove the oldest entry if the cache is full
                 }
+                logCache.add(0, logEntry); // Add the new entry at the start
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,6 +286,9 @@ public class CallsignTrainerUtils {
         return sdf.format(new Date());
     }
 
+    /**
+     * Retrieves performance metrics aggregated by callsign.
+     */
     public static Map<String, Integer[]> getPerformanceMetrics(Context context) {
         Map<String, Integer[]> metrics = new HashMap<>();
         File logDir = new File(context.getFilesDir(), LOG_DIRECTORY);
@@ -176,8 +314,8 @@ public class CallsignTrainerUtils {
                     }
 
                     String callsign = parts[0]; // Callsign
-                    int responseTime = Integer.parseInt(parts[1]); // Response time
                     boolean isCorrect = "1".equals(parts[2]); // Correctness
+                    int responseTime = Integer.parseInt(parts[3]); // Response time
 
                     // Retrieve or initialize metrics for the callsign
                     Integer[] stats = metrics.getOrDefault(callsign, new Integer[]{0, 0, 0, Integer.MAX_VALUE});

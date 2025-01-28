@@ -35,10 +35,10 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
   public final TextView countdownTimer;
 
   @NonNull
-  public final CheckBox difficultLetterCombinationsCheckbox;
+  public final CheckBox difficultLettersCheckbox;
 
   @NonNull
-  public final CheckBox includeSpecialCharactersCheckbox;
+  public final CheckBox includeSlashCheckbox;
 
   @NonNull
   public final EditText inputField;
@@ -57,16 +57,16 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
 
   private FragmentCallsignTrainerBinding(@NonNull LinearLayout rootView,
       @NonNull TextView callsignLengthRangeLabel, @NonNull RangeSlider callsignLengthRangeSlider,
-      @NonNull TextView countdownTimer, @NonNull CheckBox difficultLetterCombinationsCheckbox,
-      @NonNull CheckBox includeSpecialCharactersCheckbox, @NonNull EditText inputField,
+      @NonNull TextView countdownTimer, @NonNull CheckBox difficultLettersCheckbox,
+      @NonNull CheckBox includeSlashCheckbox, @NonNull EditText inputField,
       @NonNull CheckBox numbersPlacementCheckbox, @NonNull Button startTrainingButton,
       @NonNull TabLayout tabLayout, @NonNull ViewPager2 viewPager) {
     this.rootView = rootView;
     this.callsignLengthRangeLabel = callsignLengthRangeLabel;
     this.callsignLengthRangeSlider = callsignLengthRangeSlider;
     this.countdownTimer = countdownTimer;
-    this.difficultLetterCombinationsCheckbox = difficultLetterCombinationsCheckbox;
-    this.includeSpecialCharactersCheckbox = includeSpecialCharactersCheckbox;
+    this.difficultLettersCheckbox = difficultLettersCheckbox;
+    this.includeSlashCheckbox = includeSlashCheckbox;
     this.inputField = inputField;
     this.numbersPlacementCheckbox = numbersPlacementCheckbox;
     this.startTrainingButton = startTrainingButton;
@@ -119,15 +119,15 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.difficult_letter_combinations_checkbox;
-      CheckBox difficultLetterCombinationsCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (difficultLetterCombinationsCheckbox == null) {
+      id = R.id.difficult_letters_checkbox;
+      CheckBox difficultLettersCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (difficultLettersCheckbox == null) {
         break missingId;
       }
 
-      id = R.id.include_special_characters_checkbox;
-      CheckBox includeSpecialCharactersCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (includeSpecialCharactersCheckbox == null) {
+      id = R.id.include_slash_checkbox;
+      CheckBox includeSlashCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (includeSlashCheckbox == null) {
         break missingId;
       }
 
@@ -162,9 +162,8 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
       }
 
       return new FragmentCallsignTrainerBinding((LinearLayout) rootView, callsignLengthRangeLabel,
-          callsignLengthRangeSlider, countdownTimer, difficultLetterCombinationsCheckbox,
-          includeSpecialCharactersCheckbox, inputField, numbersPlacementCheckbox,
-          startTrainingButton, tabLayout, viewPager);
+          callsignLengthRangeSlider, countdownTimer, difficultLettersCheckbox, includeSlashCheckbox,
+          inputField, numbersPlacementCheckbox, startTrainingButton, tabLayout, viewPager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -17,18 +17,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONObject;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONArray;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.json.JSONObject;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class CallsignUtils {
-
     private static final String MASTER_DTA_URL = "https://www.supercheckpartial.com/MASTER.DTA";
     private static final String DATABASE_DIRECTORY_NAME = "callsign_database";
     private static final String MASTER_DTA_FILE_NAME = "MASTER.DTA";
@@ -47,6 +51,9 @@ public class CallsignUtils {
      * Updates and sorts the callsign database with fallback handling for QRZ binary file parsing.
      */
     public static void updateAndSortCallsignDatabase(Context context, ProgressListener listener) {
+        final String metaFileName = "master_dta_meta.json";
+        final String hardcodedOnlineDate = "2025-01-02"; // Hardcoded for future reference
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         executor.execute(() -> {
@@ -56,60 +63,91 @@ public class CallsignUtils {
 
                 ensureDatabaseDirectoryExists(context);
 
-                // Paths for the local MASTER.DTA and its temp storage
-                File localMasterDtaFile = new File(context.getFilesDir(), TEMP_FILE_PREFIX + "master_local.txt");
-                boolean localMasterExists = localMasterDtaFile.exists();
-                boolean masterDtaUpdated = false;
+                File localMasterDtaFile = new File(context.getFilesDir(), MASTER_DTA_FILE_NAME);
+                File metaFile = new File(context.getFilesDir(), metaFileName);
 
-                // Step 1: Ensure MASTER.DTA exists, extract from res/raw if not found
-                if (!localMasterExists) {
-                    Log.d("CallsignUtils", "No local MASTER.DTA found. Extracting from res/raw...");
-                    listener.onProgressUpdate("Extracting MASTER.DTA from res/raw...", 10);
-                    try {
-                        extractMasterDtaFromQrz(context, localMasterDtaFile);
-                        Log.d("CallsignUtils", "Extracted MASTER.DTA from res/raw successfully.");
-                    } catch (Exception e) {
-                        Log.e("CallsignUtils", "Failed to extract MASTER.DTA from res/raw.", e);
-                        listener.onProgressUpdate("Failed to extract MASTER.DTA. Process aborted.", 100);
+                // Step 1: Load meta file for local state
+                String localDate = null;
+                String localChecksum = null;
+                String bucketChecksum = null;
+
+                if (metaFile.exists()) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(metaFile))) {
+                        JSONObject metaJson = new JSONObject(reader.readLine());
+                        localDate = metaJson.optString("date", null);
+                        localChecksum = metaJson.optString("checksum", null);
+                        bucketChecksum = metaJson.optString("bucket_checksum", null);
+                    }
+                }
+
+                // Step 2: Fetch the online MASTER.DTA date
+                listener.onProgressUpdate("Checking for updates to MASTER.DTA...", 20);
+                String onlineDate = fetchMasterDtaDateFromHtml();
+
+                if (onlineDate == null) {
+                    Log.w("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML. Using hardcoded date.");
+                    onlineDate = hardcodedOnlineDate; // Default to hardcoded date
+                }
+
+                boolean isMasterDtaUpToDate = localDate != null && onlineDate.equals(localDate);
+                boolean checksumFallback = false;
+
+                // Step 3: Decide if we need to update MASTER.DTA
+                if (!isMasterDtaUpToDate) {
+                    Log.d("CallsignUtils", "MASTER.DTA date mismatch. Falling back to checksum validation...");
+                    if (localMasterDtaFile.exists()) {
+                        String newChecksum = calculateChecksum(localMasterDtaFile);
+                        checksumFallback = localChecksum != null && localChecksum.equals(newChecksum);
+
+                        if (checksumFallback) {
+                            Log.d("CallsignUtils", "Checksum validation confirms MASTER.DTA is up-to-date.");
+                            isMasterDtaUpToDate = true;
+                        }
+                    }
+                }
+
+                // If MASTER.DTA is up-to-date, check if buckets need rebuilding
+                if (isMasterDtaUpToDate) {
+                    if (bucketChecksum != null && bucketChecksum.equals(localChecksum)) {
+                        Log.d("CallsignUtils", "Buckets are up-to-date. No processing required.");
+                        listener.onProgressUpdate("Buckets are already up-to-date.", 100);
                         return;
                     }
                 }
 
-                // Step 2: Check for online updates to MASTER.DTA
-                listener.onProgressUpdate("Checking for updates to MASTER.DTA...", 20);
-                try {
-                    masterDtaVersion = fetchMasterDtaVersion(); // Get the online version of MASTER.DTA
-                    if (!isFileUpToDate(context, masterDtaVersion)) {
-                        Log.d("CallsignUtils", "MASTER.DTA online version is newer. Downloading update...");
-                        listener.onProgressUpdate("Downloading updated MASTER.DTA...", 30);
-                        File tempMasterFile = new File(context.getFilesDir(), TEMP_FILE_PREFIX + "master_online.txt");
-                        if (fetchCallsignsToFileWithRetries(MASTER_DTA_URL, tempMasterFile)) {
-                            if (localMasterDtaFile.exists()) localMasterDtaFile.delete(); // Delete old file
-                            tempMasterFile.renameTo(localMasterDtaFile); // Replace with updated file
-                            masterDtaUpdated = true;
-                            Log.d("CallsignUtils", "MASTER.DTA updated successfully.");
-                        } else {
-                            Log.e("CallsignUtils", "Failed to download updated MASTER.DTA. Using local copy.");
-                        }
-                    } else {
-                        Log.d("CallsignUtils", "MASTER.DTA is already up-to-date.");
-                    }
-                } catch (IOException e) {
-                    Log.e("CallsignUtils", "Failed to fetch MASTER.DTA version. Proceeding with local copy.", e);
+                // Step 4: Download updated MASTER.DTA if needed
+                if (!isMasterDtaUpToDate) {
+                    listener.onProgressUpdate("Downloading MASTER.DTA...", 30);
+                    File tempMasterFile = new File(context.getFilesDir(), TEMP_FILE_PREFIX + "master_online.txt");
+                    downloadFile(MASTER_DTA_URL, tempMasterFile);
+
+                    // Calculate checksum of the new file
+                    String newChecksum = calculateChecksum(tempMasterFile);
+
+                    // Replace the local MASTER.DTA with the new one
+                    if (localMasterDtaFile.exists()) localMasterDtaFile.delete();
+                    tempMasterFile.renameTo(localMasterDtaFile);
+
+                    // Update meta file with new date and checksum
+                    localDate = onlineDate;
+                    localChecksum = newChecksum;
+
+                    Log.d("CallsignUtils", "MASTER.DTA updated successfully.");
+                    listener.onProgressUpdate("MASTER.DTA updated successfully.", 50);
                 }
 
-                // Step 3: Reset buckets before processing
-                listener.onProgressUpdate("Clearing old buckets...", 40);
-                boolean resetSuccess = resetBuckets(context); // Clear all old buckets
+                // Step 5: Reset buckets if required
+                listener.onProgressUpdate("Clearing old buckets...", 60);
+                boolean resetSuccess = resetBuckets(context);
+
                 if (resetSuccess) {
                     Log.d("CallsignUtils", "Buckets cleared successfully.");
                 } else {
                     Log.e("CallsignUtils", "Failed to clear buckets. Proceeding anyway...");
                 }
 
-                // Step 4: Parse MASTER.DTA and save into buckets
-                listener.onProgressUpdate("Parsing MASTER.DTA and sorting into buckets...", 50);
-                Log.d("CallsignUtils", "Parsing MASTER.DTA and sorting into buckets...");
+                // Step 6: Parse MASTER.DTA and save into buckets
+                listener.onProgressUpdate("Parsing MASTER.DTA and sorting into buckets...", 70);
                 Map<String, Object> parseResults = parseMasterDtaFile(context, localMasterDtaFile);
                 if (parseResults.containsKey("error")) {
                     Log.e("CallsignUtils", "Error during MASTER.DTA parsing: " + parseResults.get("error"));
@@ -117,16 +155,6 @@ public class CallsignUtils {
                     return;
                 }
 
-                // Log parsing results
-                int totalCallsigns = (int) parseResults.get("total_callsigns");
-                List<String> first10 = (List<String>) parseResults.get("first_10_callsigns");
-                List<String> last10 = (List<String>) parseResults.get("last_10_callsigns");
-
-                Log.d("CallsignUtils", "Total callsigns parsed: " + totalCallsigns);
-                Log.d("CallsignUtils", "First 10 callsigns: " + first10);
-                Log.d("CallsignUtils", "Last 10 callsigns: " + last10);
-
-                // Get parsed callsigns
                 List<String> parsedCallsigns = (List<String>) parseResults.get("parsed_callsigns");
                 if (parsedCallsigns == null || parsedCallsigns.isEmpty()) {
                     Log.e("CallsignUtils", "No callsigns parsed from MASTER.DTA. Aborting bucket sorting.");
@@ -134,15 +162,21 @@ public class CallsignUtils {
                     return;
                 }
 
-                // Pass parsed callsigns to processAndSaveBuckets
                 Log.d("CallsignUtils", "Passing " + parsedCallsigns.size() + " callsigns to processAndSaveBuckets...");
                 processAndSaveBuckets(context, parsedCallsigns);
 
-                // Step 5: Finish the process
-                listener.onProgressUpdate("Process completed successfully.", 100);
-                Log.d("CallsignUtils", masterDtaUpdated
-                        ? "MASTER.DTA updated, processed, and sorted successfully."
-                        : "MASTER.DTA processed and sorted successfully.");
+                // Step 7: Update the meta file with new bucket version
+                JSONObject metaJson = new JSONObject();
+                metaJson.put("date", localDate);
+                metaJson.put("checksum", localChecksum);
+                metaJson.put("bucket_checksum", localChecksum); // Use the MASTER.DTA checksum for buckets
+
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(metaFile))) {
+                    writer.write(metaJson.toString());
+                }
+
+                listener.onProgressUpdate("Buckets processed and saved successfully.", 100);
+                Log.d("CallsignUtils", "Buckets processed and saved successfully.");
             } catch (Exception e) {
                 Log.e("CallsignUtils", "An error occurred: " + e.getMessage(), e);
                 listener.onProgressUpdate("An error occurred: " + e.getMessage(), 100);
@@ -151,7 +185,124 @@ public class CallsignUtils {
     }
 
 
+    public static void updateMasterDta(Context context, ProgressListener listener) {
+        final String metaFileName = "master_dta_meta.json";
+        final String hardcodedOnlineDate = "2025-01-02"; // Hardcoded for future reference
 
+        try {
+            // Step 1: Fetch the current date from the HTML
+            String onlineDate = fetchMasterDtaDateFromHtml();
+            if (onlineDate == null) {
+                Log.w("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML. Falling back to checksum method.");
+                onlineDate = hardcodedOnlineDate; // Default to the hardcoded date
+            }
+
+            // Step 2: Load the meta file to get local state
+            File metaFile = new File(context.getFilesDir(), metaFileName);
+            String localDate = null;
+            String localChecksum = null;
+
+            if (metaFile.exists()) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(metaFile))) {
+                    JSONObject metaJson = new JSONObject(reader.readLine());
+                    localDate = metaJson.optString("date", null);
+                    localChecksum = metaJson.optString("checksum", null);
+                }
+            }
+
+            // Step 3: Compare dates and decide if update is necessary
+            if (localDate != null && onlineDate.equals(localDate)) {
+                Log.d("CallsignUtils", "MASTER.DTA is up-to-date. No update required.");
+                listener.onProgressUpdate("MASTER.DTA is already up-to-date.", 100);
+                return;
+            }
+
+            // Step 4: Download the MASTER.DTA file and calculate checksum
+            listener.onProgressUpdate("Downloading MASTER.DTA...", 50);
+            File tempMasterFile = new File(context.getFilesDir(), "temp_master_dta");
+            downloadFile(MASTER_DTA_URL, tempMasterFile);
+
+            String newChecksum = calculateChecksum(tempMasterFile);
+            if (localChecksum != null && newChecksum.equals(localChecksum)) {
+                Log.d("CallsignUtils", "MASTER.DTA content is identical. No update required.");
+                listener.onProgressUpdate("MASTER.DTA is already up-to-date.", 100);
+                return;
+            }
+
+            // Step 5: Replace the local MASTER.DTA with the new one
+            File localMasterFile = new File(context.getFilesDir(), MASTER_DTA_FILE_NAME);
+            if (localMasterFile.exists()) localMasterFile.delete();
+            tempMasterFile.renameTo(localMasterFile);
+
+            // Step 6: Update the meta file with the new date and checksum
+            JSONObject metaJson = new JSONObject();
+            metaJson.put("date", onlineDate);
+            metaJson.put("checksum", newChecksum);
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(metaFile))) {
+                writer.write(metaJson.toString());
+            }
+
+            listener.onProgressUpdate("MASTER.DTA updated successfully.", 100);
+            Log.d("CallsignUtils", "MASTER.DTA updated and meta file saved.");
+        } catch (Exception e) {
+            Log.e("CallsignUtils", "Error updating MASTER.DTA: " + e.getMessage(), e);
+            listener.onProgressUpdate("Failed to update MASTER.DTA.", 100);
+        }
+    }
+    private static String fetchMasterDtaDateFromHtml() {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://www.supercheckpartial.com").openConnection();
+            connection.setRequestMethod("GET");
+
+            if (connection.getResponseCode() == 200) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.contains("MASTER.DTA") && line.contains("Updated")) {
+                            // Extract the date in the format YYYY-MM-DD
+                            return line.replaceAll(".*Updated: (\\d{4}-\\d{2}-\\d{2}).*", "$1");
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML: " + e.getMessage(), e);
+        }
+        return null; // Return null if the date cannot be fetched
+    }
+
+    private static void downloadFile(String url, File destinationFile) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("GET");
+
+        try (InputStream inputStream = connection.getInputStream();
+             FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+    }
+
+    public static String calculateChecksum(File file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+        byte[] checksumBytes = digest.digest();
+        StringBuilder checksumHex = new StringBuilder();
+        for (byte b : checksumBytes) {
+            checksumHex.append(String.format("%02x", b));
+        }
+        return checksumHex.toString();
+    }
 
 
     /**
@@ -536,6 +687,57 @@ public class CallsignUtils {
         }
 
         return buckets;
+    }
+
+    /**
+     * Analyzes a single callsign and returns the associated bucket.
+     *
+     * @param callsign The callsign to analyze.
+     * @return The name of the bucket the callsign belongs to.
+     */
+    public static String getCallsignBucket(String callsign) {
+        if (callsign == null || callsign.isEmpty()) {
+            Log.e("CallsignUtils", "Invalid callsign provided.");
+            return "invalid_callsign"; // Return a special bucket for invalid callsigns
+        }
+
+        boolean isSlashed = hasSlash(callsign);
+        boolean hasNumbers = hasUnusualNumberPlacement(callsign);
+        boolean hasDifficultLetters = hasDifficultLetterCombinations(callsign);
+
+        short callsignDifficulty = 0;
+        if (isSlashed) callsignDifficulty++;
+        if (hasNumbers) callsignDifficulty++;
+        if (hasDifficultLetters) callsignDifficulty++;
+
+        // Determine the bucket based on the difficulty factors
+        switch (callsignDifficulty) {
+            case 0:
+                return "standard_callsigns"; // Standard callsigns
+            case 1:
+                if (isSlashed) {
+                    return "slashes_only"; // Slash only
+                } else if (hasNumbers) {
+                    return "difficult_numbers"; // Numbers only
+                } else if (hasDifficultLetters) {
+                    return "difficult_letters"; // Letters only
+                }
+                break;
+            case 2:
+                if (isSlashed && hasNumbers) {
+                    return "slashes_and_numbers"; // Slash + Numbers
+                } else if (hasNumbers && hasDifficultLetters) {
+                    return "numbers_and_letters"; // Numbers + Letters
+                } else if (hasDifficultLetters && isSlashed) {
+                    return "slashes_and_letters"; // Slash + Letters
+                }
+                break;
+            default:
+                return "all_criteria"; // All conditions met
+        }
+
+        // If no bucket is matched, return unknown
+        return "unknown";
     }
 
     private static boolean hasDifficultLetterCombinations(String callsign) {

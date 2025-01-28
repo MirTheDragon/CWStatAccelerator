@@ -57,7 +57,7 @@ id countdown_timer
 id database_stats
 id database_status_message
 id database_update_progress
-id difficult_letter_combinations_checkbox
+id difficult_letters_checkbox
 id drawer_layout
 id fab
 id four_character_checkbox
@@ -65,7 +65,7 @@ id fragment_container
 id frequency_label
 id frequency_seekbar
 id imageView
-id include_special_characters_checkbox
+id include_slash_checkbox
 id input_field
 id intermediate_letters_checkbox
 id log_view
