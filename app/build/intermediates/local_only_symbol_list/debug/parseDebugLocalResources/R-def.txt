@@ -50,6 +50,7 @@ id advanced_letters_checkbox
 id alphabet_checkbox
 id app_icon
 id basic_letters_checkbox
+id bucket_summary
 id callsign_length_range_label
 id callsign_length_range_slider
 id countdown_timer

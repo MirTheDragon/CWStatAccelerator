@@ -3232,6 +3232,7 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id bucket_summary
 id buttonPanel
 id cache_measures
 id callMeasure

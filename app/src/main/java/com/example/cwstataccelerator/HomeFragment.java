@@ -35,6 +35,15 @@ public class HomeFragment extends Fragment {
         // Check and update the database
         checkAndUpdateDatabase();
 
+        // Assuming you have a TextView with id "bucket_analysis"
+        TextView bucketAnalysisTextView = view.findViewById(R.id.bucket_summary);
+
+        // Fetch the detailed analysis from CallsignUtils
+        String detailedAnalysis = CallsignUtils.getDetailedBucketAnalysis(getContext());
+
+        // Set the analysis to the TextView
+        bucketAnalysisTextView.setText(detailedAnalysis);
+
         return view;
     }
 

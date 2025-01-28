@@ -1,54 +1,58 @@
 [
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/app_bar_main.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/app_bar_main.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\app_bar_main.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\app_bar_main.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_recent_log.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_recent_log.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_gallery.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_gallery.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_slideshow.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_slideshow.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_recent_log.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_recent_log.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_performance_metrics.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_performance_metrics.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\activity_main.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/content_main.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/content_main.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_cw_speed.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_cw_speed.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_reference_sheet.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_reference_sheet.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_home.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_home.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_cw_speed.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_cw_speed.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_trainer.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_trainer.xml"
+    },
+    {
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_slideshow.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_slideshow.xml"
+    },
+    {
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_performance_metrics.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_performance_metrics.xml"
     },
     {
         "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_home.xml",
         "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_home.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/activity_main.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/activity_main.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_reference_sheet.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_reference_sheet.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/nav_header_main.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/nav_header_main.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\fragment_callsign_trainer.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\fragment_callsign_trainer.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_trainer.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_trainer.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\nav_header_main.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\nav_header_main.xml"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_callsign_trainer.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_callsign_trainer.xml"
-    },
-    {
-        "merged": "com.example.cwstataccelerator.app-mergeDebugResources-43:/layout/fragment_gallery.xml",
-        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_gallery.xml"
+        "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-mergeDebugResources-43:\\layout\\content_main.xml",
+        "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-main-46:\\layout\\content_main.xml"
     }
 ]

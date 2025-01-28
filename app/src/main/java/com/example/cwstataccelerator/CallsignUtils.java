@@ -480,56 +480,193 @@ public class CallsignUtils {
 
         // Define the buckets for all combinations
         Map<String, List<String>> buckets = new HashMap<>();
-        buckets.put("slashes_only", new ArrayList<>());
-        buckets.put("difficult_numbers", new ArrayList<>());
-        buckets.put("difficult_letters", new ArrayList<>());
-        buckets.put("slashes_and_numbers", new ArrayList<>());
-        buckets.put("slashes_and_letters", new ArrayList<>());
-        buckets.put("numbers_and_letters", new ArrayList<>());
-        buckets.put("all_criteria", new ArrayList<>());
         buckets.put("standard_callsigns", new ArrayList<>()); // Standard callsigns with no special features
-
-        // Define difficult patterns
-        List<String> difficultPatterns = List.of("HH", "RR", "SS", "LZ", "XZ", "YZ", "JW", "EE", "IE");
+        buckets.put("slashes_only", new ArrayList<>());       // Contains only a slash, no difficult letters or numbers
+        buckets.put("slashes_and_letters", new ArrayList<>()); // Slash and difficult letters only
+        buckets.put("slashes_and_numbers", new ArrayList<>()); // Slash and numbers only
+        buckets.put("difficult_numbers", new ArrayList<>());   // Difficult number placements
+        buckets.put("difficult_letters", new ArrayList<>());   // Difficult letter combinations
+        buckets.put("numbers_and_letters", new ArrayList<>()); // Numbers and letters
+        buckets.put("all_criteria", new ArrayList<>());        // All complex features: slash, numbers, and difficult letters
 
         // Process each callsign
         for (String callsign : callsigns) {
-            boolean isSlashed = callsign.contains("/");
-            boolean hasDifficultNumbers = callsign.matches(".*[A-Z]+\\d+[A-Z]+.*") || callsign.matches("^\\d.*");
-            boolean hasDifficultLetters = false;
+            short callsignDifficulty = 0;
+            boolean isSlashed = hasSlash(callsign);
+            boolean hasNumbers = hasUnusualNumberPlacement(callsign);
+            boolean hasDifficultLetters = hasDifficultLetterCombinations(callsign);
 
-            // Check for difficult letter combinations
-            for (String pattern : difficultPatterns) {
-                if (callsign.contains(pattern)) {
-                    hasDifficultLetters = true;
+            if (isSlashed) callsignDifficulty++;
+            if (hasNumbers) callsignDifficulty++;
+            if (hasDifficultLetters) callsignDifficulty++;
+
+            switch (callsignDifficulty) {
+                case 0:
+                    buckets.get("standard_callsigns").add(callsign); // Standard callsigns
                     break;
-                }
+                case 1:
+                    if (isSlashed){
+                        buckets.get("slashes_only").add(callsign); // Slash only
+                    } else if (hasNumbers) {
+                        buckets.get("difficult_numbers").add(callsign); // Numbers only
+                    } else if (hasDifficultLetters) {
+                        buckets.get("difficult_letters").add(callsign); // Letters only
+                    }
+                    break;
+                case 2:
+                    if (isSlashed && hasNumbers) {
+                        buckets.get("slashes_and_numbers").add(callsign); // Slash + Numbers
+                    } else if (hasNumbers && hasDifficultLetters) {
+                        buckets.get("numbers_and_letters").add(callsign); // Numbers + Letters
+                    } else if (hasDifficultLetters && isSlashed) {
+                        buckets.get("slashes_and_letters").add(callsign); // Slash + Letters
+                    }break;
+                default:
+                    buckets.get("all_criteria").add(callsign); // All conditions met
+                    break;
+
             }
 
-            // Determine the bucket based on characteristics
-            if (isSlashed && hasDifficultNumbers && hasDifficultLetters) {
-                buckets.get("all_criteria").add(callsign);
-            } else if (isSlashed && hasDifficultNumbers) {
-                buckets.get("slashes_and_numbers").add(callsign);
-            } else if (isSlashed && hasDifficultLetters) {
-                buckets.get("slashes_and_letters").add(callsign);
-            } else if (hasDifficultNumbers && hasDifficultLetters) {
-                buckets.get("numbers_and_letters").add(callsign);
-            } else if (isSlashed) {
-                buckets.get("slashes_only").add(callsign);
-            } else if (hasDifficultNumbers) {
-                buckets.get("difficult_numbers").add(callsign);
-            } else if (hasDifficultLetters) {
-                buckets.get("difficult_letters").add(callsign);
-            } else {
-                buckets.get("standard_callsigns").add(callsign); // Add to fallback bucket if no characteristics match
-            }
+
+        }
+
+        // Log bucket statistics for debugging
+        for (Map.Entry<String, List<String>> entry : buckets.entrySet()) {
+            Log.d("CallsignUtils", "Bucket: " + entry.getKey() + " -> " + entry.getValue().size() + " callsigns.");
         }
 
         return buckets;
     }
 
+    private static boolean hasDifficultLetterCombinations(String callsign) {
+        // Define CW-difficult letter clusters (hard to distinguish or send in CW)
+        String[] cwDifficultClusters = {
+                "HH", "RR", "SS", "ZZ", "LL", "KK", "MM", "NN", // Repeated letters with challenging timing
+                "XZ", "JW", "YZ", "QZ", "WX", "CQ", "QR", "QT", // Known hard CW sequences
+                "CFH", "JWX", "QXZ", "WQR",                    // Difficult 3-letter combinations
+                "XZJW", "QWJZ", "WXQZ"                         // Challenging 4-letter sequences
+        };
 
+        // Check if the callsign contains any of the difficult CW clusters
+        for (String cluster : cwDifficultClusters) {
+            if (callsign.contains(cluster)) {
+                return true;
+            }
+        }
+
+        // Check for three or more consecutive consonants that create CW rhythm difficulty
+        if (callsign.matches(".*[CFGHJKLMNPQRSTVWXYZ]{3,}.*")) {
+            return true;
+        }
+
+        // Check for rare combinations of 4 or more consonants in a row (uncommon in CW)
+        if (callsign.matches(".*[CFGHJKLMNPQRSTVWXYZ]{4,}.*")) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+
+    private static boolean hasUnusualNumberPlacement(String callsign) {
+        // Check for multiple consecutive numbers (e.g., "123")
+        boolean hasConsecutiveNumbers = callsign.matches(".*\\d{2,}.*");
+
+        // Count the total number of numbers in the callsign
+        int numberCount = 0;
+        for (char c : callsign.toCharArray()) {
+            if (Character.isDigit(c)) {
+                numberCount++;
+            }
+        }
+
+        // Check if there are three or more scattered numbers
+        boolean hasScatteredNumbers = numberCount >= 3;
+
+        // Flag as unusual if either condition is met
+        return hasConsecutiveNumbers || hasScatteredNumbers;
+    }
+
+
+    private static boolean hasSlash(String callsign) {
+        return callsign.contains("/");
+    }
+
+    public static String getDetailedBucketAnalysis(Context context) {
+        File bucketDir = new File(context.getFilesDir(), BUCKET_DIRECTORY);
+        StringBuilder analysis = new StringBuilder();
+
+        if (!bucketDir.exists() || !bucketDir.isDirectory()) {
+            analysis.append("No bucket directory found.\n");
+            return analysis.toString();
+        }
+
+        File[] bucketFiles = bucketDir.listFiles();
+        if (bucketFiles == null || bucketFiles.length == 0) {
+            analysis.append("No bucket files found.\n");
+            return analysis.toString();
+        }
+
+        Map<String, String> bucketDescriptions = new HashMap<>();
+        bucketDescriptions.put("standard_callsigns",
+                "Standard Callsigns:\n" +
+                        "Majority of callsigns fall into this category, indicating that most callsigns are simple and meet standard expectations.\n");
+        bucketDescriptions.put("slashes_only",
+                "Slashes Only:\n" +
+                        "A subset of callsigns with a single / that are otherwise simple.\n" +
+                        "Indicates that the /-based logic is working well to differentiate these from others.\n");
+        bucketDescriptions.put("difficult_numbers",
+                "Difficult Numbers:\n" +
+                        "These callsigns have unusual number placements or multiple consecutive numbers.\n" +
+                        "Suggests that the number-placement logic correctly identifies challenges here without over-absorbing.\n");
+        bucketDescriptions.put("slashes_and_numbers",
+                "Slashes and Numbers:\n" +
+                        "Small, well-isolated group combining / and number challenges.\n" +
+                        "Perfectly indicates precise differentiation of these cases.\n");
+        bucketDescriptions.put("slashes_and_letters",
+                "Slashes and Letters:\n" +
+                        "Represents callsigns with slashes alongside letter-specific challenges.\n" +
+                        "A good-sized group that matches expectations.\n");
+        bucketDescriptions.put("all_criteria",
+                "All Criteria:\n" +
+                        "Very rare cases that combine slashes, letters, and numbers in unusual or difficult ways.\n" +
+                        "Shows excellent filtering precision for this group.\n");
+        bucketDescriptions.put("difficult_letters",
+                "Difficult Letters:\n" +
+                        "Captures callsigns with truly difficult letter clusters based on CW timing and rhythm.\n" +
+                        "Matches expectations for this subset, as it's common for complex callsigns to fall here.\n");
+        bucketDescriptions.put("numbers_and_letters",
+                "Numbers and Letters:\n" +
+                        "Callsigns with challenging number/letter combinations.\n" +
+                        "This smaller group ensures differentiation from standard or overly complex callsigns.\n");
+
+        for (File bucketFile : bucketFiles) {
+            if (bucketFile.isFile() && bucketFile.getName().endsWith(".txt")) {
+                String bucketName = bucketFile.getName().replace(".txt", "");
+                try (BufferedReader reader = new BufferedReader(new FileReader(bucketFile))) {
+                    List<String> callsigns = new ArrayList<>();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        callsigns.add(line.trim());
+                    }
+                    int count = callsigns.size();
+                    String description = bucketDescriptions.getOrDefault(bucketName, "Unknown Bucket:\n");
+                    analysis.append("(").append(count).append(") ");
+                    analysis.append(description);
+                    // Add the first 4 callsigns for preview
+                    for (int i = 0; i < Math.min(4, callsigns.size()); i++) {
+                        analysis.append("  ").append(callsigns.get(i)).append(" \n");
+                    }
+                    analysis.append("\n");
+                } catch (IOException e) {
+                    analysis.append("Error reading bucket: ").append(bucketFile.getName()).append("\n");
+                }
+            }
+        }
+
+        return analysis.toString();
+    }
 
     /**
      * Saves sorted buckets to files for future use.
