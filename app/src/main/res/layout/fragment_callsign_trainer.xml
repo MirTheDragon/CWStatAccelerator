@@ -38,22 +38,79 @@
             android:paddingBottom="8dp" />
 
         <CheckBox
-            android:id="@+id/include_slash_checkbox"
+            android:id="@+id/standard_callsigns_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="Include Slashed Callsigns (e.g. BS7H/M)" />
+            android:layout_height="wrap_content"
+            android:text="Standard Callsigns"
+            android:checked="true"
+            android:clickable="true" />
 
-        <CheckBox
-            android:id="@+id/numbers_placement_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="Include Callsigns with Difficult Number Combinations" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-        <CheckBox
-            android:id="@+id/difficult_letters_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="Include Difficult Letter Combinations (e.g. SSS)" />
+            <Spinner
+                android:id="@+id/slashed_callsign_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:popupBackground="@android:color/white"
+                android:paddingLeft="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:dropDownWidth="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Slashed Callsigns:" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Spinner
+                android:id="@+id/difficult_number_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:popupBackground="@android:color/white"
+                android:paddingLeft="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:dropDownWidth="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Difficult Number Combinations:" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Spinner
+                android:id="@+id/difficult_letter_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:popupBackground="@android:color/white"
+                android:paddingLeft="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:dropDownWidth="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Difficult Letter Combinations:" />
+        </LinearLayout>
 
         <!-- Start/Stop Training Button and Countdown Timer -->
         <Button

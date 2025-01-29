@@ -1,5 +1,6 @@
 R_DEF: Internal format may change without notice
 local
+array filter_options
 attr correctBackground
 attr incorrectBackground
 color black
@@ -57,7 +58,8 @@ id countdown_timer
 id database_stats
 id database_status_message
 id database_update_progress
-id difficult_letters_checkbox
+id difficult_letter_spinner
+id difficult_number_spinner
 id drawer_layout
 id fab
 id four_character_checkbox
@@ -65,7 +67,6 @@ id fragment_container
 id frequency_label
 id frequency_seekbar
 id imageView
-id include_slash_checkbox
 id input_field
 id intermediate_letters_checkbox
 id log_view
@@ -85,15 +86,16 @@ id nav_slideshow
 id nav_trainer
 id nav_view
 id number_checkbox
-id numbers_placement_checkbox
 id ramp_label
 id ramp_seekbar
 id rare_letters_checkbox
+id slashed_callsign_spinner
 id snr_label
 id snr_seekbar
 id special_character_checkbox
 id speed_label
 id speed_seekbar
+id standard_callsigns_checkbox
 id start_training_button
 id tab_layout
 id table_layout

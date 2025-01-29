@@ -12,6 +12,13 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="app_icon_desc">App Icon</string>
 
+    <string-array name="filter_options">
+        <item>Include</item>
+        <item>Only</item>
+        <item>Exclude</item>
+    </string-array>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

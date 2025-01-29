@@ -36,9 +36,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.json.JSONObject;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class CallsignUtils {
     private static final String MASTER_DTA_URL = "https://www.supercheckpartial.com/MASTER.DTA";
@@ -612,6 +610,59 @@ public class CallsignUtils {
     private static Map<String, List<String>> bucketCache = new HashMap<>();
     private static int currentCacheSize = 0;
 
+    public static final List<String> REPEATED_SIMILAR_LETTERS = Arrays.asList(
+            "EE", "EI", "IE", "II",  // Short sounds, hard to distinguish
+            "TT", "TM", "MT", "MM",  // Similar sounds, long timing
+            "NN", "ND", "DN", "DD",  // Similar patterns
+            "UU", "UV", "VU", "VV",
+            "GG", "GW", "WG", "WW",
+            "SS", "SH", "HS", "HH",
+            "CC", "CK", "KC", "KK",
+            "OO", "OQ", "QO", "QQ",
+            "LL", "LF", "FL", "FF",
+            "XX", "XY", "YX", "YY",
+            "PP", "PR", "RP", "RR",
+            "JJ", "JZ", "ZJ", "ZZ"
+    );
+
+
+    public static final List<String> DIFFICULT_TRANSITIONS = Arrays.asList(
+            "XZ", "JW", "YZ", "QZ", "WX", "CQ", "QR", "QT", // Uncommon hard switches
+            "CFH", "JWX", "QXZ", "WQR", "XQR",  // Poor transitions between tones
+            "XZJW", "QWJZ", "WXQZ", "KQRZ", "CFHQ" // Extremely difficult for high-speed decoding
+    );
+
+    public static final List<String> NUMBER_LETTER_CONFUSION = Arrays.asList(
+            "1I", "I1", "11", // I and 1 are visually similar
+            "5S", "S5", "55", // S and 5 sound and look alike
+            "0O", "O0", "00", // O and 0 confusion
+            "9G", "G9", "99",
+            "2Z", "Z2", "22",
+            "3V", "V3", "33",
+            "4H", "H4", "44"
+    );
+
+    public static final List<String> DIFFICULT_THREE_LETTER_COMBINATIONS = Arrays.asList(
+            "MIT", "RUN", "LOW", "DAY", "NOW", // Common words but hard in CW timing
+            "BED", "ZIP", "TOP", "COD", "VOW",
+            "PIG", "QUI",
+            "X1Y", "O2P", "A3Z", "B4N", "C5K",  // Numbers mixed in three-letter combos
+            "G6D", "H7Q", "J8M", "L9V"
+    );
+
+    public static final List<String> DIFFICULT_FOUR_LETTER_COMBINATIONS = Arrays.asList(
+            "VICT", "MARS", "THIS", "LATE", "CARE", // Hard CW rhythm patterns
+            "STOP", "ZONE", "BRAV", "JUMP", "FLAG",
+            "HOUS", "QUIT",
+            "X1Y2", "O3P4", "A5Z6", "B7N8", "C9K0",  // Mixed numbers
+            "G1D2", "H3Q4", "J5M6", "L7V8"
+    );
+
+
+
+
+
+
 
     /**
      * Sorts callsigns into predefined buckets based on their characteristics.
@@ -641,12 +692,12 @@ public class CallsignUtils {
         for (String callsign : callsigns) {
             short callsignDifficulty = 0;
             boolean isSlashed = hasSlash(callsign);
-            boolean hasNumbers = hasUnusualNumberPlacement(callsign);
-            boolean hasDifficultLetters = hasDifficultLetterCombinations(callsign);
+            boolean hasNumbers = hasDifficultNumbers(callsign);
+            boolean hasLetters = hasDifficultLetterCombinations(callsign);
 
             if (isSlashed) callsignDifficulty++;
             if (hasNumbers) callsignDifficulty++;
-            if (hasDifficultLetters) callsignDifficulty++;
+            if (hasLetters) callsignDifficulty++;
 
             switch (callsignDifficulty) {
                 case 0:
@@ -657,16 +708,16 @@ public class CallsignUtils {
                         buckets.get("slashes_only").add(callsign); // Slash only
                     } else if (hasNumbers) {
                         buckets.get("difficult_numbers").add(callsign); // Numbers only
-                    } else if (hasDifficultLetters) {
+                    } else if (hasLetters) {
                         buckets.get("difficult_letters").add(callsign); // Letters only
                     }
                     break;
                 case 2:
                     if (isSlashed && hasNumbers) {
                         buckets.get("slashes_and_numbers").add(callsign); // Slash + Numbers
-                    } else if (hasNumbers && hasDifficultLetters) {
+                    } else if (hasNumbers && hasLetters) {
                         buckets.get("numbers_and_letters").add(callsign); // Numbers + Letters
-                    } else if (hasDifficultLetters && isSlashed) {
+                    } else if (hasLetters && isSlashed) {
                         buckets.get("slashes_and_letters").add(callsign); // Slash + Letters
                     }break;
                 default:
@@ -699,7 +750,7 @@ public class CallsignUtils {
         }
 
         boolean isSlashed = hasSlash(callsign);
-        boolean hasNumbers = hasUnusualNumberPlacement(callsign);
+        boolean hasNumbers = hasDifficultNumbers(callsign);
         boolean hasDifficultLetters = hasDifficultLetterCombinations(callsign);
 
         short callsignDifficulty = 0;
@@ -737,82 +788,75 @@ public class CallsignUtils {
         return "unknown";
     }
 
+    // Helper function to check if a callsign contains a difficult combination
     private static boolean hasDifficultLetterCombinations(String callsign) {
-        // Define CW-difficult letter clusters (hard to distinguish or send in CW)
-        String[] cwDifficultClusters = {
-                "HH", "RR", "SS", "ZZ", "LL", "KK", "MM", "NN", // Repeated letters with challenging timing
-                "XZ", "JW", "YZ", "QZ", "WX", "CQ", "QR", "QT", // Known hard CW sequences
-                "CFH", "JWX", "QXZ", "WQR",                    // Difficult 3-letter combinations
-                "XZJW", "QWJZ", "WXQZ"                         // Challenging 4-letter sequences
-        };
-
-        // Check if the callsign contains any of the difficult CW clusters
-        for (String cluster : cwDifficultClusters) {
-            if (callsign.contains(cluster)) {
-                return true;
-            }
-        }
-
-        // Define patterns for 3-letter and 4-letter combinations that are challenging in CW
-        String[] difficultThreeLetterClusters = {
-                "HHH", "RRR", "SSS", "LLL", "ZZZ", "YYY", "XXX", "WWW", "QQQ", "VVV"
-        };
-        String[] difficultFourLetterClusters = {
-                "HHHH", "RRRR", "SSSS", "LLLL", "ZZZZ", "YYYY", "XXXX", "WWWW", "QQQQ", "VVVV"
-        };
-
-        // Check for 3-letter clusters
-        for (String cluster : difficultThreeLetterClusters) {
-            if (callsign.contains(cluster)) {
-                return true; // Flag as difficult
-            }
-        }
-
-        // Check for 4-letter clusters
-        for (String cluster : difficultFourLetterClusters) {
-            if (callsign.contains(cluster)) {
-                return true; // Flag as very difficult
-            }
-        }
-
-        // Check for three or more consecutive consonants that create CW rhythm difficulty
-        if (callsign.matches(".*[CFGHJKLMNPQRSTVWXYZ]{3,}.*")) {
-            return true;
-        }
-
-        // Check for rare combinations of 4 or more consonants in a row (uncommon in CW)
-        if (callsign.matches(".*[CFGHJKLMNPQRSTVWXYZ]{4,}.*")) {
-            return true;
-        }
-
-        return false;
+        return hasRepeatedSimilarLetters(callsign) ||
+                hasDifficultTransitions(callsign) ||
+                hasDifficultThreeLetterCombinations(callsign) ||
+                hasDifficultFourLetterCombinations(callsign);
     }
 
-
-
-    private static boolean hasUnusualNumberPlacement(String callsign) {
-        // Check for multiple consecutive numbers (e.g., "123")
+    private static boolean hasDifficultNumbers(String callsign) {
         boolean hasConsecutiveNumbers = callsign.matches(".*\\d{2,}.*");
-
-        // Count the total number of numbers in the callsign
         int numberCount = 0;
         for (char c : callsign.toCharArray()) {
-            if (Character.isDigit(c)) {
-                numberCount++;
-            }
+            if (Character.isDigit(c)) numberCount++;
         }
-
-        // Check if there are three or more scattered numbers
         boolean hasScatteredNumbers = numberCount >= 3;
+        boolean hasDifficultNumberCombination = hasNumberLetterConfusion(callsign);
 
-        // Flag as unusual if either condition is met
-        return hasConsecutiveNumbers || hasScatteredNumbers;
+        return hasConsecutiveNumbers || hasScatteredNumbers || hasDifficultNumberCombination;
     }
-
 
     private static boolean hasSlash(String callsign) {
         return callsign.contains("/");
     }
+
+    private static boolean hasRepeatedSimilarLetters(String callsign) {
+        for (String combo : REPEATED_SIMILAR_LETTERS) {
+            if (callsign.contains(combo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasDifficultTransitions(String callsign) {
+        for (String combo : DIFFICULT_TRANSITIONS) {
+            if (callsign.contains(combo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasNumberLetterConfusion(String callsign) {
+        for (String combo : NUMBER_LETTER_CONFUSION) {
+            if (callsign.contains(combo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasDifficultThreeLetterCombinations(String callsign) {
+        for (String combo : DIFFICULT_THREE_LETTER_COMBINATIONS) {
+            if (callsign.contains(combo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasDifficultFourLetterCombinations(String callsign) {
+        for (String combo : DIFFICULT_FOUR_LETTER_COMBINATIONS) {
+            if (callsign.contains(combo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static String getDetailedBucketAnalysis(Context context) {
         File bucketDir = new File(context.getFilesDir(), BUCKET_DIRECTORY);

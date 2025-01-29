@@ -85,6 +85,7 @@ animator nav_default_enter_anim
 animator nav_default_exit_anim
 animator nav_default_pop_enter_anim
 animator nav_default_pop_exit_anim
+array filter_options
 attr SharedValue
 attr SharedValueId
 attr action
@@ -3291,7 +3292,8 @@ id design_menu_item_action_area_stub
 id design_menu_item_text
 id design_navigation_view
 id dialog_button
-id difficult_letters_checkbox
+id difficult_letter_spinner
+id difficult_number_spinner
 id dimensions
 id direct
 id disableHome
@@ -3368,7 +3370,6 @@ id ignoreRequest
 id image
 id imageView
 id immediateStop
-id include_slash_checkbox
 id included
 id indeterminate
 id info
@@ -3489,7 +3490,6 @@ id notification_background
 id notification_main_column
 id notification_main_column_container
 id number_checkbox
-id numbers_placement_checkbox
 id off
 id on
 id onInterceptTouchReturnSwipe
@@ -3574,6 +3574,7 @@ id showTitle
 id sin
 id skipCollapsed
 id skipped
+id slashed_callsign_spinner
 id slide
 id sliding_pane_detail_container
 id sliding_pane_layout
@@ -3599,6 +3600,7 @@ id src_atop
 id src_in
 id src_over
 id standard
+id standard_callsigns_checkbox
 id start
 id startHorizontal
 id startToEnd
