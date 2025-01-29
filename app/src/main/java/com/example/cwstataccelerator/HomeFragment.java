@@ -1,11 +1,20 @@
 package com.example.cwstataccelerator;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +30,16 @@ public class HomeFragment extends Fragment {
     private TextView databaseStatusMessage;
     private ProgressBar databaseUpdateProgress;
     private TextView databaseStats;
+    private TextView bucketAnalysisTextView;
+
+    private final BroadcastReceiver databaseUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("com.example.cwstataccelerator.DATABASE_UPDATED".equals(intent.getAction())) {
+                updateDetailedAnalysis();
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -31,22 +50,30 @@ public class HomeFragment extends Fragment {
         databaseStatusMessage = view.findViewById(R.id.database_status_message);
         databaseUpdateProgress = view.findViewById(R.id.database_update_progress);
         databaseStats = view.findViewById(R.id.database_stats);
+        bucketAnalysisTextView = view.findViewById(R.id.bucket_summary); // ✅ Make sure this is initialized
+
+
+        // Register Broadcast Receiver
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+                databaseUpdateReceiver,
+                new IntentFilter("com.example.cwstataccelerator.DATABASE_UPDATED")
+        );
 
         // Check and update the database
         checkAndUpdateDatabase();
 
-        // Assuming you have a TextView with id "bucket_analysis"
-        TextView bucketAnalysisTextView = view.findViewById(R.id.bucket_summary);
-
-        // Fetch the detailed analysis from CallsignUtils
-        String detailedAnalysis = CallsignUtils.getDetailedBucketAnalysis(getContext());
-
-        // Set the analysis to the TextView
-        bucketAnalysisTextView.setText(detailedAnalysis);
+        // Initial fetch for detailed analysis
+        updateDetailedAnalysis();
 
         return view;
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(databaseUpdateReceiver);
+    }
     private void checkAndUpdateDatabase() {
         databaseStatusMessage.setText("Checking database status...");
         databaseUpdateProgress.setVisibility(View.VISIBLE);
@@ -70,4 +97,10 @@ public class HomeFragment extends Fragment {
         databaseStats.setText("Database Stats:\nTotal Callsigns: " + totalCallsigns);
     }
 
+    private void updateDetailedAnalysis() {
+        requireActivity().runOnUiThread(() -> {
+            String detailedAnalysis = CallsignUtils.getDetailedBucketAnalysis(requireContext());
+            bucketAnalysisTextView.setText(detailedAnalysis);
+        });
+    }
 }

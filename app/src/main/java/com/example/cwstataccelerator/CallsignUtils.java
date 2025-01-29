@@ -2,6 +2,8 @@ package com.example.cwstataccelerator;
 
 import android.content.Context;
 import android.util.Log;
+import android.content.Intent;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -149,7 +151,7 @@ public class CallsignUtils {
                 if (resetSuccess) {
                     Log.d("CallsignUtils", "Buckets cleared successfully.");
                 } else {
-                    Log.e("CallsignUtils", "Failed to clear buckets. Proceeding anyway...");
+                    Log.d("CallsignUtils", "Failed to clear buckets.Creating new and proceeding anyway...");
                 }
 
                 // Step 6: Parse MASTER.DTA and save into buckets
@@ -181,8 +183,13 @@ public class CallsignUtils {
                     writer.write(metaJson.toString());
                 }
 
+
                 listener.onProgressUpdate("Buckets processed and saved successfully.", 100);
                 Log.d("CallsignUtils", "Buckets processed and saved successfully.");
+
+                // **Broadcast an update event**
+                Intent intent = new Intent("com.example.cwstataccelerator.DATABASE_UPDATED");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             } catch (Exception e) {
                 Log.e("CallsignUtils", "An error occurred: " + e.getMessage(), e);
                 listener.onProgressUpdate("An error occurred: " + e.getMessage(), 100);
