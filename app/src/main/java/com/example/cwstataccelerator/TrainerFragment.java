@@ -439,8 +439,8 @@ public class TrainerFragment extends Fragment {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         // Load values from SharedPreferences (no default value, so it stays false if not set)
-        alphabetCheckbox.setChecked(preferences.getBoolean("alphabetCheckbox", false));
-        basicLettersCheckbox.setChecked(preferences.getBoolean("basicLettersCheckbox", false));
+        alphabetCheckbox.setChecked(preferences.getBoolean("alphabetCheckbox", true));
+        basicLettersCheckbox.setChecked(preferences.getBoolean("basicLettersCheckbox", true));
         intermediateLettersCheckbox.setChecked(preferences.getBoolean("intermediateLettersCheckbox", false));
         advancedLettersCheckbox.setChecked(preferences.getBoolean("advancedLettersCheckbox", false));
         rareLettersCheckbox.setChecked(preferences.getBoolean("rareLettersCheckbox", false));

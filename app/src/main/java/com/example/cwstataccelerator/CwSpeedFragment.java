@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
+
 public class CwSpeedFragment extends Fragment {
 
     private static final String PREFS_NAME = "CWSettings";
@@ -54,8 +56,14 @@ public class CwSpeedFragment extends Fragment {
         selectedSpeed = sharedPreferences.getInt(KEY_SPEED, 15); // Default: 15 WPM
         minTrainingSpeed = sharedPreferences.getInt(KEY_MIN_TRAINING_SPEED, 10); // Default: 10 WPM
         maxTrainingSpeed = sharedPreferences.getInt(KEY_MAX_TRAINING_SPEED, 80); // Default: 80 WPM
-        rampTime = sharedPreferences.getInt(KEY_RAMP_TIME, 0); // Default: 0 ms
+        rampTime = sharedPreferences.getInt(KEY_RAMP_TIME, 5); // Default: 0 ms
         selectedSNR = sharedPreferences.getInt(KEY_SNR, 100); // Default: 100% (perfect signal)
+
+        // Log loaded settings
+        Log.d("CwSpeedFragment", "Loaded settings -> Frequency: " + selectedFrequency +
+                " Hz, Speed: " + selectedSpeed + " WPM, Min Speed: " + minTrainingSpeed +
+                " WPM, Max Speed: " + maxTrainingSpeed + " WPM, Ramp: " + rampTime + " ms, SNR: " + selectedSNR + "%");
+
 
         // Frequency Slider
         setupFrequencySlider(view);
@@ -95,6 +103,11 @@ public class CwSpeedFragment extends Fragment {
         editor.putInt(KEY_RAMP_TIME, rampTime);
         editor.putInt(KEY_SNR, selectedSNR);
         editor.apply();
+
+        // Log saved settings
+        Log.d("CwSpeedFragment", "Saved settings -> Frequency: " + selectedFrequency +
+                " Hz, Speed: " + selectedSpeed + " WPM, Min Speed: " + minTrainingSpeed +
+                " WPM, Max Speed: " + maxTrainingSpeed + " WPM, Ramp: " + rampTime + " ms, SNR: " + selectedSNR + "%");
     }
 
     private void setupFrequencySlider(View view) {
@@ -141,6 +154,7 @@ public class CwSpeedFragment extends Fragment {
                 morseCodeGenerator.setDotDuration(1200 / selectedSpeed);
                 adjustMinMaxTrainingSpeeds();
                 morseCodeGenerator.playRepeatingTone("/"); // Update tone dynamically
+                Log.d("CwSpeedFragment", "Speed updated: " + selectedSpeed + " WPM");
             }
 
             @Override
@@ -246,6 +260,9 @@ public class CwSpeedFragment extends Fragment {
                 rampTimeLabel.setText("Ramp Time: " + rampTime + " ms");
                 morseCodeGenerator.setRampDuration(rampTime);
                 morseCodeGenerator.playRepeatingTone("/"); // Update tone dynamically
+
+                // Debugging log
+                Log.d("CwSpeedFragment", "Ramp Time changed: " + rampTime + " ms");
             }
 
             @Override

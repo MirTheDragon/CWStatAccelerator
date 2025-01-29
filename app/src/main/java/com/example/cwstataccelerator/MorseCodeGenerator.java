@@ -22,12 +22,12 @@ public class MorseCodeGenerator {
     private static final String PREFS_NAME = "CWSettings";
     private static final String KEY_FREQUENCY = "frequency";
     private static final String KEY_SPEED = "speed";
-    private static final String KEY_RAMP_TIME = "ramp_duration";
+    private static final String KEY_RAMP_TIME = "ramp_time";
     private static final String KEY_SNR = "snr";
 
     private int frequency = 600; // Default frequency in Hz
     private int dotDuration = 80; // Default dot duration in ms
-    private int rampDuration = 0; // Ramp duration in ms
+    private int rampDuration = 5; // Ramp duration in ms
     private int snr = 100; // Default SNR in %
 
     private final Map<String, AudioTrack> audioTrackCache = new HashMap<>();
@@ -138,8 +138,11 @@ public class MorseCodeGenerator {
         frequency = sharedPreferences.getInt(KEY_FREQUENCY, 600);
         int speed = sharedPreferences.getInt(KEY_SPEED, 15);
         dotDuration = 1200 / speed;
-        rampDuration = sharedPreferences.getInt(KEY_RAMP_TIME, 0);
-        snr = sharedPreferences.getInt(KEY_SNR, 100);
+        rampDuration = sharedPreferences.getInt(KEY_RAMP_TIME, 5);
+        snr = sharedPreferences.getInt(KEY_SNR, 100);  // Load SNR
+
+        // Debug log
+        Log.d("MorseCodeGenerator", "Loaded settings -> Frequency: " + frequency + " Hz, Speed: " + speed + " WPM, Ramp: " + rampDuration + " ms, SNR: " + snr + "%");
     }
 
     public void playMorseCode(String input) {
