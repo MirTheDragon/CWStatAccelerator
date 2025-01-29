@@ -396,7 +396,7 @@ public class CallsignTrainerFragment extends Fragment {
 
         // Ensure the entered callsign is not null or empty
         if (enteredCallsign == null || enteredCallsign.isEmpty()) {
-            ToastUtils.showCustomToast(requireContext(), "❌ No callsign entered!", 800);
+            ToastUtils.showCustomToast(requireContext(), "👎 No callsign entered!", 800);
             return;
         }
 
@@ -427,11 +427,11 @@ public class CallsignTrainerFragment extends Fragment {
         // Provide user feedback
         String feedbackMessage;
         if (isCorrect) {
-            feedbackMessage = "✅ Correct! Callsign matched.";
+            feedbackMessage = "👍 Correct! Callsign matched.";
             ToastUtils.showCustomToast(requireContext(), feedbackMessage, 800);
             playNextCallsign(true); // Move to the next callsign
         } else {
-            feedbackMessage = "❌ Incorrect! Try again.";
+            feedbackMessage = "👎 Incorrect! Try again.";
             ToastUtils.showCustomToast(requireContext(), feedbackMessage, 1200);
             playNextCallsign(false); // Replay the current callsign
         }

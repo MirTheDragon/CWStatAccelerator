@@ -270,7 +270,7 @@ public class TrainerFragment extends Fragment {
                 if (isTrainingActive && s.length() > 0 && waitingForReply) {
                     String enteredChar = s.toString().toUpperCase();
                     processInput(enteredChar); // Process the entered character
-                    inputField.setText(""); // Clear the input field
+                    // inputField.setText(""); // Clear the input field
                 }
             }
         });
@@ -555,16 +555,19 @@ public class TrainerFragment extends Fragment {
         if (charactersInTraining == 1) {
             String message = isCorrect ? "👍 Correct!" : "👎 Incorrect!";
             ToastUtils.showCustomToast(requireContext(), message, toastTime);
+            inputField.setText(""); // Clear the input field
             playNextCharacter(isCorrect);
         } else if (charactersInTraining > 1 && remaining > 0) {
             String message = isCorrect ? "👍 Correct! Keep Going!" : "👎 Incorrect! Starting over.";
             ToastUtils.showCustomToast(requireContext(), message, toastTime);
             if (!isCorrect) {
+                inputField.setText(""); // Clear the input field
                 playNextCharacter(false);
             }
         } else if (charactersInTraining > 1 && remaining <= 0) {
             String message = isCorrect ? "👍 Correct! Training text complete." : "👎 Incorrect! Starting over.";
             ToastUtils.showCustomToast(requireContext(), message, toastTime);
+            inputField.setText(""); // Clear the input field
             playNextCharacter(isCorrect);
         }
 

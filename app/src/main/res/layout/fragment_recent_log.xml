@@ -3,14 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableLayout
-        android:id="@+id/log_view"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <!-- Add rows dynamically in the code -->
+        <TableLayout
+            android:id="@+id/log_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:padding="16dp">
 
-    </TableLayout>
+            <!-- Add rows dynamically in the code -->
+
+        </TableLayout>
+    </HorizontalScrollView>
 </ScrollView>

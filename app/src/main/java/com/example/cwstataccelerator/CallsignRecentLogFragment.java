@@ -88,13 +88,17 @@ public class CallsignRecentLogFragment extends Fragment {
             return;
         }
 
+        // Define the headers (only keeping relevant columns)
+        String[] headers = {"Callsign", "Typed Response", "Response Time (ms)", "WPM", "Timestamp"};
+        int[] columnIndices = {0, 1, 3, 4, 6}; // Corresponding indices in logEntry format
+
         // Add a header row
         TableRow headerRow = new TableRow(requireContext());
         headerRow.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
-        String[] headers = {"Callsign", "Response Time (ms)", "Correct", "Typed Response", "WPM", "Bucket", "Timestamp"};
+
         for (String header : headers) {
             TextView headerView = new TextView(requireContext());
             headerView.setText(header);
@@ -131,10 +135,10 @@ public class CallsignRecentLogFragment extends Fragment {
             }
             row.setBackgroundColor(typedValue.data);
 
-            // Populate row columns
-            for (String field : logEntry) {
+            // Populate row with only selected columns
+            for (int index : columnIndices) {
                 TextView textView = new TextView(requireContext());
-                textView.setText(field.trim());
+                textView.setText(logEntry[index].trim());
                 textView.setPadding(8, 8, 8, 8);
                 row.addView(textView);
             }

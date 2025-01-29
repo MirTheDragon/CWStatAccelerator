@@ -20,6 +20,12 @@ import java.util.Map;
 import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.text.ParseException;
+
 
 import org.json.JSONArray;
 
@@ -184,87 +190,35 @@ public class CallsignUtils {
         });
     }
 
-
-    public static void updateMasterDta(Context context, ProgressListener listener) {
-        final String metaFileName = "master_dta_meta.json";
-        final String hardcodedOnlineDate = "2025-01-02"; // Hardcoded for future reference
-
-        try {
-            // Step 1: Fetch the current date from the HTML
-            String onlineDate = fetchMasterDtaDateFromHtml();
-            if (onlineDate == null) {
-                Log.w("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML. Falling back to checksum method.");
-                onlineDate = hardcodedOnlineDate; // Default to the hardcoded date
-            }
-
-            // Step 2: Load the meta file to get local state
-            File metaFile = new File(context.getFilesDir(), metaFileName);
-            String localDate = null;
-            String localChecksum = null;
-
-            if (metaFile.exists()) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(metaFile))) {
-                    JSONObject metaJson = new JSONObject(reader.readLine());
-                    localDate = metaJson.optString("date", null);
-                    localChecksum = metaJson.optString("checksum", null);
-                }
-            }
-
-            // Step 3: Compare dates and decide if update is necessary
-            if (localDate != null && onlineDate.equals(localDate)) {
-                Log.d("CallsignUtils", "MASTER.DTA is up-to-date. No update required.");
-                listener.onProgressUpdate("MASTER.DTA is already up-to-date.", 100);
-                return;
-            }
-
-            // Step 4: Download the MASTER.DTA file and calculate checksum
-            listener.onProgressUpdate("Downloading MASTER.DTA...", 50);
-            File tempMasterFile = new File(context.getFilesDir(), "temp_master_dta");
-            downloadFile(MASTER_DTA_URL, tempMasterFile);
-
-            String newChecksum = calculateChecksum(tempMasterFile);
-            if (localChecksum != null && newChecksum.equals(localChecksum)) {
-                Log.d("CallsignUtils", "MASTER.DTA content is identical. No update required.");
-                listener.onProgressUpdate("MASTER.DTA is already up-to-date.", 100);
-                return;
-            }
-
-            // Step 5: Replace the local MASTER.DTA with the new one
-            File localMasterFile = new File(context.getFilesDir(), MASTER_DTA_FILE_NAME);
-            if (localMasterFile.exists()) localMasterFile.delete();
-            tempMasterFile.renameTo(localMasterFile);
-
-            // Step 6: Update the meta file with the new date and checksum
-            JSONObject metaJson = new JSONObject();
-            metaJson.put("date", onlineDate);
-            metaJson.put("checksum", newChecksum);
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(metaFile))) {
-                writer.write(metaJson.toString());
-            }
-
-            listener.onProgressUpdate("MASTER.DTA updated successfully.", 100);
-            Log.d("CallsignUtils", "MASTER.DTA updated and meta file saved.");
-        } catch (Exception e) {
-            Log.e("CallsignUtils", "Error updating MASTER.DTA: " + e.getMessage(), e);
-            listener.onProgressUpdate("Failed to update MASTER.DTA.", 100);
-        }
-    }
     private static String fetchMasterDtaDateFromHtml() {
+        String datePattern = "\\b([A-Z][a-z]+ \\d{1,2}, \\d{4})\\b"; // Matches "January 2, 2025"
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL("https://www.supercheckpartial.com").openConnection();
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
 
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        if (line.contains("MASTER.DTA") && line.contains("Updated")) {
-                            // Extract the date in the format YYYY-MM-DD
-                            return line.replaceAll(".*Updated: (\\d{4}-\\d{2}-\\d{2}).*", "$1");
+                        Log.d("CallsignUtils", "Processing line: " + line); // Debug: Log each line
+                        // Look for "Master Files" in the line
+                        if (line.contains("Master Files")) {
+                            Log.d("CallsignUtils", "Found 'Master Files' in line: " + line);
+                            // Extract the date using regex
+                            Pattern pattern = Pattern.compile(datePattern);
+                            Matcher matcher = pattern.matcher(line);
+                            if (matcher.find()) {
+                                String rawDate = matcher.group(1); // Extracted date in "January 2, 2025" format
+                                Log.d("CallsignUtils", "Extracted raw date: " + rawDate);
+                                return convertDateToIsoFormat(rawDate); // Convert to "YYYY-MM-DD"
+                            }
                         }
                     }
                 }
+            } else {
+                Log.e("CallsignUtils", "HTTP connection failed with response code: " + connection.getResponseCode());
             }
         } catch (Exception e) {
             Log.e("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML: " + e.getMessage(), e);
@@ -272,17 +226,53 @@ public class CallsignUtils {
         return null; // Return null if the date cannot be fetched
     }
 
-    private static void downloadFile(String url, File destinationFile) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestMethod("GET");
+    /**
+     * Converts a date in "MMMM DD, YYYY" format to "YYYY-MM-DD" format.
+     *
+     * @param rawDate The raw date in "MMMM DD, YYYY" format.
+     * @return The converted date in "YYYY-MM-DD" format.
+     */
+    private static String convertDateToIsoFormat(String rawDate) {
+        try {
+            // Define input and output formats
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
-        try (InputStream inputStream = connection.getInputStream();
-             FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+            // Parse the input date and format it to the output format
+            return outputFormat.format(inputFormat.parse(rawDate));
+        } catch (ParseException e) {
+            Log.e("CallsignUtils", "Failed to convert date format: " + rawDate, e);
+            return null; // Return null if the conversion fails
+        }
+    }
 
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+
+    private static void downloadFile(String fileUrl, File destinationFile) throws IOException {
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(fileUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000); // Set connection timeout
+            connection.setReadTimeout(5000); // Set read timeout
+
+            // Check for a valid response code
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try (InputStream inputStream = connection.getInputStream();
+                     FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+            } else {
+                throw new IOException("Failed to download file: HTTP " + connection.getResponseCode());
+            }
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
             }
         }
     }
