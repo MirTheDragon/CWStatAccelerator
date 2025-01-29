@@ -1,6 +1,7 @@
 package com.example.cwstataccelerator;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -68,9 +69,7 @@ public class TrainerFragment extends Fragment {
     private int currentCharacterIndex = 0; // Tracks the current character in the training string
     private long characterStartTime;
     private boolean waitingForReply = false;
-
     private int selectedSpeed;
-
     private static final String PREFS_NAME = "CWSettings";
     private static final String KEY_SPEED = "speed";
 
@@ -97,6 +96,9 @@ public class TrainerFragment extends Fragment {
         threeCharacterCheckbox = view.findViewById(R.id.three_character_checkbox);
         fourCharacterCheckbox = view.findViewById(R.id.four_character_checkbox);
 
+        // Load saved checkbox states BEFORE setting any defaults
+        loadCheckboxStates();
+
         inputField = view.findViewById(R.id.input_field);
         startTrainingButton = view.findViewById(R.id.start_training_button);
         logView = view.findViewById(R.id.log_view);
@@ -109,9 +111,12 @@ public class TrainerFragment extends Fragment {
         updateCheckboxesState(true); // Enable checkboxes initially
         updateInputFieldState(false); // Disable input field initially
 
-        // Alphabet selected by default; at least one checkbox always remains checked
-        alphabetCheckbox.setChecked(true);
+        // **ONLY NOW enforce rules after loading correct state**
         enforceMinimumCheckboxSelection();
+
+        // Set up listeners (ensures any changes are saved)
+        setupCheckboxListeners();
+
 
         // Input field
         inputField = view.findViewById(R.id.input_field);
@@ -276,13 +281,42 @@ public class TrainerFragment extends Fragment {
         });
     }
 
+    private void setupCheckboxListeners() {
+        CheckBox[] checkboxes = {
+                alphabetCheckbox, basicLettersCheckbox, intermediateLettersCheckbox, advancedLettersCheckbox,
+                rareLettersCheckbox, numberCheckbox, specialCharacterCheckbox, twoCharacterCheckbox,
+                threeCharacterCheckbox, fourCharacterCheckbox
+        };
+
+        for (CheckBox checkbox : checkboxes) {
+            checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                Log.d("TrainerFragment", "Checkbox changed: " + buttonView.getId() + " -> " + isChecked);
+
+                enforceMinimumCheckboxSelection();
+                saveCheckboxStates(); // ✅ Ensure save happens EVERY TIME
+            });
+        }
+    }
+
+
+
+    /**
+     * Ensures the minimum checkboxes are selected.
+     */
     private void enforceMinimumCheckboxSelection() {
         CheckBox[] mainCheckboxes = {alphabetCheckbox, numberCheckbox, specialCharacterCheckbox};
         CheckBox[] subgroupCheckboxes = {basicLettersCheckbox, intermediateLettersCheckbox, advancedLettersCheckbox, rareLettersCheckbox};
         CheckBox[] multiCharacterCheckboxes = {twoCharacterCheckbox, threeCharacterCheckbox, fourCharacterCheckbox};
 
-        // Handle changes for main checkboxes
+        // ** Ensure subgroup checkboxes are greyed out if Alphabet is unchecked **
+        boolean isAlphabetChecked = alphabetCheckbox.isChecked();
+        for (CheckBox subgroupCheckbox : subgroupCheckboxes) {
+            subgroupCheckbox.setEnabled(isAlphabetChecked); // Disable but do not uncheck
+        }
+
+        // ** Handle main checkboxes **
         for (CheckBox checkbox : mainCheckboxes) {
+            checkbox.setOnCheckedChangeListener(null); // Temporarily remove listener to prevent loops
             checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!isChecked) {
                     boolean atLeastOneChecked = false;
@@ -294,27 +328,25 @@ public class TrainerFragment extends Fragment {
                     }
                     if (!atLeastOneChecked) {
                         buttonView.setChecked(true);
+                        return;
                     }
                 }
 
-                // Handle the alphabet checkbox specifically
+                // Handle the "alphabet" checkbox specifically
                 if (buttonView == alphabetCheckbox) {
-                    // Enable or disable all subgroups when the main alphabet checkbox is toggled
                     for (CheckBox subgroupCheckbox : subgroupCheckboxes) {
-                        subgroupCheckbox.setChecked(isChecked);
+                        subgroupCheckbox.setEnabled(isChecked);
                     }
                 }
+                saveCheckboxStates(); // ✅ Ensure state is saved
             });
         }
 
-        // Handle changes for subgroup checkboxes
+        // ** Handle subgroup checkboxes **
         for (CheckBox subgroupCheckbox : subgroupCheckboxes) {
+            subgroupCheckbox.setOnCheckedChangeListener(null);
             subgroupCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                // If any subgroup is selected, ensure the alphabet checkbox is also selected
-                if (isChecked) {
-                    alphabetCheckbox.setChecked(true);
-                } else {
-                    // If all subgroups are deselected, uncheck the alphabet checkbox
+                if (!isChecked) {
                     boolean anySubgroupChecked = false;
                     for (CheckBox subgroup : subgroupCheckboxes) {
                         if (subgroup.isChecked()) {
@@ -323,42 +355,54 @@ public class TrainerFragment extends Fragment {
                         }
                     }
                     if (!anySubgroupChecked) {
-                        alphabetCheckbox.setChecked(false);
+                        buttonView.setChecked(true);
+                        return;
                     }
                 }
+
+                // Ensure Alphabet is checked if any subgroup is checked
+                boolean anySubgroupChecked = false;
+                for (CheckBox subgroup : subgroupCheckboxes) {
+                    if (subgroup.isChecked()) {
+                        anySubgroupChecked = true;
+                        break;
+                    }
+                }
+                alphabetCheckbox.setChecked(anySubgroupChecked);
+                saveCheckboxStates();
             });
         }
 
-        // Handle changes for multi character checkboxes
+        // ** Handle multi-character checkboxes (only one active at a time, or none) **
         for (CheckBox checkbox : multiCharacterCheckboxes) {
+            checkbox.setOnCheckedChangeListener(null);
             checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
-
-                // If checkbox is checked, set the characters in training to associated value
                 if (isChecked) {
+                    // Set training length based on selected checkbox
                     if (checkbox == twoCharacterCheckbox) charactersInTraining = 2;
                     if (checkbox == threeCharacterCheckbox) charactersInTraining = 3;
                     if (checkbox == fourCharacterCheckbox) charactersInTraining = 4;
                     Log.d("TrainerFragment", "Characters in training set to " + charactersInTraining + ".");
 
-                    // Deselect all other checkboxes in the group
+                    // Deselect all other multi-character checkboxes
                     for (CheckBox otherCheckbox : multiCharacterCheckboxes) {
                         if (otherCheckbox != buttonView) {
                             otherCheckbox.setChecked(false);
                         }
                     }
-                }
-                if(!isChecked){
-                    // Check if all checkboxes in the group are off
+                } else {
                     if (areAllCheckboxesOff(multiCharacterCheckboxes)) {
-                        charactersInTraining = 1; // Default to single-letter training
-                        Log.d("TrainerFragment", "Characters in training set to " + charactersInTraining + ".");
+                        charactersInTraining = 1;
                     }
-            }
+                }
+                saveCheckboxStates();
             });
         }
     }
 
+    /**
+     * Checks if all checkboxes in an array are unchecked.
+     */
     private boolean areAllCheckboxesOff(CheckBox[] checkboxes) {
         for (CheckBox checkbox : checkboxes) {
             if (checkbox.isChecked()) {
@@ -367,6 +411,50 @@ public class TrainerFragment extends Fragment {
         }
         return true; // All checkboxes are off
     }
+
+
+    /**
+     * Saves the checkbox states.
+     */
+    private void saveCheckboxStates() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putBoolean("alphabetCheckbox", alphabetCheckbox.isChecked());
+        editor.putBoolean("basicLettersCheckbox", basicLettersCheckbox.isChecked());
+        editor.putBoolean("intermediateLettersCheckbox", intermediateLettersCheckbox.isChecked());
+        editor.putBoolean("advancedLettersCheckbox", advancedLettersCheckbox.isChecked());
+        editor.putBoolean("rareLettersCheckbox", rareLettersCheckbox.isChecked());
+        editor.putBoolean("numberCheckbox", numberCheckbox.isChecked());
+        editor.putBoolean("specialCharacterCheckbox", specialCharacterCheckbox.isChecked());
+        editor.putBoolean("twoCharacterCheckbox", twoCharacterCheckbox.isChecked());
+        editor.putBoolean("threeCharacterCheckbox", threeCharacterCheckbox.isChecked());
+        editor.putBoolean("fourCharacterCheckbox", fourCharacterCheckbox.isChecked());
+
+        editor.apply();
+        Log.d("TrainerFragment", "Checkbox states saved.");
+    }
+
+    private void loadCheckboxStates() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        // Load values from SharedPreferences (no default value, so it stays false if not set)
+        alphabetCheckbox.setChecked(preferences.getBoolean("alphabetCheckbox", false));
+        basicLettersCheckbox.setChecked(preferences.getBoolean("basicLettersCheckbox", false));
+        intermediateLettersCheckbox.setChecked(preferences.getBoolean("intermediateLettersCheckbox", false));
+        advancedLettersCheckbox.setChecked(preferences.getBoolean("advancedLettersCheckbox", false));
+        rareLettersCheckbox.setChecked(preferences.getBoolean("rareLettersCheckbox", false));
+        numberCheckbox.setChecked(preferences.getBoolean("numberCheckbox", false));
+        specialCharacterCheckbox.setChecked(preferences.getBoolean("specialCharacterCheckbox", false));
+        twoCharacterCheckbox.setChecked(preferences.getBoolean("twoCharacterCheckbox", false));
+        threeCharacterCheckbox.setChecked(preferences.getBoolean("threeCharacterCheckbox", false));
+        fourCharacterCheckbox.setChecked(preferences.getBoolean("fourCharacterCheckbox", false));
+
+        Log.d("TrainerFragment", "Checkbox states loaded: Alphabet=" + alphabetCheckbox.isChecked());
+    }
+
+
+
 
     private void startTrainingSession() {
         Log.d("TrainerFragment", "Starting training session.");
@@ -422,11 +510,6 @@ public class TrainerFragment extends Fragment {
         }
     }
 
-    private String getRandomCharacter() {
-        String characters = getSelectedCharacters();
-        Random random = new Random();
-        return String.valueOf(characters.charAt(random.nextInt(characters.length())));
-    }
 
     public String getRandomWeightedCharacter() {
         int maxSamples = 20;

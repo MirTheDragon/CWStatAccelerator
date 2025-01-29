@@ -74,7 +74,7 @@
             android:padding="8dp"
             android:enabled="false"
             android:layout_marginTop="16dp"
-            android:inputType="text"
+            android:inputType="text|textCapCharacters"
             android:imeOptions="actionDone" />
 
         <TextView

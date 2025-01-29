@@ -2,6 +2,7 @@ package com.example.cwstataccelerator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -69,6 +70,8 @@ public class CallsignTrainerFragment extends Fragment {
     private CheckBox includeSlashCheckbox;
     private CheckBox numbersPlacementCheckbox;
     private CheckBox difficultLettersCheckbox;
+    private static final String PREFS_NAME = "CWSettings";
+    private static final String KEY_SPEED = "speed";
 
     @Nullable
     @Override
@@ -94,9 +97,11 @@ public class CallsignTrainerFragment extends Fragment {
         difficultLettersCheckbox = view.findViewById(R.id.difficult_letters_checkbox);
         startTrainingButton = view.findViewById(R.id.start_training_button);
 
+        // Load saved checkbox states and slider states
+        loadPreferences();
+
         // Set up the callsign length range slider
         setupCallsignLengthRangeSlider();
-
 
         // Input field
         inputField = view.findViewById(R.id.input_field);
@@ -181,26 +186,48 @@ public class CallsignTrainerFragment extends Fragment {
     }
 
     private void setupCallsignLengthRangeSlider() {
-        // Default range: min = 3, max = 10+
-        callsignLengthRangeSlider.setValues(3f, 10f);
+        // Load saved values
+        loadPreferences(); // Ensures minCallsignLength and maxCallsignLength are set correctly
+
+        // Initialize slider values using saved min/max values
+        callsignLengthRangeSlider.setValues((float) minCallsignLength, (float) maxCallsignLength);
+
+        // **Trigger the label update immediately upon initialization**
+        updateCallsignLengthLabel(minCallsignLength, maxCallsignLength);
 
         // Update the label dynamically as the user moves the slider
         callsignLengthRangeSlider.addOnChangeListener((slider, value, fromUser) -> {
             List<Float> values = slider.getValues();
-            int minLength = Math.round(values.get(0));
-            int maxLength = Math.round(values.get(1));
-            String maxText = maxLength == 10 ? "15+ Characters" : maxLength + " Characters";
+            minCallsignLength = Math.round(values.get(0)); // Update local min length
+            maxCallsignLength = Math.round(values.get(1)); // Update local max length
 
-            if(minLength == maxLength && maxLength < 10) {
-                callsignLengthRangeLabel.setText( "Callsign Length: " + maxText + " Characters");
-            } else if (  maxLength == 10){
-                callsignLengthRangeLabel.setText( "Callsign Length: " + minLength + " Characters and Above");
-            } else {
-                callsignLengthRangeLabel.setText( "Callsign Length: " + minLength + " to " + maxLength +" Characters");
-            }
+            // **Call the label update method**
+            updateCallsignLengthLabel(minCallsignLength, maxCallsignLength);
 
+            // Save preferences whenever the slider changes
+            savePreferences();
         });
     }
+
+    /**
+     * Updates the callsign length label dynamically.
+     */
+    private void updateCallsignLengthLabel(int minLength, int maxLength) {
+        String maxText = maxLength == 10 ? "15+ Characters" : maxLength + " Characters";
+
+        if (minLength == maxLength && maxLength < 10) {
+            callsignLengthRangeLabel.setText("Callsign Length: " + maxText);
+        } else if (maxLength == 10) {
+            callsignLengthRangeLabel.setText("Callsign Length: " + minLength + " Characters and Above");
+        } else {
+            callsignLengthRangeLabel.setText("Callsign Length: " + minLength + " to " + maxLength + " Characters");
+        }
+
+        Log.d("CallsignTrainerFragment", "Updated label: " + callsignLengthRangeLabel.getText().toString());
+    }
+
+
+
     private void toggleTraining() {
         Log.d("TrainerFragment", "Toggling training. Current state: " + isTrainingActive);
         isTrainingActive = !isTrainingActive;
@@ -346,8 +373,43 @@ public class CallsignTrainerFragment extends Fragment {
             selectedBuckets.remove("all_criteria");
         }
 
+        // Save checkbox states and slider values
+        savePreferences();
+
         // Log or debug the current selected buckets
         Log.d("TrainerUtils", "Selected Buckets: " + selectedBuckets.toString());
+    }
+
+    private void savePreferences() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        // Save min and max callsign length
+        editor.putInt("minCallsignLength", minCallsignLength);
+        editor.putInt("maxCallsignLength", maxCallsignLength);
+
+        // Save checkbox states
+        editor.putBoolean("includeSlashCheckbox", includeSlashCheckbox.isChecked());
+        editor.putBoolean("numbersPlacementCheckbox", numbersPlacementCheckbox.isChecked());
+        editor.putBoolean("difficultLettersCheckbox", difficultLettersCheckbox.isChecked());
+
+        editor.apply(); // Save changes asynchronously
+        Log.d("CallsignTrainerFragment", "Preferences saved.");
+    }
+
+    private void loadPreferences() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        // Load min and max callsign length
+        minCallsignLength = preferences.getInt("minCallsignLength", 3); // Default to 3
+        maxCallsignLength = preferences.getInt("maxCallsignLength", 6); // Default to 6
+
+        // Load checkbox states
+        includeSlashCheckbox.setChecked(preferences.getBoolean("includeSlashCheckbox", false)); // Default to false
+        numbersPlacementCheckbox.setChecked(preferences.getBoolean("numbersPlacementCheckbox", false)); // Default to false
+        difficultLettersCheckbox.setChecked(preferences.getBoolean("difficultLettersCheckbox", false)); // Default to false
+
+        Log.d("CallsignTrainerFragment", "Preferences loaded.");
     }
 
     private void playNextCallsign(boolean fetchNewCallsign) {

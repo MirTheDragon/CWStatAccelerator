@@ -38,7 +38,7 @@ public class CallsignRecentLogFragment extends Fragment {
         // Register broadcast receiver for updates
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
                 logUpdateReceiver,
-                new IntentFilter("com.example.cwstataccelerator.CALLSIGN_LOG_UPDATED")
+                new IntentFilter("com.example.cwstataccelerator.UPDATE_LOG")
         );
 
         // Populate logs on creation

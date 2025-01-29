@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Status Message -->
+        <TextView
+            android:id="@+id/database_status_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:text="Checking database status..."
+            android:textSize="16sp" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/database_update_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true" />
+
+        <!-- Database Stats -->
+        <TextView
+            android:id="@+id/database_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Database Stats: Loading..."
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <!-- Bucket Summary -->
+        <TextView
+            android:id="@+id/bucket_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textSize="16sp"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls"
+            android:text="Bucket summary will appear here..." />
+
+        <!-- Replace with actual performance history views and recommendation UI -->
+        <TextView
+            android:id="@+id/text_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Home screen. Will add your personal performance statistics here later" />
+
+    </LinearLayout>
+</ScrollView>
