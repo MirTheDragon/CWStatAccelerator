@@ -522,7 +522,7 @@ public class TrainerFragment extends Fragment {
 
         // Get the current character to compare and check correctness
         char expectedChar = currentCharacter.charAt(currentCharacterIndex);
-        boolean isCorrect = enteredChar.length() == 1 && enteredChar.charAt(0) == expectedChar;
+        boolean isCorrect = enteredChar.length() <= charactersInTraining && enteredChar.charAt(currentCharacterIndex) == expectedChar;
 
         // Log the result
         // Calculate the actual response time from when the current character finished playing
@@ -545,7 +545,7 @@ public class TrainerFragment extends Fragment {
         // Check for remaining characters;
         currentCharacterIndex++; // Move to the next character
         int remaining = currentCharacter.length() - currentCharacterIndex;
-        int toastTime = 600;
+        int toastTime = 800;
 
         // Broadcast the update
         Intent intent = new Intent("com.example.cwstataccelerator.UPDATE_LOG");

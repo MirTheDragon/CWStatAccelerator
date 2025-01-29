@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <!-- Callsign Length Range Slider -->
+        <TextView
+            android:id="@+id/callsign_length_range_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Callsign Length: 3 Characters and Above"
+            android:paddingHorizontal="16dp" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/callsign_length_range_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="3"
+            android:valueTo="10"
+            android:stepSize="1" />
+
+        <!-- Callsign Filters -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Callsign Filters"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/include_slash_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Include Slashed Callsigns (e.g. BS7H/M)" />
+
+        <CheckBox
+            android:id="@+id/numbers_placement_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Include Callsigns with Difficult Number Combinations" />
+
+        <CheckBox
+            android:id="@+id/difficult_letters_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Include Difficult Letter Combinations (e.g. SSS)" />
+
+        <!-- Start/Stop Training Button and Countdown Timer -->
+        <Button
+            android:id="@+id/start_training_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="Start Training" />
+
+        <!-- Training Input Field -->
+        <EditText
+            android:id="@+id/input_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Type here"
+            android:padding="8dp"
+            android:enabled="false"
+            android:layout_marginTop="16dp"
+            android:inputType="text"
+            android:imeOptions="actionDone" />
+
+        <TextView
+            android:id="@+id/countdown_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Ready"
+            android:textSize="24sp"
+            android:padding="8dp"
+            android:visibility="gone" />
+
+        <!-- Tabs Section -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -394,9 +394,11 @@ public class CallsignTrainerFragment extends Fragment {
             return;
         }
 
+        int toastTime = 800;
+
         // Ensure the entered callsign is not null or empty
         if (enteredCallsign == null || enteredCallsign.isEmpty()) {
-            ToastUtils.showCustomToast(requireContext(), "👎 No callsign entered!", 800);
+            ToastUtils.showCustomToast(requireContext(), "👎 No callsign entered!", toastTime);
             return;
         }
 
@@ -428,11 +430,11 @@ public class CallsignTrainerFragment extends Fragment {
         String feedbackMessage;
         if (isCorrect) {
             feedbackMessage = "👍 Correct! Callsign matched.";
-            ToastUtils.showCustomToast(requireContext(), feedbackMessage, 800);
+            ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
             playNextCallsign(true); // Move to the next callsign
         } else {
             feedbackMessage = "👎 Incorrect! Try again.";
-            ToastUtils.showCustomToast(requireContext(), feedbackMessage, 1200);
+            ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
             playNextCallsign(false); // Replay the current callsign
         }
     }
