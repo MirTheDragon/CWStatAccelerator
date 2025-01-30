@@ -58,7 +58,7 @@ public class CallsignUtils {
      */
     public static void updateAndSortCallsignDatabase(Context context, ProgressListener listener) {
         final String metaFileName = "master_dta_meta.json";
-        final String hardcodedOnlineDate = "2025-01-02"; // Hardcoded for future reference
+        final String hardcodedOnlineDate = "2025-01-02"; // Fallback date
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -98,7 +98,7 @@ public class CallsignUtils {
                 boolean isMasterDtaUpToDate = localDate != null && onlineDate.equals(localDate);
                 boolean checksumFallback = false;
 
-                // Step 3: Decide if we need to update MASTER.DTA
+                // Step 3: Validate if MASTER.DTA is usable via checksum
                 if (!isMasterDtaUpToDate) {
                     Log.d("CallsignUtils", "MASTER.DTA date mismatch. Falling back to checksum validation...");
                     if (localMasterDtaFile.exists()) {
@@ -112,34 +112,18 @@ public class CallsignUtils {
                     }
                 }
 
-                // If MASTER.DTA is up-to-date, check if buckets need rebuilding
-                if (isMasterDtaUpToDate) {
-                    if (bucketChecksum != null && bucketChecksum.equals(localChecksum)) {
-                        Log.d("CallsignUtils", "Buckets are up-to-date. No processing required.");
-                        listener.onProgressUpdate("Buckets are already up-to-date.", 100);
+                // Step 4: **Extract from QRZ database if no internet and no valid local file**
+                if (!isMasterDtaUpToDate && !localMasterDtaFile.exists()) {
+                    Log.e("CallsignUtils", "No internet and no local MASTER.DTA found. Attempting to extract from QRZ database.");
+
+                    try {
+                        extractMasterDtaFromQrz(context, localMasterDtaFile);
+                        Log.d("CallsignUtils", "MASTER.DTA successfully extracted from QRZ database.");
+                    } catch (IOException e) {
+                        Log.e("CallsignUtils", "Failed to extract MASTER.DTA from QRZ database.", e);
+                        listener.onProgressUpdate("Critical error: No MASTER.DTA available.", 100);
                         return;
                     }
-                }
-
-                // Step 4: Download updated MASTER.DTA if needed
-                if (!isMasterDtaUpToDate) {
-                    listener.onProgressUpdate("Downloading MASTER.DTA...", 30);
-                    File tempMasterFile = new File(context.getFilesDir(), TEMP_FILE_PREFIX + "master_online.txt");
-                    downloadFile(MASTER_DTA_URL, tempMasterFile);
-
-                    // Calculate checksum of the new file
-                    String newChecksum = calculateChecksum(tempMasterFile);
-
-                    // Replace the local MASTER.DTA with the new one
-                    if (localMasterDtaFile.exists()) localMasterDtaFile.delete();
-                    tempMasterFile.renameTo(localMasterDtaFile);
-
-                    // Update meta file with new date and checksum
-                    localDate = onlineDate;
-                    localChecksum = newChecksum;
-
-                    Log.d("CallsignUtils", "MASTER.DTA updated successfully.");
-                    listener.onProgressUpdate("MASTER.DTA updated successfully.", 50);
                 }
 
                 // Step 5: Reset buckets if required
@@ -149,7 +133,7 @@ public class CallsignUtils {
                 if (resetSuccess) {
                     Log.d("CallsignUtils", "Buckets cleared successfully.");
                 } else {
-                    Log.d("CallsignUtils", "Failed to clear buckets.Creating new and proceeding anyway...");
+                    Log.w("CallsignUtils", "Failed to clear buckets. Proceeding anyway...");
                 }
 
                 // Step 6: Parse MASTER.DTA and save into buckets
@@ -181,7 +165,6 @@ public class CallsignUtils {
                     writer.write(metaJson.toString());
                 }
 
-
                 listener.onProgressUpdate("Buckets processed and saved successfully.", 100);
                 Log.d("CallsignUtils", "Buckets processed and saved successfully.");
 
@@ -194,6 +177,8 @@ public class CallsignUtils {
             }
         });
     }
+
+
 
     private static String fetchMasterDtaDateFromHtml() {
         String datePattern = "\\b([A-Z][a-z]+ \\d{1,2}, \\d{4})\\b"; // Matches "January 2, 2025"

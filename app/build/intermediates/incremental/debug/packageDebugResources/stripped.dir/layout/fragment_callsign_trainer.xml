@@ -12,12 +12,47 @@
         android:orientation="vertical"
         android:padding="0dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="0dp">
+
+
+            <CheckBox
+                android:id="@+id/adjust_speed_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fixed WMP"
+                android:checked="true"
+                android:clickable="true" />
+
+            <CheckBox
+                android:id="@+id/fixed_speed_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WPM based on performance"
+                android:checked="true"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <!-- Callsign Filters -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filters"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
+
         <!-- Callsign Length Range Slider -->
         <TextView
             android:id="@+id/callsign_length_range_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Callsign Length: 3 Characters and Above"
+            android:text="Length: 3 Characters and Above"
             android:paddingHorizontal="16dp" />
 
         <com.google.android.material.slider.RangeSlider
@@ -28,29 +63,35 @@
             android:valueTo="10"
             android:stepSize="1" />
 
-        <!-- Callsign Filters -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Callsign Filters"
-            android:textStyle="bold"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="0dp">
 
-        <CheckBox
-            android:id="@+id/standard_callsigns_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Standard Callsigns"
-            android:checked="true"
-            android:clickable="true" />
+            <Spinner
+                android:id="@+id/simple_callsign_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:popupBackground="@android:color/white"
+                android:paddingLeft="8dp"
+                android:background="@android:drawable/editbox_background"
+                android:dropDownWidth="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Simple Callsigns:" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="0dp">
 
             <Spinner
                 android:id="@+id/slashed_callsign_spinner"
@@ -73,7 +114,7 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="0dp">
 
             <Spinner
                 android:id="@+id/difficult_number_spinner"
@@ -95,7 +136,7 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="0dp">
 
             <Spinner
                 android:id="@+id/difficult_letter_spinner"

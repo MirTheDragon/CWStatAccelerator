@@ -47,6 +47,7 @@ drawable ic_speed
 drawable ic_trainer
 drawable side_nav_bar
 id action_settings
+id adjust_speed_checkbox
 id advanced_letters_checkbox
 id alphabet_checkbox
 id app_icon
@@ -62,6 +63,7 @@ id difficult_letter_spinner
 id difficult_number_spinner
 id drawer_layout
 id fab
+id fixed_speed_checkbox
 id four_character_checkbox
 id fragment_container
 id frequency_label
@@ -89,13 +91,13 @@ id number_checkbox
 id ramp_label
 id ramp_seekbar
 id rare_letters_checkbox
+id simple_callsign_spinner
 id slashed_callsign_spinner
 id snr_label
 id snr_seekbar
 id special_character_checkbox
 id speed_label
 id speed_seekbar
-id standard_callsigns_checkbox
 id start_training_button
 id tab_layout
 id table_layout

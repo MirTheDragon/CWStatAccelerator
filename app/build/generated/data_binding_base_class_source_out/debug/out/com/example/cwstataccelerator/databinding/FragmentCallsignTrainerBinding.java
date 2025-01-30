@@ -27,6 +27,9 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final CheckBox adjustSpeedCheckbox;
+
+  @NonNull
   public final TextView callsignLengthRangeLabel;
 
   @NonNull
@@ -42,13 +45,16 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
   public final Spinner difficultNumberSpinner;
 
   @NonNull
+  public final CheckBox fixedSpeedCheckbox;
+
+  @NonNull
   public final EditText inputField;
 
   @NonNull
-  public final Spinner slashedCallsignSpinner;
+  public final Spinner simpleCallsignSpinner;
 
   @NonNull
-  public final CheckBox standardCallsignsCheckbox;
+  public final Spinner slashedCallsignSpinner;
 
   @NonNull
   public final Button startTrainingButton;
@@ -60,21 +66,24 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
   public final ViewPager2 viewPager;
 
   private FragmentCallsignTrainerBinding(@NonNull LinearLayout rootView,
-      @NonNull TextView callsignLengthRangeLabel, @NonNull RangeSlider callsignLengthRangeSlider,
-      @NonNull TextView countdownTimer, @NonNull Spinner difficultLetterSpinner,
-      @NonNull Spinner difficultNumberSpinner, @NonNull EditText inputField,
-      @NonNull Spinner slashedCallsignSpinner, @NonNull CheckBox standardCallsignsCheckbox,
+      @NonNull CheckBox adjustSpeedCheckbox, @NonNull TextView callsignLengthRangeLabel,
+      @NonNull RangeSlider callsignLengthRangeSlider, @NonNull TextView countdownTimer,
+      @NonNull Spinner difficultLetterSpinner, @NonNull Spinner difficultNumberSpinner,
+      @NonNull CheckBox fixedSpeedCheckbox, @NonNull EditText inputField,
+      @NonNull Spinner simpleCallsignSpinner, @NonNull Spinner slashedCallsignSpinner,
       @NonNull Button startTrainingButton, @NonNull TabLayout tabLayout,
       @NonNull ViewPager2 viewPager) {
     this.rootView = rootView;
+    this.adjustSpeedCheckbox = adjustSpeedCheckbox;
     this.callsignLengthRangeLabel = callsignLengthRangeLabel;
     this.callsignLengthRangeSlider = callsignLengthRangeSlider;
     this.countdownTimer = countdownTimer;
     this.difficultLetterSpinner = difficultLetterSpinner;
     this.difficultNumberSpinner = difficultNumberSpinner;
+    this.fixedSpeedCheckbox = fixedSpeedCheckbox;
     this.inputField = inputField;
+    this.simpleCallsignSpinner = simpleCallsignSpinner;
     this.slashedCallsignSpinner = slashedCallsignSpinner;
-    this.standardCallsignsCheckbox = standardCallsignsCheckbox;
     this.startTrainingButton = startTrainingButton;
     this.tabLayout = tabLayout;
     this.viewPager = viewPager;
@@ -107,6 +116,12 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.adjust_speed_checkbox;
+      CheckBox adjustSpeedCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (adjustSpeedCheckbox == null) {
+        break missingId;
+      }
+
       id = R.id.callsign_length_range_label;
       TextView callsignLengthRangeLabel = ViewBindings.findChildViewById(rootView, id);
       if (callsignLengthRangeLabel == null) {
@@ -137,21 +152,27 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.fixed_speed_checkbox;
+      CheckBox fixedSpeedCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (fixedSpeedCheckbox == null) {
+        break missingId;
+      }
+
       id = R.id.input_field;
       EditText inputField = ViewBindings.findChildViewById(rootView, id);
       if (inputField == null) {
         break missingId;
       }
 
-      id = R.id.slashed_callsign_spinner;
-      Spinner slashedCallsignSpinner = ViewBindings.findChildViewById(rootView, id);
-      if (slashedCallsignSpinner == null) {
+      id = R.id.simple_callsign_spinner;
+      Spinner simpleCallsignSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (simpleCallsignSpinner == null) {
         break missingId;
       }
 
-      id = R.id.standard_callsigns_checkbox;
-      CheckBox standardCallsignsCheckbox = ViewBindings.findChildViewById(rootView, id);
-      if (standardCallsignsCheckbox == null) {
+      id = R.id.slashed_callsign_spinner;
+      Spinner slashedCallsignSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (slashedCallsignSpinner == null) {
         break missingId;
       }
 
@@ -173,10 +194,10 @@ public final class FragmentCallsignTrainerBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentCallsignTrainerBinding((LinearLayout) rootView, callsignLengthRangeLabel,
-          callsignLengthRangeSlider, countdownTimer, difficultLetterSpinner, difficultNumberSpinner,
-          inputField, slashedCallsignSpinner, standardCallsignsCheckbox, startTrainingButton,
-          tabLayout, viewPager);
+      return new FragmentCallsignTrainerBinding((LinearLayout) rootView, adjustSpeedCheckbox,
+          callsignLengthRangeLabel, callsignLengthRangeSlider, countdownTimer,
+          difficultLetterSpinner, difficultNumberSpinner, fixedSpeedCheckbox, inputField,
+          simpleCallsignSpinner, slashedCallsignSpinner, startTrainingButton, tabLayout, viewPager);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +48,7 @@ public class CallsignTrainerUtils {
         // Check if the cache needs to be updated
         boolean cacheNeedsUpdate = false;
 
-        // Check if the cache is empty
+        // Check if the cache is empty or parameters changed
         for (String bucket : selectedBuckets) {
             if (!bucketCache.containsKey(bucket) || bucketCache.get(bucket).isEmpty()) {
                 cacheNeedsUpdate = true;
@@ -73,24 +74,143 @@ public class CallsignTrainerUtils {
             Log.d("CallsignTrainerUtils", "Using existing cached callsigns without updating.");
         }
 
-        // Gather callsigns from the selected cached buckets
+
+        // Breakdown log map to count callsigns by length
+        Map<String, Map<Integer, Integer>> bucketBreakdown = new HashMap<>();
         List<String> availableCallsigns = new ArrayList<>();
+
         for (String bucket : selectedBuckets) {
             if (bucketCache.containsKey(bucket)) {
-                availableCallsigns.addAll(bucketCache.get(bucket));
+                List<String> callsigns = bucketCache.get(bucket);
+                availableCallsigns.addAll(callsigns);
+
+                // Log callsigns per bucket
+                Map<Integer, Integer> lengthCount = new HashMap<>();
+                for (String callsign : callsigns) {
+                    int length = callsign.length();
+                    lengthCount.put(length, lengthCount.getOrDefault(length, 0) + 1);
+                }
+
+                bucketBreakdown.put(bucket, lengthCount);
             }
         }
 
-        // Return a random callsign from the available callsigns
+        // Log breakdown details
+        for (Map.Entry<String, Map<Integer, Integer>> entry : bucketBreakdown.entrySet()) {
+            String bucketName = entry.getKey();
+            Map<Integer, Integer> lengthCount = entry.getValue();
+
+            StringBuilder breakdownLog = new StringBuilder("Bucket: " + bucketName + " -> ");
+            for (Map.Entry<Integer, Integer> countEntry : lengthCount.entrySet()) {
+                breakdownLog.append("Length ").append(countEntry.getKey()).append(": ").append(countEntry.getValue()).append(", ");
+            }
+            Log.d("CallsignTrainerUtils", breakdownLog.toString());
+        }
+
+        // Return a random callsign
         if (!availableCallsigns.isEmpty()) {
             Random random = new Random();
             return availableCallsigns.get(random.nextInt(availableCallsigns.size()));
         } else {
             Log.w("CallsignTrainerUtils", "No valid callsigns available in the selected buckets.");
-            return null; // No valid callsigns available
+            return null;
         }
     }
 
+    public static int[] adjustCallsignLengthRange(Context context, List<String> selectedBuckets, int requestedMin, int requestedMax, boolean isTrainingActive) {
+        boolean cacheNeedsUpdate = false;
+        boolean standardHasValidCallsigns = false; // Tracks if `standard_callsigns` has callsigns in range
+
+        // Step 1: Check if cache needs updating
+        for (String bucket : selectedBuckets) {
+            if (!bucketCache.containsKey(bucket) || bucketCache.get(bucket).isEmpty()) {
+                cacheNeedsUpdate = true;
+                break;
+            }
+        }
+
+        if (requestedMin != lastMinLength || requestedMax != lastMaxLength) {
+            cacheNeedsUpdate = true;
+        }
+
+        // Step 2: Update and sort cache if needed
+        if (cacheNeedsUpdate || !isTrainingActive) {
+            Log.d("CallsignUtils", "Cache needs update. Updating now...");
+            boolean updated = updateBucketCache(context, selectedBuckets, requestedMin, requestedMax);
+            if (updated) {
+                Log.d("CallsignUtils", "Cache updated successfully.");
+            } else {
+                Log.w("CallsignUtils", "Failed to update cache or no valid callsigns found.");
+            }
+        } else {
+            Log.d("CallsignUtils", "Using existing cached callsigns without updating.");
+        }
+
+        // Step 3: Verify callsigns in requested range, prioritize `standard_callsigns`
+        int adjustedMin = requestedMin;
+        int adjustedMax = requestedMax;
+        boolean needsAdjustment = false;
+        int totalCallsigns = 0;  // Track total callsigns in final range
+
+        for (String bucket : selectedBuckets) {
+            if (!bucketCache.containsKey(bucket) || bucketCache.get(bucket).isEmpty()) {
+                Log.w("CallsignUtils", "Bucket " + bucket + " is empty after cache update.");
+                continue;
+            }
+
+            List<String> callsigns = bucketCache.get(bucket);
+            callsigns.sort(Comparator.comparingInt(String::length)); // Ensure sorting
+
+            int minInBucket = Integer.MAX_VALUE;
+            int maxInBucket = Integer.MIN_VALUE;
+            int validCount = 0;
+
+            for (String callsign : callsigns) {
+                int length = callsign.length();
+                if (length >= requestedMin && length <= requestedMax) {
+                    validCount++;
+                }
+                minInBucket = Math.min(minInBucket, length);
+                maxInBucket = Math.max(maxInBucket, length);
+            }
+
+            // Log bucket details
+            Log.d("CallsignUtils", "Bucket: " + bucket + " -> Min: " + minInBucket + ", Max: " + maxInBucket + ", Callsigns in range: " + validCount);
+
+            // If the `standard_callsigns` bucket has valid callsigns, stop adjusting
+            if (bucket.equals("standard_callsigns") && validCount > 0) {
+                standardHasValidCallsigns = true;
+            }
+
+            // If bucket has no valid callsigns, adjust range minimally
+            if (validCount == 0 && !standardHasValidCallsigns) {
+                needsAdjustment = true;
+                if (minInBucket > requestedMax) {
+                    adjustedMax = Math.min(adjustedMax, minInBucket);
+                } else if (maxInBucket < requestedMin) {
+                    adjustedMin = Math.max(adjustedMin, maxInBucket);
+                }
+            } else {
+                totalCallsigns += validCount;
+            }
+        }
+
+        // Step 4: Apply minimal adjustments if needed
+        if (needsAdjustment && !standardHasValidCallsigns) {
+            Log.w("CallsignUtils", "Requested min/max range (" + requestedMin + "-" + requestedMax + ") does not cover all selected buckets.");
+            Log.w("CallsignUtils", "Adjusted range: " + adjustedMin + "-" + adjustedMax);
+        } else {
+            Log.d("CallsignUtils", "Requested range is valid. No adjustments needed.");
+        }
+
+        // Step 5: Ensure cache is re-sorted with final range
+        updateBucketCache(context, selectedBuckets, adjustedMin, adjustedMax);
+        Log.d("CallsignUtils", "Final cache updated with sorted callsigns for range " + adjustedMin + "-" + adjustedMax);
+        Log.d("CallsignUtils", "Total callsigns available in adjusted range: " + totalCallsigns);
+
+        // Step 6: Return adjusted range + callsign count
+        return new int[]{adjustedMin, adjustedMax, totalCallsigns};
+    }
 
 
     /**

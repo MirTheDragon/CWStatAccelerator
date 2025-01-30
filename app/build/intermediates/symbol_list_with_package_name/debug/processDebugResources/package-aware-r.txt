@@ -3201,6 +3201,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id adjust_speed_checkbox
 id advanced_letters_checkbox
 id alertTitle
 id aligned
@@ -3338,6 +3339,7 @@ id fitStart
 id fitToContents
 id fitXY
 id fixed
+id fixed_speed_checkbox
 id flip
 id floating
 id forever
@@ -3571,6 +3573,7 @@ id shortcut
 id showCustom
 id showHome
 id showTitle
+id simple_callsign_spinner
 id sin
 id skipCollapsed
 id skipped
@@ -3600,7 +3603,6 @@ id src_atop
 id src_in
 id src_over
 id standard
-id standard_callsigns_checkbox
 id start
 id startHorizontal
 id startToEnd

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.os.SystemClock;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,7 +72,7 @@ public class CallsignTrainerFragment extends Fragment {
     private int minCallsignLength = 3;
 
     private int maxCallsignLength = 6;
-    private CheckBox simpleCallsignCheckbox;
+    private Spinner simpleSpinner;
     private Spinner slashedSpinner;
     private Spinner numberSpinner;
     private Spinner letterSpinner;
@@ -97,7 +98,7 @@ public class CallsignTrainerFragment extends Fragment {
         // Initialize UI elements
         callsignLengthRangeLabel = view.findViewById(R.id.callsign_length_range_label);
         callsignLengthRangeSlider = view.findViewById(R.id.callsign_length_range_slider);
-        simpleCallsignCheckbox = view.findViewById(R.id.standard_callsigns_checkbox);
+        simpleSpinner = view.findViewById(R.id.simple_callsign_spinner);
         slashedSpinner = view.findViewById(R.id.slashed_callsign_spinner);
         numberSpinner = view.findViewById(R.id.difficult_number_spinner);
         letterSpinner = view.findViewById(R.id.difficult_letter_spinner);
@@ -113,10 +114,12 @@ public class CallsignTrainerFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Set adapters to spinners
+        simpleSpinner.setAdapter(adapter);
         slashedSpinner.setAdapter(adapter);
         numberSpinner.setAdapter(adapter);
         letterSpinner.setAdapter(adapter);
 
+        simpleSpinner.setSelection(0);
         slashedSpinner.setSelection(2);
         numberSpinner.setSelection(2);
         letterSpinner.setSelection(2);
@@ -127,7 +130,9 @@ public class CallsignTrainerFragment extends Fragment {
         // Set up the callsign length range slider and checkbox and spinners
         setupCallsignLengthRangeSlider();
         setupListeners();
-        enforceLogicCheckboxSelection(simpleCallsignCheckbox);
+        enforceLogicSpinnerSelection(simpleSpinner);
+        //enforceLogicCheckboxSelection(simpleCallsignCheckbox); // Not necesary to call on load
+        updateSelectedBuckets();
 
         // Input field
         inputField = view.findViewById(R.id.input_field);
@@ -135,14 +140,6 @@ public class CallsignTrainerFragment extends Fragment {
 
         // Log view
         logView = view.findViewById(R.id.log_view);
-
-
-        AdapterView.OnItemSelectedListener updatesimpleCallsignCheckbox = new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updatesimpleCallsignCheckbox();
-            }
-            public void onNothingSelected(AdapterView<?> parent) {}
-        };
 
         // Start/Stop training button
         startTrainingButton = view.findViewById(R.id.start_training_button);
@@ -158,14 +155,6 @@ public class CallsignTrainerFragment extends Fragment {
         trainingHandler = new Handler();
 
         return view;
-    }
-
-    private void updatesimpleCallsignCheckbox() {
-        boolean allExcluded = slashedSpinner.getSelectedItemPosition() == 2 &&
-                numberSpinner.getSelectedItemPosition() == 2 &&
-                letterSpinner.getSelectedItemPosition() == 2;
-
-        simpleCallsignCheckbox.setChecked(allExcluded);
     }
 
     private void setupTabsAndViewPager(View view) {
@@ -245,11 +234,11 @@ public class CallsignTrainerFragment extends Fragment {
         String maxText = maxLength == 10 ? "15+ Characters" : maxLength + " Characters";
 
         if (minLength == maxLength && maxLength < 10) {
-            callsignLengthRangeLabel.setText("Callsign Length: " + maxText);
+            callsignLengthRangeLabel.setText("Length: " + maxText);
         } else if (maxLength == 10) {
-            callsignLengthRangeLabel.setText("Callsign Length: " + minLength + " Characters and Above");
+            callsignLengthRangeLabel.setText("Length: " + minLength + " Characters and Above");
         } else {
-            callsignLengthRangeLabel.setText("Callsign Length: " + minLength + " to " + maxLength + " Characters");
+            callsignLengthRangeLabel.setText("Length: " + minLength + " to " + maxLength + " Characters");
         }
 
         Log.d("CallsignTrainerFragment", "Updated label: " + callsignLengthRangeLabel.getText().toString());
@@ -257,21 +246,9 @@ public class CallsignTrainerFragment extends Fragment {
 
 
     private void setupListeners() {
-        // Set up checkbox listeners
-        CheckBox[] checkboxes = {
-                simpleCallsignCheckbox
-        };
-        for (CheckBox checkbox : checkboxes) {
-            checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                Log.d("CallsignTrainerFragment", "Checkbox changed: " + buttonView.getId() + " -> " + isChecked);
-                enforceLogicCheckboxSelection(checkbox);
-                updateSelectedBuckets();
-                savePreferences();
-            });
-        }
         // Set up spinner listeners
         Spinner[] spinners = {
-                slashedSpinner, numberSpinner, letterSpinner
+                simpleSpinner, slashedSpinner, numberSpinner, letterSpinner
         };
         for (Spinner spinner : spinners) {
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -291,64 +268,87 @@ public class CallsignTrainerFragment extends Fragment {
     }
 
     private void enforceLogicSpinnerSelection(Spinner changedSpinner) {
+        Activity activity = getActivity();
+        if (!isAdded() || getActivity() == null) { // Prevents crash
+            Log.w("CallsignTrainerFragment", "Fragment not attached. Skipping enforceLogicSpinnerSelection.");
+            return;
+        }
+
         boolean hasOnlySelected = changedSpinner.getSelectedItem().toString().equals("Only");
         boolean hasIncludeSelected = changedSpinner.getSelectedItem().toString().equals("Include");
+        boolean hasExcludeSelected = changedSpinner.getSelectedItem().toString().equals("Exclude");
 
         Log.d("CallsignTrainerFragment", "Spinner changed to " + changedSpinner.getSelectedItem().toString());
 
-
         Spinner[] spinners = {slashedSpinner, numberSpinner, letterSpinner};
+        boolean allExcluded = slashedSpinner.getSelectedItem().toString().equals("Exclude")
+                            && numberSpinner.getSelectedItem().toString().equals("Exclude")
+                            && letterSpinner.getSelectedItem().toString().equals("Exclude");
+        boolean simpleExcluded = simpleSpinner.getSelectedItem().toString().equals("Exclude");
 
-        for (Spinner spinner : spinners) {
-            String selectedValue = spinner.getSelectedItem().toString();
 
-            if (hasOnlySelected && selectedValue.equals("Include")) {
-                spinner.setSelection(1, true);
-            } else
-            if (hasIncludeSelected && selectedValue.equals("Only")) {
-                spinner.setSelection(0, true);
+        activity.runOnUiThread(() -> {
+            if (changedSpinner == simpleSpinner) {
+                if (allExcluded) {
+                    simpleSpinner.setSelection(1, true);
+                } else {
+                    for (Spinner spinner : spinners) {
+                        String selectedValue = spinner.getSelectedItem().toString();
+
+                        if (hasOnlySelected) {
+                            spinner.setSelection(2, true);
+                        } else if (hasIncludeSelected && selectedValue.equals("Only")) {
+                            spinner.setSelection(0, true);
+                        }
+                    }
+                }
+            } else {
+                if (hasExcludeSelected && allExcluded && simpleExcluded) {
+                    changedSpinner.setSelection(1, true);
+                }
+                if (hasOnlySelected) {
+                    simpleSpinner.setSelection(2, true);
+                } else if (hasIncludeSelected && simpleSpinner.getSelectedItem().toString().equals("Only")) {
+                    simpleSpinner.setSelection(0, true);
+                }
+                for (Spinner spinner : spinners) {
+                    String selectedValue = spinner.getSelectedItem().toString();
+
+                    if (hasOnlySelected && selectedValue.equals("Include")) {
+                        spinner.setSelection(1, true);
+                    } else if (hasIncludeSelected && selectedValue.equals("Only")) {
+                        spinner.setSelection(0, true);
+                    }
+                }
             }
-        }
-
-        // If any spinner is set to "Only", disable the standard callsign checkbox
-        if (hasIncludeSelected) {
-            simpleCallsignCheckbox.setChecked(true);
-        } else {
-            simpleCallsignCheckbox.setChecked(false);
-        }
+        });
     }
-
-    private void enforceLogicCheckboxSelection(CheckBox checkBox) {
-        boolean isChecked = checkBox.isChecked();
-
-        Log.d("CallsignTrainerFragment", "Checkbox changed: " + checkBox.getId() + " -> " + isChecked);
-
-        Spinner[] spinners = {slashedSpinner, numberSpinner, letterSpinner};
-
-        for (Spinner spinner : spinners) {
-            String selectedValue = spinner.getSelectedItem().toString();
-
-            // If standard callsigns is selected, reset any "Only" selections to "Include"
-            if (isChecked && selectedValue.equals("Only")) {
-                spinner.setSelection(0, true); // Assume "Only" is at index 1
-            } else
-            // If standard callsigns is not selected, reset any "include" selections to "Only"
-            if (!isChecked && selectedValue.equals("Include")) {
-                spinner.setSelection(1, true); // Assume "Include" is at index 0
-            }
-        }
-    }
-
 
     private void toggleTraining() {
-        Log.d("TrainerFragment", "Toggling training. Current state: " + isTrainingActive);
+        Log.d("CallsignTrainerFragment", "Toggling training. Current state: " + isTrainingActive);
         isTrainingActive = !isTrainingActive;
 
         if (isTrainingActive) {
-            Log.d("TrainerFragment", "Training activated.");
+            // Adjust callsign range before starting
+            int[] adjustedData = CallsignTrainerUtils.adjustCallsignLengthRange(getContext(), selectedBuckets, minCallsignLength, maxCallsignLength, true);
+            int newMin = adjustedData[0];
+            int newMax = adjustedData[1];
+            int totalCallsigns = adjustedData[2];
+
+            // Apply adjustments to UI if necessary
+            if (newMin != minCallsignLength || newMax != maxCallsignLength) {
+                callsignLengthRangeSlider.setValueFrom(newMin);
+                callsignLengthRangeSlider.setValueTo(newMax);
+
+                String message = "Range adjusted to " + newMin + " - " + newMax + " (Total: " + totalCallsigns + " callsigns)";
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                Log.w("CallsignUtils", message);
+            }
+
+            Log.d("CallsignTrainerFragment", "Training activated.");
             startTrainingButton.setEnabled(false);
             startCountdown(() -> {
-                Log.d("TrainerFragment", "Countdown finished. Starting training.");
+                Log.d("CallsignTrainerFragment", "Countdown finished. Starting training.");
                 startTrainingButton.setText("Stop Training");
                 startTrainingButton.setEnabled(true);
 
@@ -360,7 +360,7 @@ public class CallsignTrainerFragment extends Fragment {
                 startTrainingSession(); // Start training logic
             });
         } else {
-            Log.d("TrainerFragment", "Training deactivated.");
+            Log.d("CallsignTrainerFragment", "Training deactivated.");
             startTrainingButton.setText("Start Training");
             inputField.setEnabled(false); // Disable the input field
             hideKeyboard(inputField); // Hide the keyboard
@@ -369,12 +369,12 @@ public class CallsignTrainerFragment extends Fragment {
     }
 
     private void startCountdown(Runnable onComplete) {
-        Log.d("TrainerFragment", "Starting countdown.");
+        Log.d("CallsignTrainerFragment", "Starting countdown.");
         new Thread(() -> {
             for (int i = 3; i > 0; i--) {
                 int finalI = i;
                 requireActivity().runOnUiThread(() -> {
-                    Log.d("TrainerFragment", "Countdown: " + finalI);
+                    Log.d("CallsignTrainerFragment", "Countdown: " + finalI);
                     startTrainingButton.setText("Starting in " + finalI + "...");
                 });
                 try {
@@ -384,7 +384,7 @@ public class CallsignTrainerFragment extends Fragment {
                 }
             }
             requireActivity().runOnUiThread(() -> {
-                Log.d("TrainerFragment", "Countdown complete.");
+                Log.d("CallsignTrainerFragment", "Countdown complete.");
                 onComplete.run();
             });
         }).start();
@@ -418,7 +418,7 @@ public class CallsignTrainerFragment extends Fragment {
         isTrainingActive = true;
         toggleInputFields(false); // Disable inputs
 
-        Log.d("TrainerFragment", "Starting training session.");
+        Log.d("CallsignTrainerFragment", "Starting training session.");
         playNextCallsign(true);
     }
 
@@ -432,7 +432,7 @@ public class CallsignTrainerFragment extends Fragment {
 
     private void toggleInputFields(boolean enabled) {
         // Enable/disable the checkboxes and slider
-        simpleCallsignCheckbox.setEnabled(enabled);
+        simpleSpinner.setEnabled(enabled);
         slashedSpinner.setEnabled(enabled);
         numberSpinner.setEnabled(enabled);
         letterSpinner.setEnabled(enabled);
@@ -453,48 +453,68 @@ public class CallsignTrainerFragment extends Fragment {
     private void updateSelectedBuckets() {
         selectedBuckets.clear();
 
+        short callsignDifficultyOnly = 0;
+        boolean isSlashedOnly = slashedSpinner.getSelectedItem().toString().equals("Only");
+        boolean hasNumbersOnly = numberSpinner.getSelectedItem().toString().equals("Only");
+        boolean hasLettersOnly = letterSpinner.getSelectedItem().toString().equals("Only");
+
+        short callsignDifficultyInclude = 0;
+        boolean isSlashedIncluded = slashedSpinner.getSelectedItem().toString().equals("Include");
+        boolean hasNumbersIncluded= numberSpinner.getSelectedItem().toString().equals("Include");
+        boolean hasLettersIncluded = letterSpinner.getSelectedItem().toString().equals("Include");
+
+        if (isSlashedOnly) callsignDifficultyOnly++;
+        if (hasNumbersOnly) callsignDifficultyOnly++;
+        if (hasLettersOnly) callsignDifficultyOnly++;
+
+        if (isSlashedIncluded) callsignDifficultyInclude++;
+        if (hasNumbersIncluded) callsignDifficultyInclude++;
+        if (hasLettersIncluded) callsignDifficultyInclude++;
+
+        if (callsignDifficultyOnly > 0 && callsignDifficultyInclude > 0) {
+            Log.d("CallsignTrainerUtils", "Error in interface logic for selected buckets, continuing anyway...");
+        }
         // Default to standard callsigns
-        if (simpleCallsignCheckbox.isChecked()) {
-            selectedBuckets.add("standard_callsigns");
-        } else {
+        if (callsignDifficultyOnly > 0) {
             selectedBuckets.remove("standard_callsigns");
+        } else {
+            selectedBuckets.add("standard_callsigns");
         }
 
-        short callsignDifficulty = 0;
-        boolean isSlashed = slashedSpinner.getSelectedItem().toString().equals("Only") || slashedSpinner.getSelectedItem().toString().equals("Include");
-        boolean hasNumbers = numberSpinner.getSelectedItem().toString().equals("Only") || numberSpinner.getSelectedItem().toString().equals("Include");
-        boolean hasLetters = letterSpinner.getSelectedItem().toString().equals("Only") || letterSpinner.getSelectedItem().toString().equals("Include");
+        if (callsignDifficultyInclude > 0) {
+            if(isSlashedIncluded) selectedBuckets.add("slashes_only");
+            if (hasNumbersIncluded) selectedBuckets.add("difficult_numbers");
+            if (hasLettersIncluded) selectedBuckets.add("difficult_letters");
+            if (isSlashedIncluded && hasNumbersIncluded) selectedBuckets.add("slashes_and_numbers");
+            if (hasNumbersIncluded && hasLettersIncluded) selectedBuckets.add("numbers_and_letters");
+            if (hasLettersIncluded && isSlashedIncluded) selectedBuckets.add("slashes_and_letters");
+            if (isSlashedIncluded && hasNumbersIncluded && hasLettersIncluded) selectedBuckets.add("all_criteria");
+        }
 
-        if (isSlashed) callsignDifficulty++;
-        if (hasNumbers) callsignDifficulty++;
-        if (hasLetters) callsignDifficulty++;
-
-        switch (callsignDifficulty) {
-            case 0:
-                selectedBuckets.add("standard_callsigns");
-                break;
+        switch (callsignDifficultyOnly) {
             case 1:
-                if (isSlashed) {
-                    selectedBuckets.add("difficult_slashed");
-                } else if (hasNumbers) {
+                if (isSlashedOnly) {
+                    selectedBuckets.add("slashes_only");
+                } else if (hasNumbersOnly) {
                     selectedBuckets.add("difficult_numbers");
-                } else if (hasLetters) {
+                } else if (hasLettersOnly) {
                     selectedBuckets.add("difficult_letters");
                 }
                 break;
             case 2:
-                if (isSlashed && hasNumbers) {
-                    selectedBuckets.add("slashed_and_numbers");
-                } else if (hasNumbers && hasLetters) {
+                if (isSlashedOnly && hasNumbersOnly) {
+                    selectedBuckets.add("slashes_and_numbers");
+                } else if (hasNumbersOnly && hasLettersOnly) {
                     selectedBuckets.add("numbers_and_letters");
-                } else if (hasLetters && isSlashed) {
+                } else if (hasLettersOnly && isSlashedOnly) {
                     selectedBuckets.add("slashes_and_letters");
                 }
                 break;
-            default:
+            case 3:
                 selectedBuckets.add("all_criteria");
                 break;
         }
+
 
         // Log or debug the selected buckets
         Log.d("CallsignTrainerUtils", "Selected Buckets: " + selectedBuckets.toString());
@@ -509,8 +529,8 @@ public class CallsignTrainerFragment extends Fragment {
         editor.putInt("minCallsignLength", minCallsignLength);
         editor.putInt("maxCallsignLength", maxCallsignLength);
 
-        // Save checkbox states
-        editor.putBoolean("standardCallsignsCheckbox", simpleCallsignCheckbox.isChecked());
+        // Save simple callsign selection
+        editor.putInt("simpeleCallsignSelection", simpleSpinner.getSelectedItemPosition());
 
         // Save dropdown selections
         editor.putInt("slashedCallsignsSelection", slashedSpinner.getSelectedItemPosition());
@@ -529,12 +549,12 @@ public class CallsignTrainerFragment extends Fragment {
         maxCallsignLength = preferences.getInt("maxCallsignLength", 6);
 
         // Load checkbox states
-        simpleCallsignCheckbox.setChecked(preferences.getBoolean("standardCallsignsCheckbox", true));
+        simpleSpinner.setSelection(preferences.getInt("simpeleCallsignSelection", 0), true);
 
         // Load dropdown selections
-        slashedSpinner.setSelection(preferences.getInt("slashedCallsignsSelection", 2), true);
-        numberSpinner.setSelection(preferences.getInt("numberCombinationsSelection", 2), true);
-        letterSpinner.setSelection(preferences.getInt("letterCombinationsSelection", 2), true);
+        slashedSpinner.setSelection(preferences.getInt("slashedCallsignsSelection", 0), true);
+        numberSpinner.setSelection(preferences.getInt("numberCombinationsSelection", 0), true);
+        letterSpinner.setSelection(preferences.getInt("letterCombinationsSelection", 0), true);
 
         Log.d("CallsignTrainerFragment", "Preferences loaded successfully.");
     }
@@ -543,12 +563,20 @@ public class CallsignTrainerFragment extends Fragment {
     private void playNextCallsign(boolean fetchNewCallsign) {
         try {
             if (fetchNewCallsign) {
+
+                // CHeck if callsigns can be extremely long
+                int openEndedCallsignLength = maxCallsignLength;
+
+                if ( openEndedCallsignLength >= 10) {
+                    openEndedCallsignLength = 100;
+                }
+
                 // Use TrainerUtils to fetch a random callsign
                 currentCallsign = CallsignTrainerUtils.getRandomCallsign(
                         getContext(),
                         selectedBuckets,
                         minCallsignLength,
-                        maxCallsignLength,
+                        openEndedCallsignLength,
                         isTrainingActive);
 
                 if (currentCallsign == null || currentCallsign.isEmpty()) {
