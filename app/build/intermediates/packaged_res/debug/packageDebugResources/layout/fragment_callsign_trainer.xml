@@ -21,15 +21,15 @@
 
 
             <CheckBox
-                android:id="@+id/adjust_speed_checkbox"
+                android:id="@+id/fixed_speed_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fixed WMP"
+                android:text="Fixed WPM"
                 android:checked="true"
                 android:clickable="true" />
 
             <CheckBox
-                android:id="@+id/fixed_speed_checkbox"
+                android:id="@+id/adjust_speed_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="WPM based on performance"
@@ -75,7 +75,7 @@
                 android:id="@+id/simple_callsign_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:popupBackground="@android:color/white"
+                android:popupBackground="?attr/colorSurface"
                 android:paddingLeft="8dp"
                 android:background="?attr/colorSurface"
                 android:textColor="?attr/colorOnSurface"
@@ -99,7 +99,7 @@
                 android:id="@+id/slashed_callsign_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:popupBackground="@android:color/white"
+                android:popupBackground="?attr/colorSurface"
                 android:paddingLeft="8dp"
                 android:background="?attr/colorSurface"
                 android:textColor="?attr/colorOnSurface"
@@ -123,7 +123,7 @@
                 android:id="@+id/difficult_number_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:popupBackground="@android:color/white"
+                android:popupBackground="?attr/colorSurface"
                 android:paddingLeft="8dp"
                 android:background="?attr/colorSurface"
                 android:textColor="?attr/colorOnSurface"
@@ -146,7 +146,7 @@
                 android:id="@+id/difficult_letter_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:popupBackground="@android:color/white"
+                android:popupBackground="?attr/colorSurface"
                 android:paddingLeft="8dp"
                 android:background="?attr/colorSurface"
                 android:textColor="?attr/colorOnSurface"
