@@ -136,6 +136,7 @@ public class CallsignTrainerFragment extends Fragment {
         // Log view
         logView = view.findViewById(R.id.log_view);
 
+
         AdapterView.OnItemSelectedListener updatesimpleCallsignCheckbox = new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updatesimpleCallsignCheckbox();
