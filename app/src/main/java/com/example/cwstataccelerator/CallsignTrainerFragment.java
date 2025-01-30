@@ -231,11 +231,11 @@ public class CallsignTrainerFragment extends Fragment {
      * Updates the callsign length label dynamically.
      */
     private void updateCallsignLengthLabel(int minLength, int maxLength) {
-        String maxText = maxLength == 10 ? "15+ Characters" : maxLength + " Characters";
+        String maxText = maxLength == 8 ? "8+ Characters" : maxLength + " Characters";
 
-        if (minLength == maxLength && maxLength < 10) {
+        if (minLength == maxLength && maxLength < 8) {
             callsignLengthRangeLabel.setText("Length: " + maxText);
-        } else if (maxLength == 10) {
+        } else if (maxLength == 8) {
             callsignLengthRangeLabel.setText("Length: " + minLength + " Characters and Above");
         } else {
             callsignLengthRangeLabel.setText("Length: " + minLength + " to " + maxLength + " Characters");
@@ -454,11 +454,13 @@ public class CallsignTrainerFragment extends Fragment {
         selectedBuckets.clear();
 
         short callsignDifficultyOnly = 0;
+        boolean isSimpleOnly = simpleSpinner.getSelectedItem().toString().equals("Only");
         boolean isSlashedOnly = slashedSpinner.getSelectedItem().toString().equals("Only");
         boolean hasNumbersOnly = numberSpinner.getSelectedItem().toString().equals("Only");
         boolean hasLettersOnly = letterSpinner.getSelectedItem().toString().equals("Only");
 
         short callsignDifficultyInclude = 0;
+        boolean isSimpleIncluded = simpleSpinner.getSelectedItem().toString().equals("Include");
         boolean isSlashedIncluded = slashedSpinner.getSelectedItem().toString().equals("Include");
         boolean hasNumbersIncluded= numberSpinner.getSelectedItem().toString().equals("Include");
         boolean hasLettersIncluded = letterSpinner.getSelectedItem().toString().equals("Include");
@@ -475,10 +477,10 @@ public class CallsignTrainerFragment extends Fragment {
             Log.d("CallsignTrainerUtils", "Error in interface logic for selected buckets, continuing anyway...");
         }
         // Default to standard callsigns
-        if (callsignDifficultyOnly > 0) {
-            selectedBuckets.remove("standard_callsigns");
-        } else {
+        if (isSimpleOnly || isSimpleIncluded) {
             selectedBuckets.add("standard_callsigns");
+        } else {
+            selectedBuckets.remove("standard_callsigns");
         }
 
         if (callsignDifficultyInclude > 0) {

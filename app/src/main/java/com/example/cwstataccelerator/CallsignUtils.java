@@ -85,6 +85,7 @@ public class CallsignUtils {
                         bucketChecksum = metaJson.optString("bucket_checksum", null);
                     }
                 }
+                Log.d("CallsignUtils", "Loaded metadata: Local Date=" + localDate + ", Local Checksum=" + localChecksum + ", Bucket Checksum=" + bucketChecksum);
 
                 // Step 2: Fetch the online MASTER.DTA date
                 listener.onProgressUpdate("Checking for updates to MASTER.DTA...", 20);
@@ -92,51 +93,72 @@ public class CallsignUtils {
 
                 if (onlineDate == null) {
                     Log.w("CallsignUtils", "Failed to fetch MASTER.DTA date from HTML. Using hardcoded date.");
-                    onlineDate = hardcodedOnlineDate; // Default to hardcoded date
+                    onlineDate = hardcodedOnlineDate;
                 }
+                Log.d("CallsignUtils", "Stored date: " + localDate + ", Online date: " + onlineDate);
 
+                // Step 3: Determine if the local MASTER.DTA is up to date
                 boolean isMasterDtaUpToDate = localDate != null && onlineDate.equals(localDate);
                 boolean checksumFallback = false;
+                String newChecksum = null;
 
-                // Step 3: Validate if MASTER.DTA is usable via checksum
-                if (!isMasterDtaUpToDate) {
+                // Step 4: If date check fails, verify via checksum
+                if (!isMasterDtaUpToDate && localMasterDtaFile.exists()) {
                     Log.d("CallsignUtils", "MASTER.DTA date mismatch. Falling back to checksum validation...");
-                    if (localMasterDtaFile.exists()) {
-                        String newChecksum = calculateChecksum(localMasterDtaFile);
-                        checksumFallback = localChecksum != null && localChecksum.equals(newChecksum);
+                    newChecksum = calculateChecksum(localMasterDtaFile);
+                    Log.d("CallsignUtils", "Stored checksum: " + localChecksum + ", Calculated checksum: " + newChecksum);
 
-                        if (checksumFallback) {
-                            Log.d("CallsignUtils", "Checksum validation confirms MASTER.DTA is up-to-date.");
+                    if (localChecksum != null && localChecksum.equals(newChecksum)) {
+                        Log.d("CallsignUtils", "Checksum validation confirms MASTER.DTA is up-to-date.");
+                        isMasterDtaUpToDate = true;
+                    }
+                }
+
+                // Step 5: Download new MASTER.DTA only if it's outdated
+                if (!isMasterDtaUpToDate) {
+                    listener.onProgressUpdate("Downloading MASTER.DTA...", 30);
+                    File tempMasterFile = new File(context.getFilesDir(), "temp_master.dta");
+                    boolean downloadSuccess = downloadFile(MASTER_DTA_URL, tempMasterFile);
+
+                    if (downloadSuccess) {
+                        String downloadedChecksum = calculateChecksum(tempMasterFile);
+                        Log.d("CallsignUtils", "Downloaded checksum: " + downloadedChecksum);
+
+                        if (localChecksum != null && localChecksum.equals(downloadedChecksum)) {
+                            Log.d("CallsignUtils", "Downloaded MASTER.DTA is identical to the existing one. Skipping update.");
+                            tempMasterFile.delete();
                             isMasterDtaUpToDate = true;
+                        } else {
+                            Log.d("CallsignUtils", "New MASTER.DTA detected. Replacing existing file.");
+                            if (localMasterDtaFile.exists()) localMasterDtaFile.delete();
+                            tempMasterFile.renameTo(localMasterDtaFile);
+                            newChecksum = downloadedChecksum;
                         }
+                    } else {
+                        Log.w("CallsignUtils", "Failed to download MASTER.DTA. Checking if a valid local copy exists.");
                     }
                 }
 
-                // Step 4: **Extract from QRZ database if no internet and no valid local file**
-                if (!isMasterDtaUpToDate && !localMasterDtaFile.exists()) {
-                    Log.e("CallsignUtils", "No internet and no local MASTER.DTA found. Attempting to extract from QRZ database.");
+                // Step 6: Check bucket validity
+                boolean bucketsAreValid = areBucketsValid(context);
+                String currentBucketChecksum = calculateBucketChecksum(context);
 
-                    try {
-                        extractMasterDtaFromQrz(context, localMasterDtaFile);
-                        Log.d("CallsignUtils", "MASTER.DTA successfully extracted from QRZ database.");
-                    } catch (IOException e) {
-                        Log.e("CallsignUtils", "Failed to extract MASTER.DTA from QRZ database.", e);
-                        listener.onProgressUpdate("Critical error: No MASTER.DTA available.", 100);
+                if (isMasterDtaUpToDate) {
+                    if (bucketsAreValid && currentBucketChecksum != null && currentBucketChecksum.equals(bucketChecksum)) {
+                        Log.d("CallsignUtils", "Database and buckets are up-to-date. Skipping rebuild.");
+                        listener.onProgressUpdate("Database and buckets are already up-to-date.", 100);
                         return;
+                    } else {
+                        Log.w("CallsignUtils", "Buckets are missing or checksum mismatch. Rebuilding buckets.");
                     }
                 }
 
-                // Step 5: Reset buckets if required
+                // Step 7: Reset and update buckets
                 listener.onProgressUpdate("Clearing old buckets...", 60);
                 boolean resetSuccess = resetBuckets(context);
+                Log.d("CallsignUtils", "Bucket reset status: " + resetSuccess);
 
-                if (resetSuccess) {
-                    Log.d("CallsignUtils", "Buckets cleared successfully.");
-                } else {
-                    Log.w("CallsignUtils", "Failed to clear buckets. Proceeding anyway...");
-                }
-
-                // Step 6: Parse MASTER.DTA and save into buckets
+                // Step 8: Parse MASTER.DTA and save into buckets
                 listener.onProgressUpdate("Parsing MASTER.DTA and sorting into buckets...", 70);
                 Map<String, Object> parseResults = parseMasterDtaFile(context, localMasterDtaFile);
                 if (parseResults.containsKey("error")) {
@@ -152,14 +174,14 @@ public class CallsignUtils {
                     return;
                 }
 
-                Log.d("CallsignUtils", "Passing " + parsedCallsigns.size() + " callsigns to processAndSaveBuckets...");
+                Log.d("CallsignUtils", "Processing " + parsedCallsigns.size() + " callsigns...");
                 processAndSaveBuckets(context, parsedCallsigns);
 
-                // Step 7: Update the meta file with new bucket version
+                // Step 9: Update meta file
                 JSONObject metaJson = new JSONObject();
-                metaJson.put("date", localDate);
-                metaJson.put("checksum", localChecksum);
-                metaJson.put("bucket_checksum", localChecksum); // Use the MASTER.DTA checksum for buckets
+                metaJson.put("date", onlineDate);
+                metaJson.put("checksum", newChecksum);
+                metaJson.put("bucket_checksum", calculateBucketChecksum(context));  // New: Store bucket checksum
 
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(metaFile))) {
                     writer.write(metaJson.toString());
@@ -167,15 +189,55 @@ public class CallsignUtils {
 
                 listener.onProgressUpdate("Buckets processed and saved successfully.", 100);
                 Log.d("CallsignUtils", "Buckets processed and saved successfully.");
-
-                // **Broadcast an update event**
-                Intent intent = new Intent("com.example.cwstataccelerator.DATABASE_UPDATED");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             } catch (Exception e) {
                 Log.e("CallsignUtils", "An error occurred: " + e.getMessage(), e);
                 listener.onProgressUpdate("An error occurred: " + e.getMessage(), 100);
             }
         });
+    }
+
+
+    private static boolean areBucketsValid(Context context) {
+        String[] bucketFiles = {
+                "standard_callsigns.txt",
+                "slashes_only.txt",
+                "difficult_numbers.txt",
+                "slashes_and_numbers.txt",
+                "slashes_and_letters.txt",
+                "all_criteria.txt",
+                "difficult_letters.txt",
+                "numbers_and_letters.txt"
+        };
+
+        File filesDir = new File(context.getFilesDir(), BUCKET_DIRECTORY);
+
+        if (!filesDir.exists()) {
+            Log.w("CallsignUtils", "Bucket directory does not exist.");
+            return false;
+        }
+
+        boolean allBucketsValid = true;
+
+        for (String bucket : bucketFiles) {
+            File file = new File(filesDir, bucket);
+            if (!file.exists()) {
+                Log.w("CallsignUtils", "Bucket missing: " + bucket);
+                allBucketsValid = false;
+            } else if (file.length() == 0) {
+                Log.w("CallsignUtils", "Bucket is empty: " + bucket);
+                allBucketsValid = false;
+            } else {
+                Log.d("CallsignUtils", "Bucket exists and is non-empty: " + bucket);
+            }
+        }
+
+        if (allBucketsValid) {
+            Log.d("CallsignUtils", "All buckets exist and are valid.");
+        } else {
+            Log.w("CallsignUtils", "Some buckets are missing or incomplete.");
+        }
+
+        return allBucketsValid;
     }
 
 
@@ -237,7 +299,7 @@ public class CallsignUtils {
     }
 
 
-    private static void downloadFile(String fileUrl, File destinationFile) throws IOException {
+    private static boolean downloadFile(String fileUrl, File destinationFile) {
         HttpURLConnection connection = null;
         try {
             URL url = new URL(fileUrl);
@@ -257,15 +319,22 @@ public class CallsignUtils {
                         outputStream.write(buffer, 0, bytesRead);
                     }
                 }
+                Log.d("CallsignUtils", "Download successful: " + destinationFile.getAbsolutePath());
+                return true;  // ✅ Return true on success
             } else {
-                throw new IOException("Failed to download file: HTTP " + connection.getResponseCode());
+                Log.e("CallsignUtils", "Failed to download file: HTTP " + connection.getResponseCode());
+                return false; // ✅ Return false on failure
             }
+        } catch (IOException e) {
+            Log.e("CallsignUtils", "Error downloading file: " + e.getMessage());
+            return false; // ✅ Return false on failure
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
     }
+
 
     public static String calculateChecksum(File file) throws IOException, NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -282,6 +351,43 @@ public class CallsignUtils {
             checksumHex.append(String.format("%02x", b));
         }
         return checksumHex.toString();
+    }
+
+    private static String calculateBucketChecksum(Context context) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            File bucketDir = new File(context.getFilesDir(), BUCKET_DIRECTORY);
+            File[] bucketFiles = bucketDir.listFiles();
+
+            if (bucketFiles == null || bucketFiles.length == 0) {
+                Log.w("CallsignUtils", "No bucket files found for checksum calculation.");
+                return null;
+            }
+
+            for (File bucketFile : bucketFiles) {
+                if (bucketFile.isFile() && bucketFile.length() > 0) {
+                    try (FileInputStream fis = new FileInputStream(bucketFile)) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = fis.read(buffer)) != -1) {
+                            digest.update(buffer, 0, bytesRead);
+                        }
+                    }
+                }
+            }
+
+            byte[] checksumBytes = digest.digest();
+            StringBuilder checksumHex = new StringBuilder();
+            for (byte b : checksumBytes) {
+                checksumHex.append(String.format("%02x", b));
+            }
+
+            Log.d("CallsignUtils", "Computed bucket checksum: " + checksumHex.toString());
+            return checksumHex.toString();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            Log.e("CallsignUtils", "Failed to calculate bucket checksum.", e);
+            return null;
+        }
     }
 
 
@@ -400,8 +506,6 @@ public class CallsignUtils {
     }
 
 
-
-
     /**
      * Determines if a string is a valid callsign.
      *
@@ -435,22 +539,6 @@ public class CallsignUtils {
         if (!databaseDir.exists()) {
             databaseDir.mkdir();
         }
-    }
-
-    /**
-     * Fetch callsigns from a URL with retries.
-     */
-    private static boolean fetchCallsignsToFileWithRetries(String url, File outputFile) {
-        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-            try {
-                Log.d("CallsignUtils", "Attempting to fetch from " + url + " (Attempt " + attempt + ")...");
-                fetchCallsignsToFile(url, outputFile);
-                return true;
-            } catch (IOException e) {
-                Log.e("CallsignUtils", "Failed to fetch from " + url + " on attempt " + attempt, e);
-            }
-        }
-        return false;
     }
 
     private static void fetchCallsignsToFile(String url, File outputFile) throws IOException {
@@ -514,30 +602,6 @@ public class CallsignUtils {
     }
 
 
-
-    /**
-     * Checks if the MASTER.DTA file is up-to-date.
-     */
-    private static boolean isFileUpToDate(Context context, String version) {
-        File databaseFile = new File(context.getFilesDir(), DATABASE_DIRECTORY_NAME + "/" + version + "_" + DATABASE_FILE_NAME);
-        return databaseFile.exists();
-    }
-
-    /**
-     * Fetches the version identifier from MASTER.DTA using HTTP HEAD.
-     */
-    private static String fetchMasterDtaVersion() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(MASTER_DTA_URL).openConnection();
-        connection.setRequestMethod("HEAD");
-
-        String lastModified = connection.getHeaderField("Last-Modified");
-        if (lastModified != null) {
-            return "VER" + lastModified.replace(" ", "").replace(":", "").replace("GMT", "");
-        }
-
-        throw new IOException("Unable to determine MASTER.DTA version.");
-    }
-
     /**
      * Deletes all bucket files and resets the bucket directory.
      *
@@ -547,35 +611,36 @@ public class CallsignUtils {
     public static boolean resetBuckets(Context context) {
         File bucketDir = new File(context.getFilesDir(), BUCKET_DIRECTORY);
 
-        // Check if the bucket directory exists
-        if (!bucketDir.exists() || !bucketDir.isDirectory()) {
-            Log.w("CallsignUtils", "Bucket directory does not exist. Nothing to reset.");
-            return false; // Nothing to reset
+        if (!bucketDir.exists()) {
+            Log.w("CallsignUtils", "Bucket directory does not exist. Creating it now...");
+            boolean dirCreated = bucketDir.mkdirs();
+            if (!dirCreated) {
+                Log.e("CallsignUtils", "Failed to create bucket directory.");
+                return false;
+            }
         }
 
         File[] bucketFiles = bucketDir.listFiles();
         if (bucketFiles == null || bucketFiles.length == 0) {
-            Log.w("CallsignUtils", "No bucket files found in bucket directory. Nothing to reset.");
-            return true; // No buckets to clear
+            Log.w("CallsignUtils", "No bucket files found. Nothing to reset.");
+            return true; // No buckets to clear means they're already empty
         }
 
         boolean allCleared = true;
 
-        // Clear the content of each bucket file
         for (File bucketFile : bucketFiles) {
             if (bucketFile.isFile() && bucketFile.getName().endsWith(".txt")) {
+                Log.d("CallsignUtils", "Attempting to clear bucket file: " + bucketFile.getName());
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(bucketFile, false))) {
-                    // Open the file in overwrite mode to clear its content
-                    writer.write("");
+                    writer.write(""); // Clear the file
                     Log.d("CallsignUtils", "Cleared bucket file: " + bucketFile.getName());
                 } catch (IOException e) {
                     Log.e("CallsignUtils", "Failed to clear bucket file: " + bucketFile.getName(), e);
-                    allCleared = false; // Mark failure if any file fails to clear
+                    allCleared = false;
                 }
             }
         }
 
-        // Log the result
         if (allCleared) {
             Log.d("CallsignUtils", "All bucket files cleared successfully.");
         } else {
@@ -584,10 +649,6 @@ public class CallsignUtils {
 
         return allCleared;
     }
-
-
-
-
 
 
     private static final String BUCKET_DIRECTORY = "callsign_buckets";
