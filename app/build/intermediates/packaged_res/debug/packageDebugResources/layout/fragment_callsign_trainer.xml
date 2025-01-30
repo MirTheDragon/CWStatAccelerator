@@ -77,7 +77,8 @@
                 android:layout_height="wrap_content"
                 android:popupBackground="@android:color/white"
                 android:paddingLeft="8dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="?attr/colorSurface"
+                android:textColor="?attr/colorOnSurface"
                 android:dropDownWidth="wrap_content"/>
 
             <TextView
@@ -100,7 +101,8 @@
                 android:layout_height="wrap_content"
                 android:popupBackground="@android:color/white"
                 android:paddingLeft="8dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="?attr/colorSurface"
+                android:textColor="?attr/colorOnSurface"
                 android:dropDownWidth="wrap_content"/>
 
             <TextView
@@ -123,7 +125,8 @@
                 android:layout_height="wrap_content"
                 android:popupBackground="@android:color/white"
                 android:paddingLeft="8dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="?attr/colorSurface"
+                android:textColor="?attr/colorOnSurface"
                 android:dropDownWidth="wrap_content"/>
 
             <TextView
@@ -145,7 +148,8 @@
                 android:layout_height="wrap_content"
                 android:popupBackground="@android:color/white"
                 android:paddingLeft="8dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="?attr/colorSurface"
+                android:textColor="?attr/colorOnSurface"
                 android:dropDownWidth="wrap_content"/>
 
             <TextView
