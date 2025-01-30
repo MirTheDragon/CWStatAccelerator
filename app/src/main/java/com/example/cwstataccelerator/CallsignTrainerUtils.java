@@ -48,6 +48,8 @@ public class CallsignTrainerUtils {
         // Check if the cache needs to be updated
         boolean cacheNeedsUpdate = false;
 
+
+
         // Check if the cache is empty or parameters changed
         for (String bucket : selectedBuckets) {
             if (!bucketCache.containsKey(bucket) || bucketCache.get(bucket).isEmpty()) {
@@ -234,15 +236,16 @@ public class CallsignTrainerUtils {
             }
         }
 
-        // Load buckets that are newly selected or need to be updated
+        // Load buckets that are newly selected or need updating
         for (String bucket : selectedBuckets) {
-            boolean isNewBucket = !bucketCache.containsKey(bucket);
+            List<String> bucketCallsigns = loadFilteredBucket(context, bucket, minLength, maxLength);
 
-            if (isNewBucket) {
-                List<String> bucketCallsigns = loadFilteredBucket(context, bucket, minLength, maxLength);
+            if (!bucketCallsigns.isEmpty()) {  // ✅ Ensure the bucket is not empty
                 bucketCache.put(bucket, bucketCallsigns);
                 cacheUpdated = true;
                 Log.d("CallsignTrainerUtils", "Loaded bucket: " + bucket + " with " + bucketCallsigns.size() + " callsigns.");
+            } else {
+                Log.w("CallsignTrainerUtils", "❗ Bucket " + bucket + " is empty after attempting to load from file.");
             }
         }
 
@@ -265,16 +268,43 @@ public class CallsignTrainerUtils {
      */
     private static List<String> loadFilteredBucket(Context context, String bucket, int minLength, int maxLength) {
         List<String> filteredCallsigns = new ArrayList<>();
+
+        // ✅ Load the bucket file using CallsignUtils
         List<String> bucketCallsigns = CallsignUtils.loadBucketFromFile(context, bucket);
 
+        // ✅ Log error if the file does not exist or is empty
+        if (bucketCallsigns == null || bucketCallsigns.isEmpty()) {
+            Log.e("CallsignTrainerUtils", "⚠️ Bucket file not found or empty: " + bucket);
+            return filteredCallsigns;
+        }
+
+        // ✅ Filter the callsigns by length
         for (String callsign : bucketCallsigns) {
             if (callsign.length() >= minLength && callsign.length() <= maxLength) {
                 filteredCallsigns.add(callsign);
             }
         }
 
+        Log.d("CallsignTrainerUtils", "Bucket " + bucket + " loaded with " + filteredCallsigns.size() + " callsigns after filtering.");
+
         return filteredCallsigns;
     }
+
+    public static void debugCheckCallsignFiles(Context context) {
+        File filesDir = context.getFilesDir();
+        File[] files = filesDir.listFiles();
+
+        if (files == null || files.length == 0) {
+            Log.e("CallsignTrainerUtils", "❌ No callsign files found in app storage.");
+            return;
+        }
+
+        Log.d("CallsignTrainerUtils", "📂 Available Callsign Files:");
+        for (File file : files) {
+            Log.d("CallsignTrainerUtils", " - " + file.getName() + " (Size: " + file.length() + " bytes)");
+        }
+    }
+
 
     public static void logResult(Context context, String callsign, String typedResponse, boolean isCorrect,
         int responseTime, int wpm, String bucketName) {

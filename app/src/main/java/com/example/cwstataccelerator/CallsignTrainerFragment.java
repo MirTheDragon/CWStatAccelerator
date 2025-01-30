@@ -71,7 +71,7 @@ public class CallsignTrainerFragment extends Fragment {
 
     private int minCallsignLength = 3;
 
-    private int maxCallsignLength = 6;
+    private int maxCallsignLength = 8;
     private Spinner simpleSpinner;
     private Spinner slashedSpinner;
     private Spinner numberSpinner;
@@ -334,6 +334,7 @@ public class CallsignTrainerFragment extends Fragment {
             int newMin = adjustedData[0];
             int newMax = adjustedData[1];
             int totalCallsigns = adjustedData[2];
+            if (newMax > 8) newMax = 8; // Ensure max slider value is not greater than 8
 
             // Apply adjustments to UI if necessary
             if (newMin != minCallsignLength || newMax != maxCallsignLength) {
@@ -547,8 +548,9 @@ public class CallsignTrainerFragment extends Fragment {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         // Load min and max callsign length
+
         minCallsignLength = preferences.getInt("minCallsignLength", 3);
-        maxCallsignLength = preferences.getInt("maxCallsignLength", 6);
+        maxCallsignLength = preferences.getInt("maxCallsignLength", 8);
 
         // Load checkbox states
         simpleSpinner.setSelection(preferences.getInt("simpeleCallsignSelection", 0), true);
@@ -569,7 +571,8 @@ public class CallsignTrainerFragment extends Fragment {
                 // CHeck if callsigns can be extremely long
                 int openEndedCallsignLength = maxCallsignLength;
 
-                if ( openEndedCallsignLength >= 10) {
+                // Ensure logic for max slider value leaves it open ended
+                if ( openEndedCallsignLength >= 8) {
                     openEndedCallsignLength = 100;
                 }
 
