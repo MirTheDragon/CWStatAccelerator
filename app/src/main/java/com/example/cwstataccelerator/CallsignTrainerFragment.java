@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton;
 import android.os.SystemClock;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
@@ -67,8 +68,15 @@ public class CallsignTrainerFragment extends Fragment {
     // List to store selected buckets
     private final List<String> selectedBuckets = new ArrayList<>(Arrays.asList("standard_callsigns"));
 
-    private int currentSpeed;
-
+    private static final String KEY_SPEED = "speed";
+    private static final String KEY_MIN_TRAINING_SPEED = "min_training_speed";
+    private static final String KEY_MAX_TRAINING_SPEED = "max_training_speed";
+    private SharedPreferences sharedPreferences;
+    private int selectedSpeed = 15; // Default: 15 WPM
+    private int minTrainingSpeed = 10; // Default: 10 WPM
+    private int maxTrainingSpeed = 40; // Default: 80 WPM
+    private CheckBox adjustSpeedCheckbox;
+    private CheckBox fixedSpeedCheckbox;
     private int minCallsignLength = 3;
 
     private int maxCallsignLength = 8;
@@ -77,7 +85,6 @@ public class CallsignTrainerFragment extends Fragment {
     private Spinner numberSpinner;
     private Spinner letterSpinner;
     private static final String PREFS_NAME = "CWSettings";
-    private static final String KEY_SPEED = "speed";
 
     @Nullable
     @Override
@@ -94,6 +101,10 @@ public class CallsignTrainerFragment extends Fragment {
 
         // Initialize MorseCodeGenerator
         morseCodeGenerator = new MorseCodeGenerator(requireContext());
+
+        // Initialize CheckBoxes
+        adjustSpeedCheckbox = view.findViewById(R.id.adjust_speed_checkbox);
+        fixedSpeedCheckbox = view.findViewById(R.id.fixed_speed_checkbox);
 
         // Initialize UI elements
         callsignLengthRangeLabel = view.findViewById(R.id.callsign_length_range_label);
@@ -124,12 +135,23 @@ public class CallsignTrainerFragment extends Fragment {
         numberSpinner.setSelection(2);
         letterSpinner.setSelection(2);
 
+        // Load standard set speed as well as min and max
+        sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        selectedSpeed = sharedPreferences.getInt(KEY_SPEED, 15); // Default: 15 WPM
+        minTrainingSpeed = sharedPreferences.getInt(KEY_MIN_TRAINING_SPEED, 10); // Default: 10 WPM
+        maxTrainingSpeed = sharedPreferences.getInt(KEY_MAX_TRAINING_SPEED, 40); // Default: 80 WPM
+
+        Log.d("CallsignTrainerFragment", "Loaded settings -> Speed: " + selectedSpeed + " WPM, Min Speed: " + minTrainingSpeed + " WPM, Max Speed: " + maxTrainingSpeed + " WPM");
+
         // Load saved checkbox states and slider states
         loadPreferences();
 
         // Set up the callsign length range slider and checkbox and spinners
         setupCallsignLengthRangeSlider();
         setupListeners();
+        // Enforce checkbox selection logic
+        enforceSingleCheckboxSelection();
         enforceLogicSpinnerSelection(simpleSpinner);
         //enforceLogicCheckboxSelection(simpleCallsignCheckbox); // Not necesary to call on load
         updateSelectedBuckets();
@@ -324,6 +346,36 @@ public class CallsignTrainerFragment extends Fragment {
         });
     }
 
+    private void enforceSingleCheckboxSelection() {
+        CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // When one checkbox is checked, uncheck the other
+                    if (buttonView.getId() == R.id.adjust_speed_checkbox) {
+                        fixedSpeedCheckbox.setChecked(false);
+                    } else if (buttonView.getId() == R.id.fixed_speed_checkbox) {
+                        adjustSpeedCheckbox.setChecked(false);
+                    }
+                } else {
+                    // If attempting to uncheck the only checked checkbox, check the other one instead
+                    if (!adjustSpeedCheckbox.isChecked() && !fixedSpeedCheckbox.isChecked()) {
+                        if (buttonView.getId() == R.id.adjust_speed_checkbox) {
+                            fixedSpeedCheckbox.setChecked(true); // Auto-select the other
+                        } else {
+                            adjustSpeedCheckbox.setChecked(true); // Auto-select the other
+                        }
+                    }
+                }
+                savePreferences();
+            }
+        };
+
+        // Set the listener for both checkboxes
+        adjustSpeedCheckbox.setOnCheckedChangeListener(listener);
+        fixedSpeedCheckbox.setOnCheckedChangeListener(listener);
+    }
+
     private void toggleTraining() {
         Log.d("CallsignTrainerFragment", "Toggling training. Current state: " + isTrainingActive);
         isTrainingActive = !isTrainingActive;
@@ -401,9 +453,6 @@ public class CallsignTrainerFragment extends Fragment {
                     if (!enteredString.isEmpty()) {
                         processInput(enteredString); // Process the full entered string
                         inputField.setText(""); // Clear the input field after processing
-                    } else {
-                        // Optional: Provide feedback to enter a string
-                        Toast.makeText(requireContext(), "Please enter a callsign before pressing Done", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return true; // Consume the action
@@ -540,6 +589,10 @@ public class CallsignTrainerFragment extends Fragment {
         editor.putInt("numberCombinationsSelection", numberSpinner.getSelectedItemPosition());
         editor.putInt("letterCombinationsSelection", letterSpinner.getSelectedItemPosition());
 
+        // Save checkbox states
+        editor.putBoolean("adjustSpeedChecked", adjustSpeedCheckbox.isChecked());
+        editor.putBoolean("fixedSpeedChecked", fixedSpeedCheckbox.isChecked());
+
         editor.apply(); // Save changes asynchronously
         Log.d("CallsignTrainerFragment", "Preferences saved successfully.");
     }
@@ -559,6 +612,18 @@ public class CallsignTrainerFragment extends Fragment {
         slashedSpinner.setSelection(preferences.getInt("slashedCallsignsSelection", 0), true);
         numberSpinner.setSelection(preferences.getInt("numberCombinationsSelection", 0), true);
         letterSpinner.setSelection(preferences.getInt("letterCombinationsSelection", 0), true);
+
+        // Load checkbox states with validation
+        boolean isAdjustSpeedChecked = preferences.getBoolean("adjustSpeedChecked", true);
+        boolean isFixedSpeedChecked = preferences.getBoolean("fixedSpeedChecked", false);
+
+        // Ensure at least one checkbox is checked
+        if (!isAdjustSpeedChecked && !isFixedSpeedChecked) {
+            isAdjustSpeedChecked = true; // Default to Adjust Speed
+        }
+
+        adjustSpeedCheckbox.setChecked(isAdjustSpeedChecked);
+        fixedSpeedCheckbox.setChecked(isFixedSpeedChecked);
 
         Log.d("CallsignTrainerFragment", "Preferences loaded successfully.");
     }
@@ -628,10 +693,23 @@ public class CallsignTrainerFragment extends Fragment {
         // Compare the entered callsign to the current callsign
         boolean isCorrect = enteredCallsign.trim().equalsIgnoreCase(currentCallsign);
 
+        if ( adjustSpeedCheckbox.isChecked() ) {
+            if (isCorrect && selectedSpeed < maxTrainingSpeed){
+                selectedSpeed++;
+                morseCodeGenerator.updateSpeed(selectedSpeed);
+                Log.d("CallsignTrainerFragment", "Speed increased to " + selectedSpeed);
+
+            } else if (!isCorrect && selectedSpeed > minTrainingSpeed){
+                selectedSpeed--;
+                morseCodeGenerator.updateSpeed(selectedSpeed);
+                Log.d("CallsignTrainerFragment", "Speed decreased to " + selectedSpeed);
+            }
+        }
+
         // Log the result
         long responseTime = SystemClock.elapsedRealtime() - callsignStartTime;
         String bucket = CallsignUtils.getCallsignBucket(currentCallsign); // Get the bucket this callsign belongs to
-        CallsignTrainerUtils.logResult(getContext(), currentCallsign, enteredCallsign, isCorrect, (int) responseTime, currentSpeed, bucket);
+        CallsignTrainerUtils.logResult(getContext(), currentCallsign, enteredCallsign, isCorrect, (int) responseTime, selectedSpeed, bucket);
 
         // Update the cache with additional details
         LogCache.addLog(
@@ -640,7 +718,7 @@ public class CallsignTrainerFragment extends Fragment {
                         responseTime + "," +
                         (isCorrect ? "1" : "0") + "," +
                         enteredCallsign + "," +
-                        currentSpeed + "," +
+                        selectedSpeed + "," +
                         bucket + "," +
                         TrainerUtils.getCurrentDateTime()
         );
@@ -651,15 +729,34 @@ public class CallsignTrainerFragment extends Fragment {
 
         // Provide user feedback
         String feedbackMessage;
-        if (isCorrect) {
-            feedbackMessage = "👍 Correct! Callsign matched.";
-            ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
-            playNextCallsign(true); // Move to the next callsign
-        } else {
-            feedbackMessage = "👎 Incorrect! Try again.";
-            ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
-            playNextCallsign(false); // Replay the current callsign
+
+        Log.d("CallsignTrainerFragment", "Fixed Speed Checked: " + fixedSpeedCheckbox.isChecked());
+        Log.d("CallsignTrainerFragment", "Adjust Speed Checked: " + adjustSpeedCheckbox.isChecked());
+
+        if ( fixedSpeedCheckbox.isChecked() ) {
+
+            if (isCorrect) {
+                feedbackMessage = "👍 Correct! Callsign matched.";
+                ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
+                playNextCallsign(true); // Move to the next callsign
+            } else {
+                feedbackMessage = "👎 Incorrect! Try again.";
+                ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
+                playNextCallsign(false); // Replay the current callsign
+            }
+        } else if ( adjustSpeedCheckbox.isChecked() ){
+            if (isCorrect) {
+                feedbackMessage = "👍 Correct! Callsign matched. WPM increased to " + selectedSpeed;
+                ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
+                playNextCallsign(true); // Move to the next callsign
+            } else {
+                feedbackMessage = "👎 Incorrect! Try again. WPM decreased to " + selectedSpeed;
+                ToastUtils.showCustomToast(requireContext(), feedbackMessage, toastTime);
+                playNextCallsign(false); // Replay the current callsign
+            }
         }
+
+
     }
 
 

@@ -145,6 +145,23 @@ public class MorseCodeGenerator {
         Log.d("MorseCodeGenerator", "Loaded settings -> Frequency: " + frequency + " Hz, Speed: " + speed + " WPM, Ramp: " + rampDuration + " ms, SNR: " + snr + "%");
     }
 
+    public void updateSpeed(int newSpeed) {
+        if (newSpeed <= 0) {
+            Log.e("MorseCodeGenerator", "Invalid speed value: " + newSpeed);
+            return;
+        }
+
+        // Calculate the new dot duration without saving it to preferences
+        this.dotDuration = 1200 / newSpeed;
+
+        // Log the speed change
+        Log.d("MorseCodeGenerator", "Speed updated dynamically to " + newSpeed + " WPM (Dot duration: " + dotDuration + " ms)");
+
+        // Clear the cached audio tracks to regenerate them at the new speed
+        clearCache();
+    }
+
+
     public void playMorseCode(String input) {
         input = input.toUpperCase(); // Convert input to uppercase for consistency
 

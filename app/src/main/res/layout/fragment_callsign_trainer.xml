@@ -21,7 +21,7 @@
 
 
             <CheckBox
-                android:id="@+id/adjust_speed_checkbox"
+                android:id="@+id/fixed_speed_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fixed WPM"
@@ -29,7 +29,7 @@
                 android:clickable="true" />
 
             <CheckBox
-                android:id="@+id/fixed_speed_checkbox"
+                android:id="@+id/adjust_speed_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="WPM based on performance"

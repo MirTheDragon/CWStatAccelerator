@@ -55,7 +55,7 @@ public class CwSpeedFragment extends Fragment {
         selectedFrequency = sharedPreferences.getInt(KEY_FREQUENCY, 600); // Default: 600 Hz
         selectedSpeed = sharedPreferences.getInt(KEY_SPEED, 15); // Default: 15 WPM
         minTrainingSpeed = sharedPreferences.getInt(KEY_MIN_TRAINING_SPEED, 10); // Default: 10 WPM
-        maxTrainingSpeed = sharedPreferences.getInt(KEY_MAX_TRAINING_SPEED, 80); // Default: 80 WPM
+        maxTrainingSpeed = sharedPreferences.getInt(KEY_MAX_TRAINING_SPEED, 40); // Default: 80 WPM
         rampTime = sharedPreferences.getInt(KEY_RAMP_TIME, 5); // Default: 0 ms
         selectedSNR = sharedPreferences.getInt(KEY_SNR, 100); // Default: 100% (perfect signal)
 
