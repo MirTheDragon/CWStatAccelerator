@@ -437,6 +437,68 @@ public class CallsignTrainerUtils {
     }
 
     /**
+     * Fetches the last N callsigns from logs.
+     */
+    public static List<String[]> getLastNCallsigns(Context context, int N) {
+        List<String[]> lastNLogs = new ArrayList<>();
+
+        // Retrieve logs from the cache first
+        List<String> cachedLogs = readRecentLogEntries(context, N);
+        if (!cachedLogs.isEmpty()) {
+            lastNLogs = parseLogEntries(cachedLogs, N);
+            return lastNLogs;
+        }
+
+        // If cache is insufficient, read from log files
+        File logDir = new File(context.getFilesDir(), LOG_DIRECTORY);
+        if (!logDir.exists() || !logDir.isDirectory()) return lastNLogs; // Return empty list if directory is missing
+
+        File[] logFiles = logDir.listFiles();
+        if (logFiles == null || logFiles.length == 0) return lastNLogs; // No logs available
+
+        // Sort log files by newest first
+        List<File> sortedLogFiles = new ArrayList<>();
+        Collections.addAll(sortedLogFiles, logFiles);
+        sortedLogFiles.sort((f1, f2) -> f2.getName().compareTo(f1.getName()));
+
+        try {
+            List<String> fetchedLogs = new ArrayList<>();
+            for (File logFile : sortedLogFiles) {
+                BufferedReader reader = new BufferedReader(new FileReader(logFile));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    fetchedLogs.add(line);
+                    if (fetchedLogs.size() >= N) break; // Stop when we have enough logs
+                }
+                reader.close();
+                if (fetchedLogs.size() >= N) break;
+            }
+            lastNLogs = parseLogEntries(fetchedLogs, N);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lastNLogs;
+    }
+
+    /**
+     * Parses log entries into {original, entered} callsign pairs.
+     */
+    private static List<String[]> parseLogEntries(List<String> logEntries, int maxEntries) {
+        List<String[]> parsedLogs = new ArrayList<>();
+
+        for (String entry : logEntries) {
+            String[] parts = entry.split(",");
+            if (parts.length >= 2) {
+                parsedLogs.add(new String[]{parts[0], parts[1]}); // {original, entered}
+            }
+            if (parsedLogs.size() >= maxEntries) break;
+        }
+
+        return parsedLogs;
+    }
+
+    /**
      * Retrieves performance metrics aggregated by callsign.
      */
     public static Map<String, Integer[]> getPerformanceMetrics(Context context) {

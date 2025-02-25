@@ -17,7 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
@@ -29,7 +28,9 @@ import java.util.Map;
 public class CallsignPerformanceMetricsFragment extends Fragment {
 
     private static final String TAG = "CallsignMetricsFragment";
+    private static final int MAX_ANALYSIS_LIMIT = 50;  // Number of recent callsigns to analyze
     private TableLayout metricsView;
+    private TableLayout errorAnalysisView;
 
     @Nullable
     @Override
@@ -37,13 +38,13 @@ public class CallsignPerformanceMetricsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_performance_metrics, container, false);
 
         metricsView = view.findViewById(R.id.metrics_view);
+        errorAnalysisView = view.findViewById(R.id.metrics_view);  // Add this to your layout
 
-        // Register a broadcast receiver to update metrics dynamically
+        // Register broadcast receiver
         LocalBroadcastManager.getInstance(requireContext())
                 .registerReceiver(updateReceiver, new IntentFilter("com.example.cwstataccelerator.CALLSIGN_UPDATE_METRICS"));
 
-        // Populate metrics initially
-        updateMetricsView();
+        updateMetricsView();  // Populate metrics initially
 
         return view;
     }
@@ -53,7 +54,7 @@ public class CallsignPerformanceMetricsFragment extends Fragment {
         super.onResume();
         LocalBroadcastManager.getInstance(requireContext())
                 .registerReceiver(updateReceiver, new IntentFilter("com.example.cwstataccelerator.CALLSIGN_UPDATE_METRICS"));
-        updateMetricsView(); // Refresh metrics when fragment becomes visible
+        updateMetricsView(); // Refresh metrics
     }
 
     @Override
@@ -71,59 +72,31 @@ public class CallsignPerformanceMetricsFragment extends Fragment {
     private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateMetricsView(); // Refresh metrics dynamically when broadcast is received
+            updateMetricsView();  // Refresh dynamically when a new callsign is logged
         }
     };
 
     public void updateMetricsView() {
-        if (metricsView == null) return;
+        if (metricsView == null || errorAnalysisView == null) return;
 
-        metricsView.removeAllViews(); // Clear existing metrics
+        metricsView.removeAllViews();  // Clear existing performance metrics
+        errorAnalysisView.removeAllViews();  // Clear existing error analysis
 
-        // Fetch metrics from CallsignTrainerUtils
+        // Fetch performance metrics
         Map<String, Integer[]> metrics = CallsignTrainerUtils.getPerformanceMetrics(requireContext());
 
         if (metrics == null || metrics.isEmpty()) {
-            // Add a placeholder message if no metrics are available
-            TableRow placeholderRow = new TableRow(requireContext());
-            TextView placeholderText = new TextView(requireContext());
-            placeholderText.setText("No performance metrics available. Start training to generate data.");
-            placeholderText.setGravity(Gravity.CENTER);
-            placeholderText.setPadding(16, 16, 16, 16);
-            placeholderRow.addView(placeholderText);
-            metricsView.addView(placeholderRow);
+            addPlaceholderMessage(metricsView, "No performance metrics available. Start training.");
+            addPlaceholderMessage(errorAnalysisView, "No error analysis available.");
             return;
         }
 
-        // Add a header row to the metrics table
-        TableRow headerRow = new TableRow(requireContext());
-        headerRow.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-        ));
-
-        String[] headers = {"Callsign", "Attempts", "Success Rate", "Avg Time (ms)", "Fastest Time (ms)"};
-        for (String header : headers) {
-            TextView headerView = new TextView(requireContext());
-            headerView.setText(header);
-            headerView.setPadding(8, 8, 8, 8);
-            headerView.setGravity(Gravity.CENTER);
-            headerView.setTextSize(12);
-            headerView.setTypeface(null, android.graphics.Typeface.BOLD);
-            headerRow.addView(headerView);
-        }
-        metricsView.addView(headerRow);
-
-        // Sort metrics by performance (worst-performing first)
+        // **Performance Metrics Table**
+        addMetricsHeader(metricsView);
         List<Map.Entry<String, Integer[]>> sortedMetrics = sortMetricsByPerformance(metrics);
 
-        // Populate the table with metrics
         for (Map.Entry<String, Integer[]> entry : sortedMetrics) {
             TableRow row = new TableRow(requireContext());
-            row.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            ));
 
             String callsign = entry.getKey();
             Integer[] stats = entry.getValue();
@@ -135,7 +108,6 @@ public class CallsignPerformanceMetricsFragment extends Fragment {
             double successRate = (correct / (double) attempts) * 100;
             int averageResponseTime = totalResponseTime / attempts;
 
-            // Add columns to the row
             row.addView(createTextView(callsign));
             row.addView(createTextView(String.valueOf(attempts)));
             row.addView(createTextView(String.format("%.1f%%", successRate)));
@@ -144,34 +116,70 @@ public class CallsignPerformanceMetricsFragment extends Fragment {
 
             metricsView.addView(row);
         }
+
+        // **Error Analysis**
+        List<String[]> lastNCalls = CallsignTrainerUtils.getLastNCallsigns(requireContext(), MAX_ANALYSIS_LIMIT);
+
+        if (lastNCalls.isEmpty()) {
+            addPlaceholderMessage(errorAnalysisView, "No error analysis available.");
+        } else {
+            addErrorAnalysisHeader(errorAnalysisView);
+            Map<String, Integer> errorData = CallsignErrorAnalyzer.analyzeErrors(lastNCalls);
+
+            for (Map.Entry<String, Integer> entry : errorData.entrySet()) {
+                TableRow row = new TableRow(requireContext());
+                row.addView(createTextView(entry.getKey())); // Error Pattern
+                row.addView(createTextView(String.valueOf(entry.getValue()))); // Occurrences
+                errorAnalysisView.addView(row);
+            }
+        }
+    }
+
+    private void addMetricsHeader(TableLayout table) {
+        TableRow headerRow = new TableRow(requireContext());
+        String[] headers = {"Callsign", "Attempts", "Success Rate", "Avg Time (ms)", "Fastest Time (ms)"};
+        for (String header : headers) {
+            headerRow.addView(createTextView(header, true));
+        }
+        table.addView(headerRow);
+    }
+
+    private void addErrorAnalysisHeader(TableLayout table) {
+        TableRow headerRow = new TableRow(requireContext());
+        headerRow.addView(createTextView("Common Mistakes", true));
+        headerRow.addView(createTextView("Occurrences", true));
+        table.addView(headerRow);
     }
 
     private List<Map.Entry<String, Integer[]>> sortMetricsByPerformance(Map<String, Integer[]> metrics) {
         List<Map.Entry<String, Integer[]>> sortedMetrics = new ArrayList<>(metrics.entrySet());
-        Collections.sort(sortedMetrics, new Comparator<Map.Entry<String, Integer[]>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer[]> o1, Map.Entry<String, Integer[]> o2) {
-                Integer[] stats1 = o1.getValue();
-                Integer[] stats2 = o2.getValue();
-
-                double successRate1 = stats1[1] / (double) stats1[0];
-                double successRate2 = stats2[1] / (double) stats2[0];
-
-                if (successRate1 != successRate2) {
-                    return Double.compare(successRate1, successRate2); // Sort by success rate
-                }
-
-                return Integer.compare(stats1[2] / stats1[0], stats2[2] / stats2[0]); // Sort by average response time
-            }
-        });
+        Collections.sort(sortedMetrics, Comparator.comparingDouble(o -> (o.getValue()[1] / (double) o.getValue()[0])));
         return sortedMetrics;
     }
 
     private TextView createTextView(String text) {
+        return createTextView(text, false);
+    }
+
+    private TextView createTextView(String text, boolean isHeader) {
         TextView textView = new TextView(requireContext());
         textView.setText(text);
         textView.setPadding(8, 8, 8, 8);
-        textView.setTextSize(14);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextSize(isHeader ? 12 : 14);
+        if (isHeader) {
+            textView.setTypeface(null, android.graphics.Typeface.BOLD);
+        }
         return textView;
+    }
+
+    private void addPlaceholderMessage(TableLayout table, String message) {
+        TableRow placeholderRow = new TableRow(requireContext());
+        TextView placeholderText = new TextView(requireContext());
+        placeholderText.setText(message);
+        placeholderText.setGravity(Gravity.CENTER);
+        placeholderText.setPadding(16, 16, 16, 16);
+        placeholderRow.addView(placeholderText);
+        table.addView(placeholderRow);
     }
 }
