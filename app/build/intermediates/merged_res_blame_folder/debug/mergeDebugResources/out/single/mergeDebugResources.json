@@ -56,10 +56,6 @@
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-pngs-40:\\drawable-hdpi\\ic_launcher_background.png"
     },
     {
-        "merged": "com.example.cwstataccelerator.app-debug-44:/menu_activity_main_drawer.xml.flat",
-        "source": "com.example.cwstataccelerator.app-main-46:/menu/activity_main_drawer.xml"
-    },
-    {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-debug-44:\\drawable-xhdpi_cw_app_trainer_icon_background.png.flat",
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-pngs-40:\\drawable-xhdpi\\cw_app_trainer_icon_background.png"
     },
@@ -314,6 +310,10 @@
     {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-debug-44:\\drawable-xhdpi_ic_home.png.flat",
         "source": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-pngs-40:\\drawable-xhdpi\\ic_home.png"
+    },
+    {
+        "merged": "com.example.cwstataccelerator.app-debug-44:/layout_fragment_home.xml.flat",
+        "source": "com.example.cwstataccelerator.app-main-46:/layout/fragment_home.xml"
     },
     {
         "merged": "C:\\Users\\plasm\\.gradle\\daemon\\8.10.2\\com.example.cwstataccelerator.app-debug-44:\\layout_fragment_trainer.xml.flat",

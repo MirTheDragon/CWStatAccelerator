@@ -3,24 +3,24 @@
 3    package="com.example.cwstataccelerator.test" >
 4
 5    <uses-sdk
-5-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:5:5-74
+5-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:5:5-74
 6        android:minSdkVersion="19"
-6-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:5:15-41
+6-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:5:15-41
 7        android:targetSdkVersion="35" />
-7-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:5:42-71
+7-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:5:42-71
 8
 9    <instrumentation
-9-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:11:5-15:79
+9-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:11:5-15:79
 10        android:name="androidx.test.runner.AndroidJUnitRunner"
-10-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:11:22-76
+10-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:11:22-76
 11        android:functionalTest="false"
-11-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:14:22-52
+11-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:14:22-52
 12        android:handleProfiling="false"
-12-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:13:22-53
+12-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:13:22-53
 13        android:label="Tests for com.example.cwstataccelerator"
-13-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:15:22-77
+13-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:15:22-77
 14        android:targetPackage="com.example.cwstataccelerator" />
-14-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:12:22-75
+14-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:12:22-75
 15
 16    <uses-permission android:name="android.permission.REORDER_TASKS" />
 16-->[androidx.test:core:1.5.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\785b2a79cd15f81590ec8dce2074dfad\transformed\core-1.5.0\AndroidManifest.xml:24:5-72
@@ -40,12 +40,12 @@
 22    </queries>
 23
 24    <application
-24-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:7:5-9:19
+24-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:7:5-9:19
 25        android:debuggable="true"
 26        android:extractNativeLibs="true" >
 27        <uses-library android:name="android.test.runner" />
-27-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:8:9-60
-27-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest2000876992796150462.xml:8:23-57
+27-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:8:9-60
+27-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest9434941234412889917.xml:8:23-57
 28
 29        <activity
 29-->[androidx.test:core:1.5.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\785b2a79cd15f81590ec8dce2074dfad\transformed\core-1.5.0\AndroidManifest.xml:27:9-34:20

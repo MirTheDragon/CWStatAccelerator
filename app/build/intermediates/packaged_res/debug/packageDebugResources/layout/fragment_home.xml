@@ -10,6 +10,26 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Replace with actual performance history views and recommendation UI -->
+        <TextView
+            android:id="@+id/text_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="This app is CW audio morsecode to text trainer.
+It's highly customizable and designed to breach the
+difficulty gap between single letter translation and
+real-time callsign parsing. The character trainer can
+be used for learning just single characters with the
+farnsworth method to getting comftable parsing longer
+strings. I can recommend having a printed chart to
+reffer to when just getting started. The Callsign
+trainer is for when you get more comftable with
+sequential characters and offers advanced selection
+of callsign difficulty and length, designed to train
+parsing speed and reliability. A full on air Callsign
+trainer will be added in the future" />
+
         <!-- Status Message -->
         <TextView
             android:id="@+id/database_status_message"
@@ -49,12 +69,6 @@
             android:overScrollMode="ifContentScrolls"
             android:text="Bucket summary will appear here..." />
 
-        <!-- Replace with actual performance history views and recommendation UI -->
-        <TextView
-            android:id="@+id/text_home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Home screen. Will add your personal performance statistics here later" />
 
     </LinearLayout>
 </ScrollView>

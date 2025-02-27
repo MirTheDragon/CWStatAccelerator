@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -78,6 +79,9 @@ public class HomeFragment extends Fragment {
         databaseStatusMessage.setText("Checking database status...");
         databaseUpdateProgress.setVisibility(View.VISIBLE);
 
+        // 🔹 Lock the navigation drawer
+        lockNavigationDrawer(true);
+
         CallsignUtils.updateAndSortCallsignDatabase(requireContext(), new CallsignUtils.ProgressListener() {
             @Override
             public void onProgressUpdate(String message, int progress) {
@@ -86,7 +90,10 @@ public class HomeFragment extends Fragment {
                     if (progress == 100) {
                         databaseUpdateProgress.setVisibility(View.GONE);
 
-                        // 🔹 Directly update stats when sorting is done
+                        // 🔹 Unlock the drawer after update completes
+                        lockNavigationDrawer(false);
+
+                        // 🔹 Update stats and analysis
                         showDatabaseStats();
                         updateDetailedAnalysis();
                     }
@@ -95,6 +102,16 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void lockNavigationDrawer(boolean shouldLock) {
+        if (getActivity() != null) {
+            DrawerLayout drawerLayout = getActivity().findViewById(R.id.drawer_layout);
+            if (drawerLayout != null) {
+                drawerLayout.setDrawerLockMode(
+                        shouldLock ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED
+                );
+            }
+        }
+    }
 
     private void showDatabaseStats() {
         int totalCallsigns = CallsignUtils.getTotalCallsignsInDatabase(requireContext());
