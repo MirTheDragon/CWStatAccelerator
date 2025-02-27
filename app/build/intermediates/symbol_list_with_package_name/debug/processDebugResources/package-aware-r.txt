@@ -3327,7 +3327,6 @@ id enterAlwaysCollapsed
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
-id fab
 id fade
 id fill
 id fill_horizontal
@@ -3468,7 +3467,6 @@ id nav_cw_speed
 id nav_gallery
 id nav_home
 id nav_host_fragment_container
-id nav_host_fragment_content_main
 id nav_reference
 id nav_slideshow
 id nav_trainer
@@ -3639,13 +3637,11 @@ id textSpacerNoTitle
 id textStart
 id textTop
 id textView
-id text_gallery
 id text_home
 id text_input_end_icon
 id text_input_error_icon
 id text_input_start_icon
 id text_reference
-id text_slideshow
 id textinput_counter
 id textinput_error
 id textinput_helper_text
@@ -3811,8 +3807,6 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_main
-layout app_bar_main
-layout content_main
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
@@ -3831,12 +3825,10 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout fragment_callsign_trainer
 layout fragment_cw_speed
-layout fragment_gallery
 layout fragment_home
 layout fragment_performance_metrics
 layout fragment_recent_log
 layout fragment_reference_sheet
-layout fragment_slideshow
 layout fragment_trainer
 layout m3_alert_dialog
 layout m3_alert_dialog_actions

@@ -85,12 +85,16 @@ public class HomeFragment extends Fragment {
                     databaseStatusMessage.setText(message);
                     if (progress == 100) {
                         databaseUpdateProgress.setVisibility(View.GONE);
+
+                        // 🔹 Directly update stats when sorting is done
                         showDatabaseStats();
+                        updateDetailedAnalysis();
                     }
                 });
             }
         });
     }
+
 
     private void showDatabaseStats() {
         int totalCallsigns = CallsignUtils.getTotalCallsignsInDatabase(requireContext());

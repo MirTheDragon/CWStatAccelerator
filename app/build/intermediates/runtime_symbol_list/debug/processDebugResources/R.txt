@@ -3326,7 +3326,6 @@ int id enterAlwaysCollapsed 0x7f0900c2
 int id exitUntilCollapsed 0x7f0900c3
 int id expand_activities_button 0x7f0900c4
 int id expanded_menu 0x7f0900c5
-int id fab 0x7f0900c6
 int id fade 0x7f0900c7
 int id fill 0x7f0900c8
 int id fill_horizontal 0x7f0900c9
@@ -3467,7 +3466,6 @@ int id nav_cw_speed 0x7f09014f
 int id nav_gallery 0x7f090150
 int id nav_home 0x7f090151
 int id nav_host_fragment_container 0x7f090152
-int id nav_host_fragment_content_main 0x7f090153
 int id nav_reference 0x7f090154
 int id nav_slideshow 0x7f090155
 int id nav_trainer 0x7f090156
@@ -3638,13 +3636,11 @@ int id textSpacerNoTitle 0x7f0901fa
 int id textStart 0x7f0901fb
 int id textTop 0x7f0901fc
 int id textView 0x7f0901fd
-int id text_gallery 0x7f0901fe
 int id text_home 0x7f0901ff
 int id text_input_end_icon 0x7f090200
 int id text_input_error_icon 0x7f090201
 int id text_input_start_icon 0x7f090202
 int id text_reference 0x7f090203
-int id text_slideshow 0x7f090204
 int id textinput_counter 0x7f090205
 int id textinput_error 0x7f090206
 int id textinput_helper_text 0x7f090207
@@ -3810,8 +3806,6 @@ int layout abc_search_view 0x7f0c0019
 int layout abc_select_dialog_material 0x7f0c001a
 int layout abc_tooltip 0x7f0c001b
 int layout activity_main 0x7f0c001c
-int layout app_bar_main 0x7f0c001d
-int layout content_main 0x7f0c001e
 int layout custom_dialog 0x7f0c001f
 int layout design_bottom_navigation_item 0x7f0c0020
 int layout design_bottom_sheet_dialog 0x7f0c0021
@@ -3830,12 +3824,10 @@ int layout design_text_input_end_icon 0x7f0c002d
 int layout design_text_input_start_icon 0x7f0c002e
 int layout fragment_callsign_trainer 0x7f0c002f
 int layout fragment_cw_speed 0x7f0c0030
-int layout fragment_gallery 0x7f0c0031
 int layout fragment_home 0x7f0c0032
 int layout fragment_performance_metrics 0x7f0c0033
 int layout fragment_recent_log 0x7f0c0034
 int layout fragment_reference_sheet 0x7f0c0035
-int layout fragment_slideshow 0x7f0c0036
 int layout fragment_trainer 0x7f0c0037
 int layout m3_alert_dialog 0x7f0c0038
 int layout m3_alert_dialog_actions 0x7f0c0039

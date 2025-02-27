@@ -15,10 +15,10 @@
         <item
             android:id="@+id/nav_trainer"
             android:icon="@drawable/ic_trainer"
-            android:title="CW to Character Trainer" />
+            android:title="CW to Text Trainer" />
         <item
             android:id="@+id/nav_callsign_trainer"
             android:icon="@drawable/ic_trainer"
-            android:title="CW to Character Trainer" />
+            android:title="Callsign Trainer" />
     </group>
 </menu>

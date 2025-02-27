@@ -10,8 +10,8 @@
 10
 11    <!-- Required permissions -->
 12    <uses-permission android:name="android.permission.INTERNET" />
-12-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:5-67
-12-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:22-64
+12-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:5-67
+12-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:6:22-64
 13
 14    <permission
 14-->[androidx.core:core:1.9.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\bc9ad1eb3ac0478baf31c00deedef906\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
@@ -25,47 +25,47 @@
 18-->[androidx.core:core:1.9.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\bc9ad1eb3ac0478baf31c00deedef906\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
 19
 20    <application
-20-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:8:5-29:19
+20-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:8:5-29:19
 21        android:allowBackup="true"
-21-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:9:9-35
+21-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:9:9-35
 22        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 22-->[androidx.core:core:1.9.0] C:\Users\plasm\.gradle\caches\8.10.2\transforms\bc9ad1eb3ac0478baf31c00deedef906\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
 23        android:dataExtractionRules="@xml/data_extraction_rules"
-23-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:10:9-65
+23-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:10:9-65
 24        android:debuggable="true"
 25        android:extractNativeLibs="true"
 26        android:fullBackupContent="@xml/backup_rules"
-26-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:11:9-54
+26-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:11:9-54
 27        android:icon="@mipmap/ic_launcher"
-27-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:12:9-43
+27-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:12:9-43
 28        android:label="@string/app_name"
-28-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:13:9-41
+28-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:13:9-41
 29        android:roundIcon="@mipmap/ic_launcher_round"
-29-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:14:9-54
+29-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:14:9-54
 30        android:supportsRtl="true"
-30-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:15:9-35
+30-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:15:9-35
 31        android:testOnly="true"
 32        android:theme="@style/Theme.CWStatAccelerator" >
-32-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:16:9-55
+32-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:16:9-55
 33        <activity
-33-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:18:9-28:20
+33-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:18:9-28:20
 34            android:name="com.example.cwstataccelerator.MainActivity"
-34-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:19:13-41
+34-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:19:13-41
 35            android:exported="true"
-35-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:20:13-36
+35-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:20:13-36
 36            android:label="@string/app_name"
-36-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:21:13-45
+36-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:21:13-45
 37            android:theme="@style/Theme.CWStatAccelerator.NoActionBar" >
-37-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:22:13-71
+37-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:22:13-71
 38            <intent-filter>
-38-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:23:13-27:29
+38-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:23:13-27:29
 39                <action android:name="android.intent.action.MAIN" />
-39-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:17-69
-39-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:25-66
+39-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:17-69
+39-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:24:25-66
 40
 41                <category android:name="android.intent.category.LAUNCHER" />
-41-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:17-77
-41-->C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:27-74
+41-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:17-77
+41-->C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\AndroidManifest.xml:26:27-74
 42            </intent-filter>
 43        </activity>
 44

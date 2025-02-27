@@ -38,14 +38,14 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\plasm\\AndroidStudioProjects\\CWStatAccelerator\\app\\src\\main\\res\\values-night\\themes.xml",
+                    "source": "C:\\Users\\plasm\\StudioProjects\\CWStatAccelerator\\app\\src\\main\\res\\values-night\\themes.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
-                        "startOffsets": "100",
+                        "startOffsets": "102",
                         "endLines": "18",
                         "endColumns": "12",
-                        "endOffsets": "1090"
+                        "endOffsets": "1108"
                     },
                     "to": {
                         "startLines": "9",

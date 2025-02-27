@@ -38,10 +38,10 @@ com.example.cwstataccelerator.app-viewpager2-1.0.0-36 C:\Users\plasm\.gradle\cac
 com.example.cwstataccelerator.app-navigation-fragment-2.6.0-37 C:\Users\plasm\.gradle\caches\8.10.2\transforms\e1cc36f795fe345da2de3e8d5415f308\transformed\navigation-fragment-2.6.0\res
 com.example.cwstataccelerator.app-lifecycle-viewmodel-2.6.1-38 C:\Users\plasm\.gradle\caches\8.10.2\transforms\e2a968a817f8b2ccabd7ae382f31f04c\transformed\lifecycle-viewmodel-2.6.1\res
 com.example.cwstataccelerator.app-transition-1.4.1-39 C:\Users\plasm\.gradle\caches\8.10.2\transforms\e5153ed68e70acfb4a9e708c657884c5\transformed\transition-1.4.1\res
-com.example.cwstataccelerator.app-pngs-40 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\generated\res\pngs\debug
-com.example.cwstataccelerator.app-resValues-41 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\generated\res\resValues\debug
-com.example.cwstataccelerator.app-packageDebugResources-42 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
-com.example.cwstataccelerator.app-packageDebugResources-43 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
-com.example.cwstataccelerator.app-debug-44 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\build\intermediates\merged_res\debug\mergeDebugResources
-com.example.cwstataccelerator.app-debug-45 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\debug\res
-com.example.cwstataccelerator.app-main-46 C:\Users\plasm\AndroidStudioProjects\CWStatAccelerator\app\src\main\res
+com.example.cwstataccelerator.app-pngs-40 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\generated\res\pngs\debug
+com.example.cwstataccelerator.app-resValues-41 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\generated\res\resValues\debug
+com.example.cwstataccelerator.app-packageDebugResources-42 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.cwstataccelerator.app-packageDebugResources-43 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.cwstataccelerator.app-debug-44 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.cwstataccelerator.app-debug-45 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\debug\res
+com.example.cwstataccelerator.app-main-46 C:\Users\plasm\StudioProjects\CWStatAccelerator\app\src\main\res
